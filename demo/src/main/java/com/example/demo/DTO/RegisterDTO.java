@@ -1,39 +1,20 @@
-package com.example.demo.Model;
+package com.example.demo.DTO;
 
-import jakarta.persistence.*;
-import org.checkerframework.checker.units.qual.C;
+public class RegisterDTO {
 
-@Entity
-@Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    @Column
     private String username;
-    @Column
     private String name;
-    @Column
     private String lastname;
-    @Column
     private String password;
 
-    public User(String username, String name, String lastname, String password) {
+    public RegisterDTO(String username, String name, String lastname, String password) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
         this.password = password;
     }
 
-    public User(){}
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public RegisterDTO() {
     }
 
     public String getUsername() {
