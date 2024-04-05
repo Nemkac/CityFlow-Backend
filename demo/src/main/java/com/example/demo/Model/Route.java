@@ -11,7 +11,6 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int id;
 
-    @Column
     @ManyToOne
     @JoinColumn(name = "startLocationID")
     public Location startingPoint;
