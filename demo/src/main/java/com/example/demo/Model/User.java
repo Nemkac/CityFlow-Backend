@@ -8,7 +8,8 @@ import org.checkerframework.checker.units.qual.C;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
     @Column
     private String username;
@@ -18,12 +19,14 @@ public class User {
     private String lastname;
     @Column
     private String password;
+    private String roles;
 
-    public User(String username, String name, String lastname, String password) {
+    public User(String username, String name, String lastname, String password,String roles) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
         this.password = password;
+        this.roles = roles;
     }
 
     public User(){}
@@ -66,5 +69,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 }
