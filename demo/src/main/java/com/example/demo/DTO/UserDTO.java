@@ -1,37 +1,21 @@
-package com.example.demo.Model;
-
-import jakarta.persistence.*;
-import org.checkerframework.checker.units.qual.C;
+package com.example.demo.DTO;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "users")
-public class User {
+public class UserDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
-    @Column
     private String username;
-    @Column
     private String name;
-    @Column
     private String lastname;
-    @Column
     private String email;
-    @Column
     private String password;
-    //'YYYY-MM-DD'
-    @Column(name = "dateOfBirth")
     private LocalDate dateOfBirth;
-    @Column(name = "telephone")
     private String phoneNumber;
     private String roles;
 
-    public User(int id, String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
-        this.id = id;
+
+    public UserDTO(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
@@ -42,19 +26,8 @@ public class User {
         this.roles = roles;
     }
 
-    public User(){}
-
-    public User(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
-        this.username = username;
-        this.name = name;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-        this.dateOfBirth = dateOfBirth;
-        this.phoneNumber = phoneNumber;
-        this.roles = roles;
+    public UserDTO() {
     }
-
 
     public int getId() {
         return id;
@@ -128,3 +101,4 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 }
+

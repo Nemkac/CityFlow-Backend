@@ -52,7 +52,8 @@ public class AuthenticationController {
         return jwtService.extractUsername(token);
     }
     @GetMapping(value = "/testToken")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROL." +
+            "E_USER')")
     public String getTokenTest(){
         return "It works !";
     }
