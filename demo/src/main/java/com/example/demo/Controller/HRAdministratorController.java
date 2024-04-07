@@ -1,7 +1,9 @@
 package com.example.demo.Controller;
 
 import com.example.demo.DTO.UserDTO;
+import com.example.demo.Model.Driver;
 import com.example.demo.Model.User;
+import com.example.demo.Service.DriverService;
 import com.example.demo.Service.EmailService;
 import com.example.demo.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping(path = "/CityFlow")
 public class HRAdministratorController {
@@ -19,6 +23,9 @@ public class HRAdministratorController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private DriverService driverService;
 
     @PutMapping(consumes = "application/json", path = "/addUser")
     //@PreAuthorize("hasAuthority('ROLE_HRADMIN')")
@@ -39,7 +46,10 @@ public class HRAdministratorController {
                     userDTO.getRoles()
             );
             this.userService.addUser(newUser);
-
+            if(Objects.equals(newUser.getRoles(), "ROLE_DRIVER")) {
+                Driver newDriver = new Driver(newUser);
+                newDriver = this.driverService.save(newDriver);
+            }
         sendRegistrationEmail(newUser.getEmail(), newUser.getPassword(),newUser.getUsername());
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -56,12 +66,12 @@ public class HRAdministratorController {
                 + "Your login credentials are as follows:\n\n"
                 + "Username: " + username +"\n"
                 + "Password: " + password + "\n\n"
-                + "Please keep this information secure and do not share it with anyone. We recommend changing your password upon your first login for added security.\n\n"
+                + "Please keep this information secure and do not share it with anyone. Upon your first login, you will be required to change your password for added security. You will not be able to proceed further until you change your password!\n\n"
                 + "If you have any questions or require assistance, please do not hesitate to reach out to our HR department at \n" +
                 "isaisanovicnnba@gmail.com.\n\n"
                 + "Once again, welcome to CityFlow. We look forward to working together and achieving great success.\n\n"
                 + "Best regards,\n"
-                + "CityFlow Team";
+                + "Your CityFlow Team!";
 
         mailMessage.setText(message);
 

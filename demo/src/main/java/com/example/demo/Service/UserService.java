@@ -17,7 +17,7 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     public User save(User user){
         return this.userRepository.save(user);
     }

@@ -31,4 +31,9 @@ public class Driver {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public Driver(User user) {
+        this.user = user;
+    }
+
 }
