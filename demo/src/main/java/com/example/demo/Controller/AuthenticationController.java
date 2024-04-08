@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.DTO.LoginDTO;
+import com.example.demo.DTO.RegisterDTO;
 import com.example.demo.Model.User;
 import com.example.demo.Service.JwtService;
 import com.example.demo.Service.UserService;
@@ -24,15 +25,22 @@ public class AuthenticationController {
 //        User newUser = new User(username)
 //    }
     @PostMapping(path = "/CityFlow/RegisterUser")
-    public ResponseEntity<String> SaveUser(@RequestBody User requestBody){
-        if(userService.save(requestBody) != null){
+    public ResponseEntity<String> SaveUser(@RequestBody RegisterDTO requestBody){
+        User newUser = new User(
+                requestBody.getUsername(),
+                requestBody.getName(),
+                requestBody.getLastname(),
+                requestBody.getPassword(),
+                "ROLE_AUTHENTICATED"
+                );
+        if(userService.save(newUser) != null){
             return new ResponseEntity<>("Saved!", HttpStatusCode.valueOf(200));
         }else{
             return new ResponseEntity<>("Not saved!", HttpStatusCode.valueOf(200));
 
         }
     }
-    @GetMapping(path = "/CityFlow/Login")
+    @PostMapping(path = "/CityFlow/Login")
     public ResponseEntity<LoginDTO> Login(@RequestBody LoginDTO loginData){
         User user = userService.FindByUsername(loginData.getUsername());
         if(user != null)
