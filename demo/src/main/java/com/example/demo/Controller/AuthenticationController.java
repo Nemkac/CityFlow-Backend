@@ -20,10 +20,6 @@ public class AuthenticationController {
     @Autowired
     private JwtService jwtService;
 
-//    @PostMapping(path = "/save")
-//    public ResponseEntity<User> save(@RequestBody String username){
-//        User newUser = new User(username)
-//    }
     @PostMapping(path = "/CityFlow/RegisterUser")
     public ResponseEntity<String> SaveUser(@RequestBody RegisterDTO requestBody){
         User newUser = new User(
@@ -59,10 +55,27 @@ public class AuthenticationController {
     public String getTokenUsername(@RequestBody String token){
         return jwtService.extractUsername(token);
     }
+
     @GetMapping(value = "/testToken")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public String getTokenTest(){
         return "It works !";
+    }
+
+    @GetMapping(value = "/CityFlow/getUserByToken")
+    public ResponseEntity<User> getUserByToken(@RequestParam(required = true)String token) {
+        try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.FindByUsername(username);
+
+            if (user != null) {
+                return new ResponseEntity<User>(user, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
