@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="Driver")
+@Table(name="Bus")
 public class Bus {
 
     @Id
@@ -25,10 +25,10 @@ public class Bus {
     private Integer seatingCapacity;
 
     @Column
-    private Long ChassisNumber;
+    private Integer ChassisNumber;
 
     @Column
-    private Long registrationNumber;
+    private String registrationNumber;
 
     @Column
     private Integer currentMileage;
@@ -38,7 +38,7 @@ public class Bus {
 
     public Bus(){}
 
-    public Bus(String manufacturer, String model, Integer modelYear, Integer seatingCapacity, Long chassisNumber, Long registrationNumber, Integer currentMileage) {
+    public Bus(String manufacturer, String model, Integer modelYear, Integer seatingCapacity, Integer chassisNumber, String registrationNumber, Integer currentMileage) {
         this.manufacturer = manufacturer;
         this.model = model;
         this.modelYear = modelYear;
@@ -88,19 +88,19 @@ public class Bus {
         this.seatingCapacity = seatingCapacity;
     }
 
-    public Long getChassisNumber() {
+    public Integer getChassisNumber() {
         return ChassisNumber;
     }
 
-    public void setChassisNumber(Long chassisNumber) {
+    public void setChassisNumber(Integer chassisNumber) {
         ChassisNumber = chassisNumber;
     }
 
-    public Long getRegistrationNumber() {
+    public String getRegistrationNumber() {
         return registrationNumber;
     }
 
-    public void setRegistrationNumber(Long registrationNumber) {
+    public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
 

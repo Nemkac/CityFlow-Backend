@@ -5,6 +5,8 @@ import com.example.demo.Repository.BusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BusService {
 
@@ -12,5 +14,6 @@ public class BusService {
     private BusRepository busRepository;
 
     public Bus save(Bus bus) { return this.busRepository.save(bus); }
+    public Bus getById(Integer id) { return this.busRepository.getByBusId(id); }
 
 }
