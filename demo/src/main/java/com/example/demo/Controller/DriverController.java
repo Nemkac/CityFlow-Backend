@@ -52,12 +52,14 @@ public class DriverController {
     @PostMapping(value ="/CityFlow/addDriver/{userId}")
     public ResponseEntity<Driver> addDriverByUserId(@PathVariable Integer userId) {
         if(driverService.ifExists(this.driverService.getById(userId))){
-            return new ResponseEntity("User already exist",HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Driver already exists",HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<Driver>(this.driverService.getById(userId),HttpStatus.OK);
+        Driver driver = this.driverService.addDriverByUserId(1);
+        this.driverService.save(driver);
+        return new ResponseEntity<Driver>(driver,HttpStatus.OK);
     }
 
-    @PostMapping(value ="/CityFlow/addDriver")
+    @PostMapping(value ="/CityFlow/addDriver/test")
     public ResponseEntity<Driver> testAddDriver() {
         if(driverService.ifExists(this.driverService.getById(1))){
             return new ResponseEntity("Driver already exists",HttpStatus.FORBIDDEN);
