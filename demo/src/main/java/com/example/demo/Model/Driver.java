@@ -16,6 +16,7 @@ public class Driver {
     public Driver() {
     }
 
+    // ovo je samo za test, brise se posle
     public Driver (Integer driverId) {
         this.driverId = driverId;
     }

@@ -35,6 +35,7 @@ public class HRAdministratorController {
         if(existingUser != null){
             return new ResponseEntity("User already exists", HttpStatus.FORBIDDEN);
         } else {
+            // ovo se u konstruktor stavlja covek moj dobri
             User newUser = new User(
                     userDTO.getUsername(),
                     userDTO.getName(),
