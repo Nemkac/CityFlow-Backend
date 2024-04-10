@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .cors() // Dodajte ovu liniju za konfiguraciju CORS
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/CityFlow/*").permitAll()
+                .requestMatchers("/CityFlow/**2").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/testToken").authenticated()
                 .and()

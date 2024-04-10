@@ -9,10 +9,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DriverService {
+
     @Autowired
     private DriverRepository driverRepository;
     public Driver save(Driver driver){
         return this.driverRepository.save(driver);
     }
-
+    public void deleteByUserId(Integer id)
+    {
+        driverRepository.deleteByUserId(id);
+    }
 }

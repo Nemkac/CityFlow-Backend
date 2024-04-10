@@ -14,10 +14,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/CityFlow")
 public class HRAdministratorController {
+
     @Autowired
     private UserService userService;
 
@@ -48,7 +50,7 @@ public class HRAdministratorController {
             this.userService.addUser(newUser);
             if(Objects.equals(newUser.getRoles(), "ROLE_DRIVER")) {
                 Driver newDriver = new Driver(newUser);
-                newDriver = this.driverService.save(newDriver);
+                this.driverService.save(newDriver);
             }
         sendRegistrationEmail(newUser.getEmail(), newUser.getPassword(),newUser.getUsername());
 
@@ -76,5 +78,74 @@ public class HRAdministratorController {
         mailMessage.setText(message);
 
         emailService.sendEmail(mailMessage);
+    }
+
+   @DeleteMapping(path = "/deleteUser/{userId}")
+    public ResponseEntity<User> deleteUser(@PathVariable Integer userId) {
+        User user = userService.getById(userId);
+            // Provera da li je korisnik vozač i izbrišite ga iz tabele vozača ako jeste
+            if(user.getRoles().equals("ROLE_DRIVER")) {
+                driverService.deleteByUserId(userId);
+            }
+
+            userService.deleteById(userId);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void sendDeletionEmail(String email, String username) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+        mailMessage.setSubject("Notice: Your CityFlow Account Has Been Deleted");
+
+        String message = "Dear " + username + ",\n\n"
+                + "We regret to inform you that your CityFlow account has been deleted. We apologize for any inconvenience this may cause.\n\n"
+                + "If you believe this action was taken in error or if you have any questions, please contact our support team immediately at \n" +
+                "isaisanovicnnba@gmail.com.\n\n"
+                + "Thank you for your understanding.\n\n"
+                + "Best regards,\n"
+                + "Your CityFlow Team!";
+
+        mailMessage.setText(message);
+
+        emailService.sendEmail(mailMessage);
+    }
+
+    @PutMapping(consumes = "application/json", value = "/updateUser/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody UserDTO userDTO) {
+        User existingUser = userService.findById(userId);
+
+        if (existingUser != null) {
+            if (userDTO.getUsername() != null && !userDTO.getUsername().isEmpty()) {
+                existingUser.setUsername(userDTO.getUsername());
+            }
+            if (userDTO.getName() != null && !userDTO.getName().isEmpty()) {
+                existingUser.setName(userDTO.getName());
+            }
+            if (userDTO.getLastname() != null && !userDTO.getLastname().isEmpty()) {
+                existingUser.setLastname(userDTO.getLastname());
+            }
+            if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
+                existingUser.setEmail(userDTO.getEmail());
+            }
+            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+                existingUser.setPassword(userDTO.getPassword());
+            }
+            if (userDTO.getPhoneNumber() != null && !userDTO.getPhoneNumber().isEmpty()) {
+                existingUser.setPhoneNumber(userDTO.getPhoneNumber());
+            }
+            if (userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()) {
+                existingUser.setRoles(userDTO.getRoles());
+            }
+            if (userDTO.getDateOfBirth() != null) {
+                existingUser.setDateOfBirth(userDTO.getDateOfBirth());
+            }
+
+            userService.save(existingUser);
+
+            return new ResponseEntity<>(existingUser, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

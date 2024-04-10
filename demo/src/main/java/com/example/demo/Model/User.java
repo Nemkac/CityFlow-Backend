@@ -28,6 +28,7 @@ public class User {
     private LocalDate dateOfBirth;
     @Column(name = "telephone")
     private String phoneNumber;
+    @Column
     private String roles;
 
     public User(int id, String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
