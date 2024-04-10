@@ -16,8 +16,6 @@ public class Driver {
     @OneToOne
     private Bus bus;
 
-
-
     public Driver() {
     }
 

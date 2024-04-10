@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.Model.BusMalfunctionReport;
 import com.example.demo.Model.Driver;
+import com.example.demo.Model.User;
 import com.example.demo.Service.BusMalfunctionReportService;
 import com.example.demo.Service.BusService;
 import com.example.demo.Service.DriverService;
@@ -52,10 +53,10 @@ public class DriverController {
 
     @PostMapping(value ="/CityFlow/addDriver/{userId}")
     public ResponseEntity<Driver> addDriverByUserId(@PathVariable Integer userId) {
-        if(driverService.ifExists(this.driverService.getById(userId))){
+        if(driverService.ifUserIsDriver(userId)){
             return new ResponseEntity("Driver already exists",HttpStatus.FORBIDDEN);
         }
-        Driver driver = this.driverService.addDriverByUserId(1);
+        Driver driver = this.driverService.addDriverByUserId(userId);
         this.driverService.save(driver);
         return new ResponseEntity<Driver>(driver,HttpStatus.OK);
     }
@@ -69,19 +70,6 @@ public class DriverController {
         this.driverService.save(driver);
         return new ResponseEntity<Driver>(driver,HttpStatus.OK);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -35,8 +35,20 @@ public class DriverService {
 
     public boolean ifExists(Driver driver) {
         List<Driver> drivers = findAll();
-        for(Driver foundDriver : drivers) {
-            if(Objects.equals(driver.getUser(),foundDriver.getUser())){
+        if(!drivers.isEmpty()) {
+            for (Driver foundDriver : drivers) {
+                if (driver.getUser().getId() == foundDriver.getUser().getId() ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean ifUserIsDriver(Integer userId) {
+        User user = userService.getUserById(userId);
+        if(user != null) {
+            if(user.getRoles() != null && user.getRoles().equals("ROLE_DRIVER")) {
                 return true;
             }
         }
@@ -51,6 +63,8 @@ public class DriverService {
         User user = this.userService.getUserById(userId);
         if(user != null) {
             Driver driver = new Driver(user);
+            user.setRoles("ROLE_DRIVER");
+            this.userService.save(user);
             this.save(driver);
             return driver;
         }
