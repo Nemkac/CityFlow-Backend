@@ -15,8 +15,10 @@ public class DriverService {
     public Driver save(Driver driver){
         return this.driverRepository.save(driver);
     }
-    public void deleteByUserId(Integer id)
-    {
-        driverRepository.deleteByUserId(id);
+    public void delete(Driver driver) {
+        driverRepository.delete(driver);
+    }
+    public Driver getByUser(User user) {
+        return driverRepository.findByUser(user);
     }
 }

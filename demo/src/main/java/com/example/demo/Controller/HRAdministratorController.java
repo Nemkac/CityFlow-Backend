@@ -6,13 +6,17 @@ import com.example.demo.Model.User;
 import com.example.demo.Service.DriverService;
 import com.example.demo.Service.EmailService;
 import com.example.demo.Service.UserService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,6 +32,9 @@ public class HRAdministratorController {
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private JavaMailSender emailSender;
 
     @PutMapping(consumes = "application/json", path = "/addUser")
     //@PreAuthorize("hasAuthority('ROLE_HRADMIN')")
@@ -59,56 +66,114 @@ public class HRAdministratorController {
 }
 
     private void sendRegistrationEmail(String email, String password, String username) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(email);
-        mailMessage.setSubject("Welcome to CityFlow Platform");
+        MimeMessage message = emailSender.createMimeMessage();
 
-        String message = "Dear " + username + ",\n\n"
-                + "We are pleased to welcome you to CityFlow, where innovation meets excellence. As a valued member of our team, you now have access to our comprehensive platform designed to streamline operations and enhance collaboration across the organization.\n\n"
-                + "Your login credentials are as follows:\n\n"
-                + "Username: " + username +"\n"
-                + "Password: " + password + "\n\n"
-                + "Please keep this information secure and do not share it with anyone. Upon your first login, you will be required to change your password for added security. You will not be able to proceed further until you change your password!\n\n"
-                + "If you have any questions or require assistance, please do not hesitate to reach out to our HR department at \n" +
-                "isaisanovicnnba@gmail.com.\n\n"
-                + "Once again, welcome to CityFlow. We look forward to working together and achieving great success.\n\n"
-                + "Best regards,\n"
-                + "Your CityFlow Team!";
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+            helper.setTo(email);
+            helper.setSubject("Welcome to CityFlow Platform");
 
-        mailMessage.setText(message);
+            String htmlContent = "<html>"
+                    + "<head>"
+                    + "<style>"
+                    + "body {font-family: Arial, sans-serif;}"
+                    + ".container {max-width: 600px; margin: auto;}"
+                    + ".header {background-color: #2F3640; color: white; padding: 20px; text-align: center;}"
+                    + ".content {background-color: #353B48; color: #f5f6fa; padding: 20px;}"
+                    + ".footer {background-color: #2F3640; color: white; padding: 10px; text-align: center;}"
+                    + "</style>"
+                    + "</head>"
+                    + "<body>"
+                    + "<div class='container'>"
+                    + "<div class='header'>"
+                    + "<h1>Welcome to CityFlow Platform</h1>"
+                    + "</div>"
+                    + "<div class='content'>"
+                    + "<p>Dear " + username + ",</p>"
+                    + "<p>We are pleased to welcome you to CityFlow, where innovation meets excellence. As a valued member of our team, you now have access to our comprehensive platform designed to streamline operations and enhance collaboration across the organization.</p>"
+                    + "<p>Your login credentials are as follows:</p>"
+                    + "<ul>"
+                    + "<li><strong>Username:</strong> " + username + "</li>"
+                    + "<li><strong>Password:</strong> " + password + "</li>"
+                    + "</ul>"
+                    + "<p>Please keep this information secure and do not share it with anyone. Upon your first login, you will be required to change your password for added security. You will not be able to proceed further until you change your password!</p>"
+                    + "<p>If you have any questions or require assistance, please do not hesitate to reach out to our HR department at <a href='mailto:isaisanovicnnba@gmail.com'>isaisanovicnnba@gmail.com</a>.</p>"
+                    + "<p>Once again, welcome to CityFlow. We look forward to working together and achieving great success.</p>"
+                    + "<p>Best regards,</p>"
+                    + "<p>Your CityFlow Team!</p>"
+                    + "</div>"
+                    + "<div class='footer'>"
+                    + "<p>This is an automated message. Please do not reply.</p>"
+                    + "</div>"
+                    + "</div>"
+                    + "</body>"
+                    + "</html>";
 
-        emailService.sendEmail(mailMessage);
+            helper.setText(htmlContent, true);
+            emailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
     }
 
    @DeleteMapping(path = "/deleteUser/{userId}")
     public ResponseEntity<User> deleteUser(@PathVariable Integer userId) {
         User user = userService.getById(userId);
-            // Provera da li je korisnik vozač i izbrišite ga iz tabele vozača ako jeste
-            if(user.getRoles().equals("ROLE_DRIVER")) {
-                driverService.deleteByUserId(userId);
-            }
-
+           Driver driver = driverService.getByUser(user);
+           if (driver != null) {
+               driverService.delete(driver);
+           }
             userService.deleteById(userId);
+            sendDeletionEmail(user.getEmail(), user.getUsername());
 
             return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private void sendDeletionEmail(String email, String username) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(email);
-        mailMessage.setSubject("Notice: Your CityFlow Account Has Been Deleted");
+        MimeMessage message = emailSender.createMimeMessage();
 
-        String message = "Dear " + username + ",\n\n"
-                + "We regret to inform you that your CityFlow account has been deleted. We apologize for any inconvenience this may cause.\n\n"
-                + "If you believe this action was taken in error or if you have any questions, please contact our support team immediately at \n" +
-                "isaisanovicnnba@gmail.com.\n\n"
-                + "Thank you for your understanding.\n\n"
-                + "Best regards,\n"
-                + "Your CityFlow Team!";
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+            helper.setTo(email);
+            helper.setSubject("Notice: Your CityFlow Account Has Been Deleted");
 
-        mailMessage.setText(message);
+            String htmlContent = "<html>"
+                    + "<head>"
+                    + "<style>"
+                    + "body {font-family: Arial, sans-serif;}"
+                    + ".container {max-width: 600px; margin: auto;}"
+                    + ".header {background-color: #2F3640; color: white; padding: 20px; text-align: center;}"
+                    + ".content {background-color: #353B48; color: #f5f6fa; padding: 20px;}"
+                    + ".footer {background-color: #2F3640; color: white; padding: 10px; text-align: center;}"
+                    + "</style>"
+                    + "</head>"
+                    + "<body>"
+                    + "<div class='container'>"
+                    + "<div class='header'>"
+                    + "<h1>Notice: Your CityFlow Account Has Been Deleted</h1>"
+                    + "</div>"
+                    + "<div class='content'>"
+                    + "<p>Dear " + username + ",</p>"
+                    + "<p>We regret to inform you that your CityFlow account has been terminated. As you may already be aware, your employment with our company has come to an end.</p>"
+                    + "<p>Unfortunately, this means that your CityFlow account has also been removed from our system. You are welcome to create a new account as a user, but please note that your access as an employee will not be reinstated.</p>"
+                    + "<p>If you have any questions or require assistance, please feel free to contact our support team at <a href='mailto:isaisanovicnnba@gmail.com'>isaisanovicnnba@gmail.com</a>.</p>"
+                    + "<p>Thank you for your understanding.</p>"
+                    + "<p>Your CityFlow Team.</p>"
+                    + "</div>"
+                    + "<div class='footer'>"
+                    + "<p>This is an automated message. Please do not reply.</p>"
+                    + "</div>"
+                    + "</div>"
+                    + "</body>"
+                    + "</html>";
 
-        emailService.sendEmail(mailMessage);
+            helper.setText(htmlContent, true);
+            emailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
     }
 
     @PutMapping(consumes = "application/json", value = "/updateUser/{userId}")

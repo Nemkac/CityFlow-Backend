@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 public interface DriverRepository extends JpaRepository<Driver, Integer> {
     Driver save(Driver driver);
-    void deleteByUserId(Integer id);
 
+    void delete(Driver driver);
+    Driver findByUser(User user);
 }
