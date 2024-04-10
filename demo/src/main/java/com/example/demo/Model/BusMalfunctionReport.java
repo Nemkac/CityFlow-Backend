@@ -13,10 +13,10 @@ public class BusMalfunctionReport {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer busMalfunctionReportId;
 
-    @Column
+    @ManyToOne
     private Driver driver;
 
-    @Column
+    @ManyToOne
     private Bus bus;
 
     @Column
