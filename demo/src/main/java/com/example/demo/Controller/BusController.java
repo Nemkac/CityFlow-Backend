@@ -22,10 +22,6 @@ public class BusController {
     private DriverService driverService;
 
 
-    //@PutMapping(consumes = "application/json",path="/addBus")
-    //public ResponseEntity<Bus> addBus(@RequestBody Bus bus) {
-    //}
-
     @GetMapping(value = "/CityFlow/testBus")
     public ResponseEntity<Bus> testBus() {
         Bus bus = new Bus();
@@ -38,6 +34,15 @@ public class BusController {
         bus.setCurrentMileage(12941);
         busService.save(bus);
         return new ResponseEntity<>(bus, HttpStatus.OK);
-
     }
+
+    @PostMapping(consumes = "application/json", value="/CityFlow/addBus")
+    public ResponseEntity<Bus> addBus(@RequestBody Bus bus) {
+        if(busService.ifExists(bus.getChassisNumber()) || busService.save(bus) == null){
+            return new ResponseEntity("Bus already exists",HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<Bus>(bus,HttpStatus.OK);
+    }
+
+
 }

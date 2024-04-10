@@ -13,12 +13,18 @@ public class Driver {
     @OneToOne
     private User user;
 
+    @OneToOne
+    private Bus bus;
+
+
+
     public Driver() {
     }
 
     // ovo je samo za test, brise se posle
     public Driver (Integer driverId) {
         this.driverId = driverId;
+        this.bus = null;
     }
 
     public Integer getDriverId() {
@@ -39,6 +45,15 @@ public class Driver {
 
     public Driver(User user) {
         this.user = user;
+        this.bus = null;
+    }
+
+    public Bus getBus() {
+        return bus;
+    }
+
+    public void setBus(Bus bus) {
+        this.bus = bus;
     }
 
 }

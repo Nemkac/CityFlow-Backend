@@ -46,6 +46,7 @@ public class DriverController {
         if(driverService.ifExists(driver)){
             return new ResponseEntity("User already exist",HttpStatus.FORBIDDEN);
         }
+        this.driverService.save(driver);
         return new ResponseEntity<Driver>(driver,HttpStatus.OK);
     }
 

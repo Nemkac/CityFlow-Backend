@@ -25,7 +25,7 @@ public class Bus {
     private Integer seatingCapacity;
 
     @Column
-    private Integer ChassisNumber;
+    private Integer chassisNumber;
 
     @Column
     private String registrationNumber;
@@ -43,7 +43,7 @@ public class Bus {
         this.model = model;
         this.modelYear = modelYear;
         this.seatingCapacity = seatingCapacity;
-        ChassisNumber = chassisNumber;
+        this.chassisNumber = chassisNumber;
         this.registrationNumber = registrationNumber;
         this.currentMileage = currentMileage;
     }
@@ -89,11 +89,11 @@ public class Bus {
     }
 
     public Integer getChassisNumber() {
-        return ChassisNumber;
+        return chassisNumber;
     }
 
     public void setChassisNumber(Integer chassisNumber) {
-        ChassisNumber = chassisNumber;
+        this.chassisNumber = chassisNumber;
     }
 
     public String getRegistrationNumber() {
