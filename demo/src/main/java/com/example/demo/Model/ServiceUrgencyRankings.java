@@ -63,5 +63,5 @@ public class ServiceUrgencyRankings {
     public void setRank(Integer rank) {
         this.rank = rank;
     }
-    
+
 }

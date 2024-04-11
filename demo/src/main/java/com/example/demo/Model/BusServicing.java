@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Entity
 @Table(name="BusService")
-public class BusService {
+public class BusServicing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,9 +28,9 @@ public class BusService {
     @Column
     private String commentary;
 
-    public BusService() {}
+    public BusServicing() {}
 
-    public BusService(Bus bus,Integer mileage, Date date, boolean ifEverythingFine, String commentary) {
+    public BusServicing(Bus bus, Integer mileage, Date date, boolean ifEverythingFine, String commentary) {
         this.bus = bus;
         this.mileage = mileage;
         this.date = date;
