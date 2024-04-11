@@ -9,9 +9,9 @@ import com.example.demo.Service.ServiceUrgencyRankingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ServiceUrgencyRankingsController {
@@ -30,5 +30,13 @@ public class ServiceUrgencyRankingsController {
             return new ResponseEntity("Bus servicing already exists", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<ServiceUrgencyRankings>(serviceUrgencyRankings,HttpStatus.OK);
+    }
+
+    @GetMapping(value="/CityFlow/getServiceUrgencyRankings")
+    public ResponseEntity<List<ServiceUrgencyRankings>> getAllServiceUrgencyRankings(){
+        if(!serviceUrgencyRankingsService.findAll().isEmpty()) {
+            return new ResponseEntity<List<ServiceUrgencyRankings>>(serviceUrgencyRankingsService.findAll(), HttpStatus.OK);
+        }
+        return new ResponseEntity("No rankings found", HttpStatus.NOT_FOUND);
     }
 }

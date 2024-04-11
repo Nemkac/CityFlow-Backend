@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 
 import com.example.demo.Model.Bus;
+import com.example.demo.Model.BusMalfunctionReport;
 import com.example.demo.Model.BusServicing;
 import com.example.demo.Service.BusService;
 import com.example.demo.Service.BusServicingService;
@@ -9,9 +10,9 @@ import com.example.demo.Service.ServiceUrgencyRankingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class BusServicingController {
@@ -31,6 +32,15 @@ public class BusServicingController {
             return new ResponseEntity("Bus servicing already exists", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<BusServicing>(busServicing,HttpStatus.OK);
+    }
+
+    @GetMapping(value="/CityFlow/getBusServicing/{id}")
+    public ResponseEntity<BusServicing> getAllReports(@PathVariable Integer id){
+        BusServicing busServicing = busServicingService.getById(id);
+        if(busServicing!=null) {
+            return new ResponseEntity<BusServicing>(busServicing, HttpStatus.OK);
+        }
+        return new ResponseEntity("Not found", HttpStatus.NOT_FOUND);
     }
 
 
