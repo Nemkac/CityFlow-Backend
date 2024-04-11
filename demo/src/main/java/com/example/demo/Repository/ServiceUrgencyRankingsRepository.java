@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ServiceUrgencyRankingsRepository extends JpaRepository<ServiceUrgencyRankingsRepository,Integer> {
+public interface ServiceUrgencyRankingsRepository extends JpaRepository<ServiceUrgencyRankings,Integer> {
 
     ServiceUrgencyRankings save(ServiceUrgencyRankings serviceUrgencyRankings);
 

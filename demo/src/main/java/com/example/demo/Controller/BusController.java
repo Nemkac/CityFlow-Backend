@@ -22,6 +22,8 @@ public class BusController {
     private DriverService driverService;
 
 
+
+    // za testiranje, brise se posle
     @GetMapping(value = "/CityFlow/testBus")
     public ResponseEntity<Bus> testBus() {
         Bus bus = new Bus();
