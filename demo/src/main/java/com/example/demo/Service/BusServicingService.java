@@ -5,6 +5,8 @@ import com.example.demo.Repository.BusServicingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BusServicingService {
 
@@ -17,4 +19,6 @@ public class BusServicingService {
     public BusServicing save(BusServicing busServicing) { return this.busServicingRepository.save(busServicing); }
 
     public BusServicing getById(Integer id) { return this.busServicingRepository.getBusServicingById(id); }
+
+    public List<BusServicing> getAll() { return this.busServicingRepository.findAll(); }
 }

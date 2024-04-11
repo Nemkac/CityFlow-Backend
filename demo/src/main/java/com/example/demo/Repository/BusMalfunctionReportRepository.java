@@ -19,4 +19,6 @@ public interface BusMalfunctionReportRepository extends JpaRepository<BusMalfunc
 
     List<BusMalfunctionReport> getByDriver(Driver driver);
     List<BusMalfunctionReport> getByBus(Bus bus);
+
+    List<BusMalfunctionReport> getBusMalfunctionReportByBusOrderByDateDesc(Bus bUs);
 }

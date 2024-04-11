@@ -15,14 +15,14 @@ public class ServiceUrgencyRankings {
     private Bus bus;
 
     @Column
-    private float score;
+    private Double score;
 
     @Column
     private Integer rank;
 
     public ServiceUrgencyRankings() {}
 
-    public ServiceUrgencyRankings(Bus bus, float score, Integer rank) {
+    public ServiceUrgencyRankings(Bus bus, Double score, Integer rank) {
         this.bus = bus;
         this.score = score;
         this.rank = rank;
@@ -48,11 +48,11 @@ public class ServiceUrgencyRankings {
         this.bus = bus;
     }
 
-    public float getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(float score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 

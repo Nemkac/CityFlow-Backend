@@ -4,6 +4,7 @@ package com.example.demo.Model;
 import jakarta.persistence.*;
 
 import javax.swing.text.StyledEditorKit;
+import java.time.LocalDate;
 
 @Entity
 @Table(name="MalfunctionReport")
@@ -26,6 +27,9 @@ public class BusMalfunctionReport {
     @Column
     private Boolean ifProcessed;
 
+    @Column
+    private LocalDate date;
+
     public BusMalfunctionReport(){}
 
     public BusMalfunctionReport(Driver driver, Bus bus, String summary, Boolean ifProcessed) {
@@ -33,6 +37,7 @@ public class BusMalfunctionReport {
         this.bus = bus;
         this.summary = summary;
         this.ifProcessed = ifProcessed;
+        this.date = LocalDate.now();
     }
 
     public BusMalfunctionReport(Driver driver, Bus bus, String summary) {
@@ -40,6 +45,7 @@ public class BusMalfunctionReport {
         this.bus = bus;
         this.summary = summary;
         this.ifProcessed = false;
+        this.date = LocalDate.now();
     }
 
     public BusMalfunctionReport(Driver driver, Bus bus, Boolean ifProcessed) {
@@ -47,6 +53,7 @@ public class BusMalfunctionReport {
         this.bus = bus;
         this.summary = "No summary";
         this.ifProcessed = ifProcessed;
+        this.date = LocalDate.now();
     }
 
     public BusMalfunctionReport(Driver driver, Bus bus) {
@@ -54,6 +61,7 @@ public class BusMalfunctionReport {
         this.bus = bus;
         this.summary = "No summary";
         this.ifProcessed = false;
+        this.date = LocalDate.now();
     }
 
     public Integer getBusMalfunctionReportId() {
@@ -94,5 +102,13 @@ public class BusMalfunctionReport {
 
     public void setIfProcessed(Boolean ifProcessed) {
         this.ifProcessed = ifProcessed;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

@@ -3,7 +3,7 @@ package com.example.demo.Model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name="BusService")
@@ -20,7 +20,7 @@ public class BusServicing {
     private Integer mileage;
 
     @Column
-    private Date date;
+    private LocalDate date;
 
     @Column
     private boolean ifEverythingFine;
@@ -30,7 +30,7 @@ public class BusServicing {
 
     public BusServicing() {}
 
-    public BusServicing(Bus bus, Integer mileage, Date date, boolean ifEverythingFine, String commentary) {
+    public BusServicing(Bus bus, Integer mileage, LocalDate date, boolean ifEverythingFine, String commentary) {
         this.bus = bus;
         this.mileage = mileage;
         this.date = date;
@@ -50,7 +50,7 @@ public class BusServicing {
         return mileage;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -74,7 +74,7 @@ public class BusServicing {
         this.mileage = mileage;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

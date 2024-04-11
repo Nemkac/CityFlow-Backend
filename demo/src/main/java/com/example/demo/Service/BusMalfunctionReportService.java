@@ -22,5 +22,6 @@ public class BusMalfunctionReportService {
     public List<BusMalfunctionReport> getAllByBus(Bus bus) { return this.busMalfunctionReportRepository.getByBus(bus); }
     public List<BusMalfunctionReport> getAllProcessed() { return this.busMalfunctionReportRepository.getByIfProcessed(true); }
     public List<BusMalfunctionReport> getAllUnprocessed() { return this.busMalfunctionReportRepository.getByIfProcessed(false); }
+    public List<BusMalfunctionReport> getAllByBusSortByDate(Bus bus) { return this.busMalfunctionReportRepository.getBusMalfunctionReportByBusOrderByDateDesc(bus); }
 
 }
