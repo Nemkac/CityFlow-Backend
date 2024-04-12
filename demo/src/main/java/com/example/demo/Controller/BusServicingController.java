@@ -35,12 +35,17 @@ public class BusServicingController {
     }
 
     @GetMapping(value="/CityFlow/getBusServicing/{id}")
-    public ResponseEntity<BusServicing> getAllReports(@PathVariable Integer id){
+    public ResponseEntity<BusServicing> getAllServicings(@PathVariable Integer id){
         BusServicing busServicing = busServicingService.getById(id);
         if(busServicing!=null) {
             return new ResponseEntity<BusServicing>(busServicing, HttpStatus.OK);
         }
         return new ResponseEntity("Not found", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(consumes = "application/json",value = "/CityFlow/getBusesSortedServicingsByDate")
+    public ResponseEntity<List<BusServicing>> getSortedServicings(@RequestBody Bus bus){
+        return new ResponseEntity<List<BusServicing>>(this.busServicingService.findAllByBusOrderByDateDesc(bus),HttpStatus.OK);
     }
 
 

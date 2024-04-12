@@ -39,15 +39,16 @@ public class ServiceUrgencyRankingsService {
 
     public List<ServiceUrgencyRankings> rankingsSorted() { return this.serviceUrgencyRankingsRepository.findAllByOrderByScoreDesc(); }
 
-    // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus, svaki put se normalizuju svi parametri i iznova racunaju rankovi
+    // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus
     public void createRankings(){
         List<Bus> buses = busService.getAll();
         List<BusServicing> busServicings = busServicingService.getAll();
         Integer yearsOld = 0;
-        Integer currentMileage;
+        Integer currentMileage = 0;
         Integer operationalImportance = 0;
         Long timeSinceLastService = 0L;
         Integer ifMalfunctionProcessed = 0;
+        Integer mileageSinceLastService;
         Double formula = 0.0;
         double a = 0.1;
         double b = 0.25;
@@ -57,20 +58,25 @@ public class ServiceUrgencyRankingsService {
         for(Bus bus : buses){
             yearsOld = LocalDate.now().getYear() - bus.getModelYear();
             if(!this.busServicingService.findAllByBusOrderByDateDesc(bus).isEmpty()){
-                Duration duration = Duration.between(this.busServicingService.findAllByBusOrderByDateDesc(bus).get(0).getDate(),LocalDate.now());
-                timeSinceLastService = duration.toDays();
+                timeSinceLastService = ChronoUnit.DAYS.between(this.busServicingService.findAllByBusOrderByDateDesc(bus).get(0).getDate(),LocalDate.now());
+                mileageSinceLastService = bus.getCurrentMileage() - this.busServicingService.findAllByBusOrderByDateDesc(bus).get(0).getMileage();
             } else {
                 timeSinceLastService = yearsOld * 365L;
+                mileageSinceLastService = bus.getCurrentMileage();
             }
             currentMileage = bus.getCurrentMileage();
             if(!busMalfunctionReportService.getAllByBus(bus).isEmpty()) {
-                ifMalfunctionProcessed = busMalfunctionReportService.getAllByBusSortByDate(bus).get(0).getIfProcessed() ? 1 : 0;
+                ifMalfunctionProcessed = busMalfunctionReportService.getAllByBusSortByDate(bus).get(0).getIfProcessed() ? 0 : 100000;
             } else {
                 ifMalfunctionProcessed = 0;
             }
-            formula = a*yearsOld + b*currentMileage + c*operationalImportance + d*timeSinceLastService + e*ifMalfunctionProcessed;
+            System.out.println("Bus broj : " + bus.getBusId());
+            System.out.println("Kilometraza ukupna : " + bus.getCurrentMileage() );
+            System.out.println("Kilometraza od servisa: " + mileageSinceLastService);
+            System.out.println("Godina proizvodnje : " + yearsOld);
+            System.out.println("Dani od servisa : " + timeSinceLastService);
+            formula = (double) Math.round(a*yearsOld + b*currentMileage + c*operationalImportance + d*timeSinceLastService + e*mileageSinceLastService + ifMalfunctionProcessed);
             ServiceUrgencyRankings serviceUrgencyRankings = new ServiceUrgencyRankings(bus);
-            //ServiceUrgencyRankings serviceUrgencyRankings = this.getByBus(bus);
             serviceUrgencyRankings.setScore(formula);
             this.save(serviceUrgencyRankings);
         }
@@ -81,7 +87,6 @@ public class ServiceUrgencyRankingsService {
             save(serviceUrgencyRankings);
         }
         // dodace se i operational importance
-        // SVE OVO TESTIRAJ, POCEVSI OD ONOG SORTIRANOG NIZA SKOROVA
     }
 
 }
