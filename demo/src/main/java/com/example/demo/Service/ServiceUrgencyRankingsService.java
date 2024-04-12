@@ -40,7 +40,7 @@ public class ServiceUrgencyRankingsService {
     public List<ServiceUrgencyRankings> rankingsSorted() { return this.serviceUrgencyRankingsRepository.findAllByOrderByScoreDesc(); }
 
     // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus, svaki put se normalizuju svi parametri i iznova racunaju rankovi
-    public void CreateRankings(){
+    public void createRankings(){
         List<Bus> buses = busService.getAll();
         List<BusServicing> busServicings = busServicingService.getAll();
         Integer yearsOld = 0;
@@ -55,15 +55,24 @@ public class ServiceUrgencyRankingsService {
         double d = 0.15;
         double e = 0.3;
         for(Bus bus : buses){
-            Duration duration = Duration.between(LocalDate.now(),busServicingService.getById(bus.getBusId()).getDate());
-            timeSinceLastService = duration.toDays();
             yearsOld = LocalDate.now().getYear() - bus.getModelYear();
+            if(!this.busServicingService.findAllByBusOrderByDateDesc(bus).isEmpty()){
+                Duration duration = Duration.between(this.busServicingService.findAllByBusOrderByDateDesc(bus).get(0).getDate(),LocalDate.now());
+                timeSinceLastService = duration.toDays();
+            } else {
+                timeSinceLastService = yearsOld * 365L;
+            }
             currentMileage = bus.getCurrentMileage();
-            // operationalImportance = bus ce imati vezanu rutu za njega, iz nje vuces operativnu vaznost
-            ifMalfunctionProcessed = busMalfunctionReportService.getAllByBusSortByDate(bus).get(0).getIfProcessed() ? 1 : 0;
+            if(!busMalfunctionReportService.getAllByBus(bus).isEmpty()) {
+                ifMalfunctionProcessed = busMalfunctionReportService.getAllByBusSortByDate(bus).get(0).getIfProcessed() ? 1 : 0;
+            } else {
+                ifMalfunctionProcessed = 0;
+            }
             formula = a*yearsOld + b*currentMileage + c*operationalImportance + d*timeSinceLastService + e*ifMalfunctionProcessed;
-            ServiceUrgencyRankings serviceUrgencyRankings = this.getByBus(bus);
+            ServiceUrgencyRankings serviceUrgencyRankings = new ServiceUrgencyRankings(bus);
+            //ServiceUrgencyRankings serviceUrgencyRankings = this.getByBus(bus);
             serviceUrgencyRankings.setScore(formula);
+            this.save(serviceUrgencyRankings);
         }
         Integer rankingCounter = 1;
         for(ServiceUrgencyRankings serviceUrgencyRankings : rankingsSorted()){
@@ -71,6 +80,7 @@ public class ServiceUrgencyRankingsService {
             rankingCounter++;
             save(serviceUrgencyRankings);
         }
+        // dodace se i operational importance
         // SVE OVO TESTIRAJ, POCEVSI OD ONOG SORTIRANOG NIZA SKOROVA
     }
 

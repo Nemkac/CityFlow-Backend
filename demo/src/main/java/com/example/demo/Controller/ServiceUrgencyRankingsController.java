@@ -44,4 +44,10 @@ public class ServiceUrgencyRankingsController {
     public ResponseEntity<List<ServiceUrgencyRankings>> getAllRankingsSortedByScores(){
         return new ResponseEntity<List<ServiceUrgencyRankings>>(this.serviceUrgencyRankingsService.rankingsSorted(), HttpStatus.OK);
     }
+
+    @GetMapping(value="/CityFlow/testRanking")
+    @ResponseStatus(HttpStatus.OK)
+    public void sortRankings(){
+        this.serviceUrgencyRankingsService.createRankings();
+    }
 }
