@@ -39,8 +39,14 @@ public class ServiceUrgencyRankingsService {
 
     public List<ServiceUrgencyRankings> rankingsSorted() { return this.serviceUrgencyRankingsRepository.findAllByOrderByScoreDesc(); }
 
+    public void remove() { this.serviceUrgencyRankingsRepository.deleteAll(); }
+
     // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus
     public void createRankings(){
+        List<ServiceUrgencyRankings> allRankings = this.findAll();
+        if(!allRankings.isEmpty()) {
+            this.remove();
+        }
         List<Bus> buses = busService.getAll();
         List<BusServicing> busServicings = busServicingService.getAll();
         Integer yearsOld = 0;

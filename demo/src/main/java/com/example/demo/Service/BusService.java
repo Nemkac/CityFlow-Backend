@@ -14,7 +14,17 @@ public class BusService {
     @Autowired
     private BusRepository busRepository;
 
-    public Bus save(Bus bus) { return this.busRepository.save(bus); }
+    @Autowired
+    private ServiceUrgencyRankingsService serviceUrgencyRankingsService;
+
+    public Bus save(Bus bus) {
+        if(this.busRepository.save(bus) != null) {
+            this.serviceUrgencyRankingsService.createRankings();
+            return bus;
+        }
+        return null;
+        //return this.busRepository.save(bus);
+    }
     public Bus getById(Integer id) { return this.busRepository.getByBusId(id); }
 
     public List<Bus> getAll() { return this.busRepository.findAll(); }
