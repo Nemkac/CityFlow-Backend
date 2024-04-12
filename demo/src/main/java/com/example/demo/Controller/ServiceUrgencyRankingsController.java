@@ -39,4 +39,9 @@ public class ServiceUrgencyRankingsController {
         }
         return new ResponseEntity("No rankings found", HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping(value="/CityFlow/testScoring")
+    public ResponseEntity<List<ServiceUrgencyRankings>> getAllRankingsSortedByScores(){
+        return new ResponseEntity<List<ServiceUrgencyRankings>>(this.serviceUrgencyRankingsService.rankingsSorted(), HttpStatus.OK);
+    }
 }

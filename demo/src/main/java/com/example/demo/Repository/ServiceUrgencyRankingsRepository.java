@@ -16,5 +16,5 @@ public interface ServiceUrgencyRankingsRepository extends JpaRepository<ServiceU
     ServiceUrgencyRankings getServiceUrgencyRankingsById(Integer id);
 
     ServiceUrgencyRankings getServiceUrgencyRankingsByBus(Bus bus);
-    List<ServiceUrgencyRankings> findAllOrderByScoreDesc();
+    List<ServiceUrgencyRankings> findAllByOrderByScoreDesc();
 }

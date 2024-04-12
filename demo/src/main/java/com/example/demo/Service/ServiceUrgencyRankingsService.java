@@ -37,7 +37,7 @@ public class ServiceUrgencyRankingsService {
 
     public ServiceUrgencyRankings getByBus(Bus bus) { return this.serviceUrgencyRankingsRepository.getServiceUrgencyRankingsByBus(bus); }
 
-    public List<ServiceUrgencyRankings> rankingsSorted() { return this.rankingsSorted(); }
+    public List<ServiceUrgencyRankings> rankingsSorted() { return this.serviceUrgencyRankingsRepository.findAllByOrderByScoreDesc(); }
 
     // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus, svaki put se normalizuju svi parametri i iznova racunaju rankovi
     public void CreateRankings(){

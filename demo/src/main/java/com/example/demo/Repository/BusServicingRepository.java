@@ -11,5 +11,5 @@ public interface BusServicingRepository extends JpaRepository<BusServicing,Integ
     BusServicing save(BusServicing busServicing);
     BusServicing getBusServicingById(Integer id);
 
-    List<BusServicing> findALl();
+    //List<BusServicing> getAll();
 }
