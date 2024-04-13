@@ -32,19 +32,20 @@ public class AuthenticationController {
 
         }
     }
+
     @GetMapping(path = "/CityFlow/Login")
-    public ResponseEntity<LoginDTO> Login(@RequestBody LoginDTO loginData){
+    public ResponseEntity<String> Login(@RequestBody LoginDTO loginData){
         User user = userService.FindByUsername(loginData.getUsername());
         if(user != null)
         {
             if (loginData.getPassword().equals(user.getPassword())) {
                 String token = jwtService.generateToken(user.getUsername());
-                return new ResponseEntity<>(new LoginDTO(token, ""), HttpStatus.OK);
+                return new ResponseEntity<>(token, HttpStatus.OK);
             }else{
-                return new ResponseEntity<>(new LoginDTO("Wrong password","0"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Bad credentials", HttpStatus.BAD_REQUEST);
             }
         }
-        return new ResponseEntity<>(new LoginDTO("User not found","-1"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(value = "/getTokenUsername")
@@ -52,8 +53,7 @@ public class AuthenticationController {
         return jwtService.extractUsername(token);
     }
     @GetMapping(value = "/testToken")
-    @PreAuthorize("hasAuthority('ROL." +
-            "E_USER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public String getTokenTest(){
         return "It works !";
     }
