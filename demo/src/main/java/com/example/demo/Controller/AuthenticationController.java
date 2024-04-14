@@ -26,7 +26,10 @@ public class AuthenticationController {
                 requestBody.getUsername(),
                 requestBody.getName(),
                 requestBody.getLastname(),
+                requestBody.getEmail(),
                 requestBody.getPassword(),
+                requestBody.getDateOfBirth(),
+                requestBody.getPhone(),
                 "ROLE_AUTHENTICATED"
                 );
         if(userService.save(newUser) != null){
@@ -43,12 +46,12 @@ public class AuthenticationController {
         {
             if (loginData.getPassword().equals(user.getPassword())) {
                 String token = jwtService.generateToken(user.getUsername());
-                return new ResponseEntity<>(token, HttpStatus.OK);
+                return new ResponseEntity<>(new LoginDTO(token, ""), HttpStatus.OK);
             }else{
-                return new ResponseEntity<>("Bad credentials", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new LoginDTO("Bad credentials", "0"), HttpStatus.BAD_REQUEST);
             }
         }
-        return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new LoginDTO("User not found", "-1"), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(value = "/getTokenUsername")

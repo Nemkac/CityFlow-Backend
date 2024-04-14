@@ -56,7 +56,6 @@ public class User {
         this.roles = roles;
     }
 
-
     public int getId() {
         return id;
     }

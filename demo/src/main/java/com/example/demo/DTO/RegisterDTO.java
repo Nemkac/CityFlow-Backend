@@ -1,17 +1,25 @@
 package com.example.demo.DTO;
 
+import java.time.LocalDate;
+
 public class RegisterDTO {
 
     private String username;
     private String name;
     private String lastname;
     private String password;
+    private String email;
+    private String phone;
+    private LocalDate dateOfBirth;
 
-    public RegisterDTO(String username, String name, String lastname, String password) {
+    public RegisterDTO(String username, String name, String lastname, String password, String email, String phone, LocalDate dateOfBirth) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
         this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public RegisterDTO() {
@@ -47,5 +55,29 @@ public class RegisterDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }
