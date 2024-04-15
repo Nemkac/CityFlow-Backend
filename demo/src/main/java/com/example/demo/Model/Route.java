@@ -2,6 +2,7 @@ package com.example.demo.Model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -10,6 +11,9 @@ public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int id;
+
+    @Column
+    public String name;
 
     @ManyToOne
     @JoinColumn(name = "startLocationID")
@@ -22,12 +26,21 @@ public class Route {
     @JoinColumn(name = "endLocationID")
     public Location endPoint;
 
+    @Column
+    public String openingTime;
+
+    @Column
+    public String closingTime;
+
     public Route() {}
 
-    public Route(Location startingPoint, List<Location> stations, Location endPoint) {
+    public Route(String name, Location startingPoint, List<Location> stations, Location endPoint, String openingTime, String closingTime) {
+        this.name = name;
         this.startingPoint = startingPoint;
         this.stations = stations;
         this.endPoint = endPoint;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
     }
 
     public int getId() {

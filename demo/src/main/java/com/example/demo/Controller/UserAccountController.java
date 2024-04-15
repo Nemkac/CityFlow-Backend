@@ -20,12 +20,13 @@ public class UserAccountController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(path = "/Account/updateProfile")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_DRIVER','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant')")
-    public ResponseEntity<String>updateProfile(@RequestHeader("Authorization") String authorisation,@RequestBody EditProfileDTO requestBody){
-        String bearerToken = authorisation.substring(7);
-        String username = jwtService.extractUsername(bearerToken);
-        User user = userService.FindByUsername(username);
+    @PostMapping(path = "/CityFlow/Account/updateProfile/{id}")
+    //@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_DRIVER','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant, ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<String>updateProfile(/*@RequestHeader("Authorization") String authorisation,*/@PathVariable Integer id, @RequestBody EditProfileDTO requestBody){
+//        String bearerToken = authorisation.substring(7);
+//        String username = jwtService.extractUsername(bearerToken);
+//        User user = userService.FindByUsername(username);
+        User user = userService.findById(id);
         if(user != null){
             user.setEmail(requestBody.getEmail());
             user.setName(requestBody.getName());
@@ -34,13 +35,12 @@ public class UserAccountController {
             user.setPhoneNumber(requestBody.getPhoneNumber());
             user.setUsername(requestBody.getUsername());
             userService.save(user);
-        }
-        if (!username.equals("")){
-            return new ResponseEntity<>(username, HttpStatusCode.valueOf(200));
-        }else{
+            return new ResponseEntity<>("Updated!", HttpStatusCode.valueOf(200));
+        } else{
             return new ResponseEntity<>("Invalid request!",HttpStatusCode.valueOf(400));
         }
     }
+
     @GetMapping(path = "/Account/getUser")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_DRIVER','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant')")
     public ResponseEntity<User> getUser(@RequestHeader("Authorization") String authorisation){
