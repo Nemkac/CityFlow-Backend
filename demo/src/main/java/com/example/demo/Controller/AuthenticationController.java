@@ -30,7 +30,7 @@ public class AuthenticationController {
                 requestBody.getPassword(),
                 requestBody.getDateOfBirth(),
                 requestBody.getPhone(),
-                "ROLE_AUTHENTICATED"
+                "ROLE_USER"
                 );
         if(userService.save(newUser) != null){
             return new ResponseEntity<>("Saved!", HttpStatusCode.valueOf(200));
@@ -62,7 +62,7 @@ public class AuthenticationController {
     @GetMapping(value = "/testToken")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public String getTokenTest(){
-        return "It works !";
+        return "It works!";
     }
 
     @GetMapping(value = "/CityFlow/getUserByToken")

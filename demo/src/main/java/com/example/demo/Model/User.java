@@ -31,6 +31,10 @@ public class User {
     @Column
     private String roles;
 
+    @Column
+    private double eWallet;
+
+
     public User(int id, String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
         this.id = id;
         this.username = username;
@@ -41,6 +45,7 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.roles = roles;
+        this.eWallet = 0;
     }
 
     public User(){}
@@ -54,6 +59,15 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.roles = roles;
+        this.eWallet = 0;
+    }
+
+    public double geteWallet() {
+        return eWallet;
+    }
+
+    public void seteWallet(double eWallet) {
+        this.eWallet = eWallet;
     }
 
     public int getId() {
