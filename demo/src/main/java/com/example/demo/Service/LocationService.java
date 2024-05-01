@@ -15,4 +15,8 @@ public class LocationService {
         return locationRepository.save(location);
     }
 
+    public Location getByLatitudeAndLongiture(double latitude, double longitude){
+        return locationRepository.getByLatitudeAndLongitude(latitude, longitude);
+    }
+
 }
