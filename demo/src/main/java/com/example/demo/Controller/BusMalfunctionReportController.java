@@ -94,6 +94,14 @@ public class BusMalfunctionReportController {
         return new ResponseEntity("No reports found", HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value="/CityFlow/testReportOnFront")
+    public ResponseEntity<BusMalfunctionReport> testReportOnFront(){
+        BusMalfunctionReport report = new BusMalfunctionReport(this.driverService.getById(1),this.busService.getById(1));
+        this.busMalfunctionReportService.save(report);
+        return new ResponseEntity<BusMalfunctionReport>(report, HttpStatus.OK);
+
+    }
+
 
 
 }

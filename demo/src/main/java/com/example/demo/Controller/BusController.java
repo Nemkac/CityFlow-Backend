@@ -53,7 +53,7 @@ public class BusController {
 
     @GetMapping(value="/CityFlow/databaseFill")
     @ResponseStatus(HttpStatus.OK)
-    public void sortRankings(){
+    public void databaseFill(){
         Bus bus1 = new Bus("Gojko1","Kacar1",2002,651,154253,"KG143ZG",386291);
         Bus bus2 = new Bus("Gojko2","Kacar2",2019,652,254253,"KG243ZG",38291);
         Bus bus3 = new Bus("Gojko3","Kacar3",1999,653,354253,"KG343ZG",1038291);
