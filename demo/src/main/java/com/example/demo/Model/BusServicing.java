@@ -38,6 +38,11 @@ public class BusServicing {
         this.commentary = commentary;
     }
 
+    public BusServicing(Bus bus, LocalDate date){
+        this.bus = bus;
+        this.date = date;
+    }
+
     public Integer getId() {
         return id;
     }

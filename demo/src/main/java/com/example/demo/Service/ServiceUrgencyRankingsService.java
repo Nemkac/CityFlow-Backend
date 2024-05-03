@@ -1,9 +1,6 @@
 package com.example.demo.Service;
 
-import com.example.demo.Model.BusMalfunctionReport;
-import com.example.demo.Model.BusServicing;
-import com.example.demo.Model.ServiceUrgencyRankings;
-import com.example.demo.Model.Bus;
+import com.example.demo.Model.*;
 import com.example.demo.Repository.ServiceUrgencyRankingsRepository;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -94,5 +92,35 @@ public class ServiceUrgencyRankingsService {
         }
         // dodace se i operational importance
     }
+
+    public void bookServiceSlots(List<TimeSlot> timeSlots){
+        List<ServiceUrgencyRankings> rankings = this.rankingsSorted();
+        List<TimeSlot> sortedSlots = this.sortTimeSlots(timeSlots);
+        for(int i = 0; i < sortedSlots.size(); i++){
+            BusServicing busServicing = new BusServicing(rankings.get(i).getBus(),sortedSlots.get(i).getStart());
+            this.busServicingService.save(busServicing);
+        }
+    }
+
+    public List<TimeSlot> sortTimeSlots(List<TimeSlot> timeSlots){
+        List<TimeSlot> sortedSlots = new ArrayList<TimeSlot>();
+        for(int i = 0; i < timeSlots.size(); i++){
+            TimeSlot earliest =  timeSlots.get(0);
+            for(TimeSlot timeSlot : timeSlots){
+                if(timeSlot != null && timeSlot.getStart().isBefore(earliest.getStart())){
+                    earliest = timeSlot;
+                }
+            }
+            System.out.println("Size = " + timeSlots.size());
+            System.out.println("i = " + i);
+            sortedSlots.add(earliest);
+            timeSlots.remove(earliest);
+            timeSlots.add(null);
+        }
+        return sortedSlots;
+    }
+
+
+
 
 }
