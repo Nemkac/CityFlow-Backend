@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.http.HTTPException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,5 +81,17 @@ public class RouteController {
 
         this.routeService.save(newRoute);
         return new ResponseEntity<>(newRoute, HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/deleteRoute/{id}")
+    public ResponseEntity<String> deleteRoute(@PathVariable Integer id){
+        Route routeToDelete = this.routeService.findById(id);
+
+        if(routeToDelete != null){
+            routeService.deleteById(routeToDelete.id);
+            return new ResponseEntity<>("Route deleted successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Route not found", HttpStatus.FORBIDDEN);
+        }
     }
 }
