@@ -93,13 +93,15 @@ public class ServiceUrgencyRankingsService {
         // dodace se i operational importance
     }
 
-    public void bookServiceSlots(List<TimeSlot> timeSlots){
+    public List<BusServicing> bookServiceSlots(List<TimeSlot> timeSlots){
         List<ServiceUrgencyRankings> rankings = this.rankingsSorted();
         List<TimeSlot> sortedSlots = this.sortTimeSlots(timeSlots);
+        List<BusServicing> busServicings = new ArrayList<BusServicing>();
         for(int i = 0; i < sortedSlots.size(); i++){
             BusServicing busServicing = new BusServicing(rankings.get(i).getBus(),sortedSlots.get(i).getStart());
-            this.busServicingService.save(busServicing);
+            busServicings.add(this.busServicingService.save(busServicing));
         }
+        return busServicings;
     }
 
     public List<TimeSlot> sortTimeSlots(List<TimeSlot> timeSlots){
@@ -111,8 +113,6 @@ public class ServiceUrgencyRankingsService {
                     earliest = timeSlot;
                 }
             }
-            System.out.println("Size = " + timeSlots.size());
-            System.out.println("i = " + i);
             sortedSlots.add(earliest);
             timeSlots.remove(earliest);
             timeSlots.add(null);

@@ -84,15 +84,15 @@ public class BusController {
         this.busMalfunctionReportService.save(busMalfunctionReport2);
         this.busMalfunctionReportService.save(busMalfunctionReport3);
         this.busMalfunctionReportService.save(busMalfunctionReport4);
-        LocalDate date1 = LocalDate.now().minusMonths(12);
-        LocalDate date2 = LocalDate.now().minusMonths(15);
-        LocalDate date3 = LocalDate.now().minusMonths(12);
-        BusServicing busServicing1 = new BusServicing(bus1,124391,date1,true,"ok");
-        BusServicing busServicing2 = new BusServicing(bus1,124391,date2,true,"ok");
-        BusServicing busServicing3 = new BusServicing(bus2,24391,date3,true,"ok");
-        this.busServicingService.save(busServicing1);
-        this.busServicingService.save(busServicing2);
-        this.busServicingService.save(busServicing3);
+        //LocalDate date1 = LocalDate.now().minusMonths(12);
+        //LocalDate date2 = LocalDate.now().minusMonths(15);
+        //LocalDate date3 = LocalDate.now().minusMonths(12);
+        //BusServicing busServicing1 = new BusServicing(bus1,124391,date1,true,"ok");
+        //BusServicing busServicing2 = new BusServicing(bus1,124391,date2,true,"ok");
+        //BusServicing busServicing3 = new BusServicing(bus2,24391,date3,true,"ok");
+        //this.busServicingService.save(busServicing1);
+        //this.busServicingService.save(busServicing2);
+        //this.busServicingService.save(busServicing3);
     }
 
 
