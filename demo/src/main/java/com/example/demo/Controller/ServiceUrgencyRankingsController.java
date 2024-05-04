@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 
+import com.example.demo.Model.Bus;
 import com.example.demo.Model.BusServicing;
 import com.example.demo.Model.ServiceUrgencyRankings;
 import com.example.demo.Service.BusService;
@@ -50,4 +51,13 @@ public class ServiceUrgencyRankingsController {
     public void sortRankings(){
         this.serviceUrgencyRankingsService.createRankings();
     }
+
+
+    @GetMapping(value="/CityFlow/testChangingRank")
+    public ResponseEntity<List<ServiceUrgencyRankings>> testChangingRankings(){
+        Bus bus = this.busService.getById(1);
+        return new ResponseEntity<List<ServiceUrgencyRankings>>(this.serviceUrgencyRankingsService.changeBusPriorityRanking(bus,3),HttpStatus.OK);
+
+    }
+
 }

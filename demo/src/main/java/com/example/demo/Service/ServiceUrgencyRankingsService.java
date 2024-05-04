@@ -37,6 +37,8 @@ public class ServiceUrgencyRankingsService {
 
     public List<ServiceUrgencyRankings> rankingsSorted() { return this.serviceUrgencyRankingsRepository.findAllByOrderByScoreDesc(); }
 
+    public List<ServiceUrgencyRankings> rankingsSortedByRank() { return this.serviceUrgencyRankingsRepository.findAllByOrderByRankAsc(); }
+
     public void remove() { this.serviceUrgencyRankingsRepository.deleteAll(); }
 
     // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus
@@ -90,6 +92,19 @@ public class ServiceUrgencyRankingsService {
             rankingCounter++;
             save(serviceUrgencyRankings);
         }
+        for(int i = 0; i < rankingsSortedByRank().size(); i++){
+            ServiceUrgencyRankings ranking = rankingsSortedByRank().get(i);
+            if(i != 0){
+                ServiceUrgencyRankings previousRanking = rankingsSorted().get(i-1);
+                if(ranking.getRank().equals(previousRanking.getRank())){
+                    for(int j = i; j < rankingsSortedByRank().size(); j++){
+                        rankingsSortedByRank().get(j).setRank(j+1);
+                        this.save(rankingsSortedByRank().get(j));
+                    }
+                }
+            }
+        }
+
         // dodace se i operational importance
     }
 
@@ -120,7 +135,37 @@ public class ServiceUrgencyRankingsService {
         return sortedSlots;
     }
 
-   // public List<ServiceUrgencyRankings> changeBusPriorityRanking(Bus bus, )
+   public List<ServiceUrgencyRankings> changeBusPriorityRanking(Bus bus, Integer ordinalNumber) {
+        for(ServiceUrgencyRankings ranking : rankingsSortedByRank()){
+            if(ranking.getBus().equals(bus)){
+                ranking.setFixedAfter(rankingsSorted().get(ordinalNumber-1).getBus());
+                this.save(ranking);
+            }
+        }
+        for(ServiceUrgencyRankings ranking : rankingsSortedByRank()){
+            for(ServiceUrgencyRankings ranking2 : rankingsSortedByRank()){
+                if(ranking2.getFixedAfter() != null && ranking2.getFixedAfter().equals(ranking.getBus())){
+                    ranking2.setRank(ranking.getRank()+1);
+                    this.save(ranking2);
+                }
+            }
+        }
+        for(int i = 0; i < rankingsSortedByRank().size(); i++){
+            ServiceUrgencyRankings ranking = rankingsSortedByRank().get(i);
+            if(i != 0){
+                ServiceUrgencyRankings previousRanking = rankingsSorted().get(i-1);
+                if(ranking.getRank().equals(previousRanking.getRank())){
+                    for(int j = i; j < rankingsSortedByRank().size(); j++){
+                        rankingsSortedByRank().get(j).setRank(j+1);
+                        this.save(rankingsSortedByRank().get(j));
+                    }
+                }
+            }
+        }
+
+
+        return rankingsSortedByRank();
+   }
 
 
 
