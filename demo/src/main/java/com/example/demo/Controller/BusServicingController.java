@@ -77,6 +77,14 @@ public class BusServicingController {
         return new ResponseEntity<>(this.serviceUrgencyRankingsService.bookServiceSlots(timeSlots),HttpStatus.OK);
     }
 
+    @PutMapping(consumes = "application/json",value="/CityFlow/bookServices")
+    public ResponseEntity<List<BusServicing>> bookServices(@RequestBody List<TimeSlot> timeSlots) {
+        List<BusServicing> bookedServices = this.serviceUrgencyRankingsService.bookServiceSlots(timeSlots);
+        if(bookedServices != null) {
+            return new ResponseEntity<>(bookedServices,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+    }
 
 
 
