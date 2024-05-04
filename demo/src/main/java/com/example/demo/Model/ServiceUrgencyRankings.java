@@ -20,12 +20,23 @@ public class ServiceUrgencyRankings {
     @Column
     private Integer rank;
 
+    @OneToOne
+    private Bus fixedAfter;
+
     public ServiceUrgencyRankings() {}
 
     public ServiceUrgencyRankings(Bus bus, Double score, Integer rank) {
         this.bus = bus;
         this.score = score;
         this.rank = rank;
+        this.fixedAfter = null;
+    }
+
+    public ServiceUrgencyRankings(Bus bus, Double score, Integer rank,Bus fixedAfter) {
+        this.bus = bus;
+        this.score = score;
+        this.rank = rank;
+        this.fixedAfter = fixedAfter;
     }
 
     public ServiceUrgencyRankings(Bus bus) {
@@ -63,5 +74,10 @@ public class ServiceUrgencyRankings {
     public void setRank(Integer rank) {
         this.rank = rank;
     }
+
+    public Bus getFixedAfter() {return fixedAfter;}
+    public void setFixedAfter(Bus fixedAfter) {this.fixedAfter = fixedAfter;}
+
+
 
 }
