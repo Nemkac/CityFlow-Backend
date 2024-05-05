@@ -44,6 +44,11 @@ public class ServiceUrgencyRankingsService {
     // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus
     public void createRankings(){
         List<ServiceUrgencyRankings> allRankings = this.findAll();
+        List<ServiceUrgencyRankings> backUpRankings = new ArrayList<>();
+        for(ServiceUrgencyRankings ranking : allRankings) {
+            ServiceUrgencyRankings newRanking = new ServiceUrgencyRankings(ranking);
+            backUpRankings.add(newRanking);
+        }
         if(!allRankings.isEmpty()) {
             this.remove();
         }
@@ -76,11 +81,6 @@ public class ServiceUrgencyRankingsService {
             } else {
                 ifMalfunctionProcessed = 0;
             }
-            System.out.println("Bus broj : " + bus.getBusId());
-            System.out.println("Kilometraza ukupna : " + bus.getCurrentMileage() );
-            System.out.println("Kilometraza od servisa: " + mileageSinceLastService);
-            System.out.println("Godina proizvodnje : " + yearsOld);
-            System.out.println("Dani od servisa : " + timeSinceLastService);
             formula = (double) Math.round(a*yearsOld + b*currentMileage + c*operationalImportance + d*timeSinceLastService + e*mileageSinceLastService + ifMalfunctionProcessed);
             ServiceUrgencyRankings serviceUrgencyRankings = new ServiceUrgencyRankings(bus);
             serviceUrgencyRankings.setScore(formula);
@@ -92,6 +92,17 @@ public class ServiceUrgencyRankingsService {
             rankingCounter++;
             save(serviceUrgencyRankings);
         }
+        for(ServiceUrgencyRankings ranking : this.rankingsSortedByRank()){
+            for(ServiceUrgencyRankings ranking2 : backUpRankings){
+                if(ranking.getBus().getBusId().equals(ranking2.getBus().getBusId())){
+                    if(ranking2.getFixedAfter() != null) {
+                        ranking.setFixedAfter(ranking2.getFixedAfter());
+                        this.save(ranking);
+                    }
+                }
+            }
+        }
+
         for(int i = 0; i < rankingsSortedByRank().size(); i++){
             ServiceUrgencyRankings ranking = rankingsSortedByRank().get(i);
             if(i != 0){
@@ -104,7 +115,6 @@ public class ServiceUrgencyRankingsService {
                 }
             }
         }
-
         // dodace se i operational importance
     }
 
@@ -162,8 +172,6 @@ public class ServiceUrgencyRankingsService {
                 }
             }
         }
-
-
         return rankingsSortedByRank();
    }
 

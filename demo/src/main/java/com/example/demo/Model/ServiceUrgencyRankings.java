@@ -39,6 +39,11 @@ public class ServiceUrgencyRankings {
         this.fixedAfter = fixedAfter;
     }
 
+    public ServiceUrgencyRankings(ServiceUrgencyRankings ranking){
+        this.bus = ranking.bus;
+        this.fixedAfter = ranking.fixedAfter;
+    }
+
     public ServiceUrgencyRankings(Bus bus) {
         this.bus = bus;
     }
