@@ -51,7 +51,7 @@ public class BusServicingController {
         return new ResponseEntity<List<BusServicing>>(this.busServicingService.findAllByBusOrderByDateDesc(bus),HttpStatus.OK);
     }
 
-    // ovo se brise
+    // brise se posle
     @GetMapping(value="/CityFlow/testSortSlots")
     public ResponseEntity<List<TimeSlot>> testSortSlots(){
         TimeSlot timeSlot1 = new TimeSlot(LocalDate.now(),30);
@@ -65,6 +65,7 @@ public class BusServicingController {
         return new ResponseEntity<>(this.serviceUrgencyRankingsService.sortTimeSlots(timeSlots),HttpStatus.OK);
     }
 
+    // brise se posle
     @GetMapping(value="/CityFlow/testBookingServices")
     public ResponseEntity<List<BusServicing>> testBookingServices() {
         TimeSlot timeSlot1 = new TimeSlot(LocalDate.now(),30);

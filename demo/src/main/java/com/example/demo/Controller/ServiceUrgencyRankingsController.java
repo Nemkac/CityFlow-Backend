@@ -41,20 +41,25 @@ public class ServiceUrgencyRankingsController {
         return new ResponseEntity("No rankings found", HttpStatus.NOT_FOUND);
     }
 
+    // brise se posle
     @GetMapping(value="/CityFlow/testScoring")
     public ResponseEntity<List<ServiceUrgencyRankings>> getAllRankingsSortedByScores(){
-        return new ResponseEntity<List<ServiceUrgencyRankings>>(this.serviceUrgencyRankingsService.rankingsSorted(), HttpStatus.OK);
+        List<ServiceUrgencyRankings> rankings = this.serviceUrgencyRankingsService.rankingsSorted();
+        if(rankings == null) {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<List<ServiceUrgencyRankings>>(rankings, HttpStatus.OK);
     }
 
-    @GetMapping(value="/CityFlow/testRanking")
+    @GetMapping(value="/CityFlow/setRanking")
     @ResponseStatus(HttpStatus.OK)
     public void sortRankings(){
         this.serviceUrgencyRankingsService.createRankings();
     }
 
 
-    @GetMapping(value="/CityFlow/testChangingRank/{busId}/{ordinalNumber}")
-    public ResponseEntity<List<ServiceUrgencyRankings>> testChangingRankings(@PathVariable Integer busId, @PathVariable Integer ordinalNumber){
+    @GetMapping(value="/CityFlow/changingRank/{busId}/{ordinalNumber}")
+    public ResponseEntity<List<ServiceUrgencyRankings>> changingRankings(@PathVariable Integer busId, @PathVariable Integer ordinalNumber){
         if(this.busService.getById(busId) == null){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }

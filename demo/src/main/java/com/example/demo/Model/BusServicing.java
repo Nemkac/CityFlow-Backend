@@ -41,6 +41,7 @@ public class BusServicing {
     public BusServicing(Bus bus, LocalDate date){
         this.bus = bus;
         this.date = date;
+        this.mileage = bus.getCurrentMileage();
     }
 
     public Integer getId() {
