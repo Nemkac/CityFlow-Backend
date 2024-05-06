@@ -84,14 +84,14 @@ public class RouteController {
     }
 
     @DeleteMapping(path = "/deleteRoute/{id}")
-    public ResponseEntity<String> deleteRoute(@PathVariable Integer id){
+    public ResponseEntity<?> deleteRoute(@PathVariable Integer id) {
         Route routeToDelete = this.routeService.findById(id);
 
-        if(routeToDelete != null){
+        if (routeToDelete != null) {
             routeService.deleteById(routeToDelete.id);
-            return new ResponseEntity<>("Route deleted successfully", HttpStatus.OK);
+            return ResponseEntity.ok().body("{\"message\": \"Route deleted successfully\"}");
         } else {
-            return new ResponseEntity<>("Route not found", HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Route not found\"}");
         }
     }
 }
