@@ -103,6 +103,14 @@ public class ServiceUrgencyRankingsService {
             }
         }
 
+        for(ServiceUrgencyRankings ranking : rankingsSortedByRank()){
+            for(ServiceUrgencyRankings ranking2 : rankingsSortedByRank()){
+                if(ranking2.getFixedAfter() != null && ranking2.getFixedAfter().equals(ranking.getBus())){
+                    ranking2.setRank(ranking.getRank()+1);
+                    this.save(ranking2);
+                }
+            }
+        }
         for(int i = 0; i < rankingsSortedByRank().size(); i++){
             ServiceUrgencyRankings ranking = rankingsSortedByRank().get(i);
             if(i != 0){
