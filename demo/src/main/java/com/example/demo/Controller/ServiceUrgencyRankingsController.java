@@ -53,10 +53,13 @@ public class ServiceUrgencyRankingsController {
     }
 
 
-    @GetMapping(value="/CityFlow/testChangingRank")
-    public ResponseEntity<List<ServiceUrgencyRankings>> testChangingRankings(){
-        Bus bus = this.busService.getById(1);
-        return new ResponseEntity<List<ServiceUrgencyRankings>>(this.serviceUrgencyRankingsService.changeBusPriorityRanking(bus,3),HttpStatus.OK);
+    @GetMapping(value="/CityFlow/testChangingRank/{busId}/{ordinalNumber}")
+    public ResponseEntity<List<ServiceUrgencyRankings>> testChangingRankings(@PathVariable Integer busId, @PathVariable Integer ordinalNumber){
+        if(this.busService.getById(busId) == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        Bus bus =  this.busService.getById(busId);
+        return new ResponseEntity<List<ServiceUrgencyRankings>>(this.serviceUrgencyRankingsService.changeBusPriorityRanking(bus,ordinalNumber),HttpStatus.OK);
 
     }
 
