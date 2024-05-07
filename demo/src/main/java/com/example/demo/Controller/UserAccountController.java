@@ -7,6 +7,8 @@ import com.example.demo.Model.User;
 import com.example.demo.Service.CardService;
 import com.example.demo.Service.JwtService;
 import com.example.demo.Service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 public class UserAccountController {
-
+    private static Logger logger = LoggerFactory.getLogger(UserAccountController.class);
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -30,6 +32,7 @@ public class UserAccountController {
     public ResponseEntity<String>updateProfile(@RequestHeader("Authorization") String authorisation, @RequestBody EditProfileDTO requestBody){
         String bearerToken = authorisation.substring(7);
         String username = jwtService.extractUsername(bearerToken);
+        System.out.println(bearerToken);
         User user = userService.FindByUsername(username);
         if(user != null){
             user.setEmail(requestBody.getEmail());
