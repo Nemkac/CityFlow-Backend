@@ -60,7 +60,19 @@ public class ServiceUrgencyRankingsService {
                 rankingsWithoutBookedServices.add(ranking);
             }
         }
-        return rankingsWithoutBookedServices;
+        List<ServiceUrgencyRankings> sortedRankings = new ArrayList<ServiceUrgencyRankings>();
+        for(int i = 0; i < rankingsWithoutBookedServices.size(); i++) {
+            ServiceUrgencyRankings first = rankingsWithoutBookedServices.get(0);
+            for(ServiceUrgencyRankings ranking : rankingsWithoutBookedServices) {
+                if(ranking != null && ranking.getRank() < first.getRank()){
+                    first = ranking;
+                }
+            }
+            sortedRankings.add(first);
+            rankingsWithoutBookedServices.remove(first);
+            rankingsWithoutBookedServices.add(null);
+        }
+        return sortedRankings;
     }
 
 /*                    if(ranking.getBus().equals(servicing.getBus()) && servicing.getDate().isBefore(LocalDate.now())){
