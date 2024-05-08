@@ -39,6 +39,37 @@ public class ServiceUrgencyRankingsService {
 
     public List<ServiceUrgencyRankings> rankingsSortedByRank() { return this.serviceUrgencyRankingsRepository.findAllByOrderByRankAsc(); }
 
+    public List<ServiceUrgencyRankings> rankingsSortedByRankWithoutBookedServices() {
+        List<ServiceUrgencyRankings> rankings = rankingsSorted();
+        List<ServiceUrgencyRankings> rankingsWithoutBookedServices = new ArrayList<ServiceUrgencyRankings>();
+        List<BusServicing> services = this.busServicingService.getAll();
+        if(services == null || services.isEmpty()) {
+            return rankings;
+        }
+        for(ServiceUrgencyRankings ranking : rankings) {
+            boolean ifInServices = false;
+            for(BusServicing servicing : services) {
+                if(ranking.getBus().equals(servicing.getBus())){
+                    ifInServices = true;
+                    if(servicing.getDate().isBefore(LocalDate.now())){
+                        rankingsWithoutBookedServices.add(ranking);
+                    }
+                }
+            }
+            if(!ifInServices){
+                rankingsWithoutBookedServices.add(ranking);
+            }
+        }
+        return rankingsWithoutBookedServices;
+    }
+
+/*                    if(ranking.getBus().equals(servicing.getBus()) && servicing.getDate().isBefore(LocalDate.now())){
+        rankingsWithoutBookedServices.add(ranking);
+    } else if(ranking.getBus().equals(servicing.getBus())) {
+        rankingsWithoutBookedServices.add(ranking);
+    }*/
+
+
     public void remove() { this.serviceUrgencyRankingsRepository.deleteAll(); }
 
     // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus

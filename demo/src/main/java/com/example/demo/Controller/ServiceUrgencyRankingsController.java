@@ -35,11 +35,19 @@ public class ServiceUrgencyRankingsController {
 
     @GetMapping(value="/CityFlow/getServiceUrgencyRankings")
     public ResponseEntity<List<ServiceUrgencyRankings>> getAllServiceUrgencyRankings(){
+        if(!serviceUrgencyRankingsService.rankingsSortedByRankWithoutBookedServices().isEmpty()) {
+            return new ResponseEntity<List<ServiceUrgencyRankings>>(serviceUrgencyRankingsService.rankingsSortedByRankWithoutBookedServices(), HttpStatus.OK);
+        }
+        return new ResponseEntity("No rankings found", HttpStatus.NOT_FOUND);
+    }
+
+/*    @GetMapping(value="/CityFlow/getServiceUrgencyRankings")
+    public ResponseEntity<List<ServiceUrgencyRankings>> getAllServiceUrgencyRankings(){
         if(!serviceUrgencyRankingsService.findAll().isEmpty()) {
             return new ResponseEntity<List<ServiceUrgencyRankings>>(serviceUrgencyRankingsService.rankingsSortedByRank(), HttpStatus.OK);
         }
         return new ResponseEntity("No rankings found", HttpStatus.NOT_FOUND);
-    }
+    }*/
 
     // brise se posle
     @GetMapping(value="/CityFlow/testScoring")
