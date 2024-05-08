@@ -9,6 +9,7 @@ import com.example.demo.Service.BusService;
 import com.example.demo.Service.BusServicingService;
 import com.example.demo.Service.ServiceUrgencyRankingsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -86,6 +87,31 @@ public class BusServicingController {
         }
         return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
     }
+
+    @PutMapping(consumes = "application/json",value="/CityFlow/bookServicesOneSlotViaDate")
+    public ResponseEntity<List<BusServicing>> bookServicesOneSlot(@RequestBody LocalDate date) {
+        TimeSlot timeSlot = new TimeSlot(date,30);
+        List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+        timeSlots.add(timeSlot);
+        List<BusServicing> bookedServices = this.serviceUrgencyRankingsService.bookServiceSlots(timeSlots);
+        if(bookedServices != null) {
+            return new ResponseEntity<>(bookedServices,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+    }
+
+    @PutMapping(consumes = "application/json",value = "/CityFlow/bookServicesOneSlot")
+    public ResponseEntity<List<BusServicing>> bookServicesOneSlot(@RequestBody TimeSlot timeSlot) {
+        List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+        timeSlots.add(timeSlot);
+        List<BusServicing> bookedServices = this.serviceUrgencyRankingsService.bookServiceSlots(timeSlots);
+        if(bookedServices != null) {
+            return new ResponseEntity<>(bookedServices,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
+    }
+
+
 
 
 
