@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RouteService {
@@ -18,8 +19,9 @@ public class RouteService {
         return routeRepository.save(route);
     }
 
-    public Route getById(int  id){
-        return routeRepository.getById(id);
+    public Route findById(Integer id){
+        Optional<Route> optionalRoute = routeRepository.findById(id);
+        return optionalRoute.orElse(null);
     }
 
     public Route getByStartingPoint(Location startingPoint){
@@ -34,7 +36,7 @@ public class RouteService {
         return routeRepository.findAll();
     }
 
-    public void delete(Route route){
-        routeRepository.delete(route);
+    public void deleteById(Integer id){
+        routeRepository.deleteById(id);
     }
 }

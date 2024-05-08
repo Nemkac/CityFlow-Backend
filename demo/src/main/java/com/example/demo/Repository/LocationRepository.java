@@ -8,5 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface LocationRepository extends JpaRepository<Location, Integer> {
     Location save(Location location);
 
+    Location getByLatitudeAndLongitude(double Latitude, double Longitude);
+
     Location getById(int id);
 }

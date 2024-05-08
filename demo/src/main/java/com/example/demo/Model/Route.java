@@ -10,7 +10,7 @@ public class Route {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public int id;
+    public Integer id;
 
     @Column
     public String name;
