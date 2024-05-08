@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/CityFlow/**").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/testToken","/Account/**").authenticated()
+                .authorizeHttpRequests().requestMatchers("/testToken","/Account/**","/KYC/**").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -90,12 +90,24 @@ public class InitialDataInsertionService {
                 "000",
                 123123123
         );
+        LocalDate user5BirthDate = LocalDate.ofEpochDay(2002-18-1);
+        User user5 = new User(
+                "Djuro",
+                "Djordje",
+                "Djordjevic",
+                "dj123@gmail.com",
+                "dj123",
+                user5BirthDate,
+                "0645678910",
+                "ROLE_KYCADMINISTRATOR"
+        );
         cardService.addCard(card1);
         cardService.addCard(card2);
 //        userService.addUser(user1);
 //        userService.addUser(user2);
         userService.addUser(user3);
         userService.addUser(user4);
+        userService.addUser(user5);
 
         Location location1 = new Location(45.242006, 19.842685);
         Location location2 = new Location(45.241652, 19.842843);
