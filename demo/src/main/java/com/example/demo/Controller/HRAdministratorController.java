@@ -1,24 +1,25 @@
 package com.example.demo.Controller;
 
 import com.example.demo.DTO.UserDTO;
+import com.example.demo.Model.Accountant;
 import com.example.demo.Model.Driver;
+import com.example.demo.Model.Termination;
 import com.example.demo.Model.User;
-import com.example.demo.Service.DriverService;
-import com.example.demo.Service.EmailService;
-import com.example.demo.Service.UserService;
+import com.example.demo.Service.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/CityFlow")
@@ -28,16 +29,18 @@ public class HRAdministratorController {
     private UserService userService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private DriverService driverService;
 
     @Autowired
     private JavaMailSender emailSender;
 
-    @PutMapping(consumes = "application/json", path = "/addUser")
-    //@PreAuthorize("hasAuthority('ROLE_HRADMIN')")
+    @Autowired
+    private AccountantService accountantService;
+
+    @Autowired
+    private TerminationService terminationService;
+
+    @PostMapping (path = "/addUser")
     public ResponseEntity<User> addUser(@RequestBody UserDTO userDTO) {
         User existingUser = this.userService.findByEmail(userDTO.getEmail());
 
@@ -52,16 +55,26 @@ public class HRAdministratorController {
                     userDTO.getPassword(),
                     userDTO.getDateOfBirth(),
                     userDTO.getPhoneNumber(),
-                    userDTO.getRoles()
+                    userDTO.getRoles(),
+                    true
             );
             this.userService.addUser(newUser);
-            if(Objects.equals(newUser.getRoles(), "ROLE_DRIVER")) {
-                Driver newDriver = new Driver(newUser);
-                this.driverService.save(newDriver);
-            }
-        sendRegistrationEmail(newUser.getEmail(), newUser.getPassword(),newUser.getUsername());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+            String role = userDTO.getRoles();
+            if (role.equals("ROLE_DRIVER")) {
+                Driver newDriver = new Driver();
+                newDriver.setUser(newUser);
+                this.driverService.save(newDriver);
+            } else if(role.equals("ROLE_Accountant")){
+                Accountant newAccountant = new Accountant();
+                newAccountant.setUser(newUser);
+                this.accountantService.save(newAccountant);
+            }
+
+            sendRegistrationEmail(newUser.getEmail(), newUser.getPassword(), newUser.getUsername());
+
+            return new ResponseEntity<>(HttpStatus.OK);
+
     }
 }
 
@@ -113,22 +126,30 @@ public class HRAdministratorController {
             emailSender.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            // Handle exception
+
         }
     }
 
-   @DeleteMapping(path = "/deleteUser/{userId}")
-    public ResponseEntity<User> deleteUser(@PathVariable Integer userId) {
+    @PostMapping("/deleteUser/{userId}")
+    public ResponseEntity<User> deleteUser(@PathVariable Integer userId, @RequestBody String reason) {
         User user = userService.getById(userId);
-           Driver driver = driverService.getByUser(user);
-           if (driver != null) {
-               driverService.delete(driver);
-           }
-            userService.deleteById(userId);
-            sendDeletionEmail(user.getEmail(), user.getUsername());
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        user.setEmployed(false);
+        userService.save(user);
 
-            return new ResponseEntity<>(HttpStatus.OK);
+        Termination termination = new Termination();
+        termination.setUser(user);
+        termination.setTerminationDate(LocalDate.now());
+        termination.setReason(reason);
+        terminationService.save(termination);
+
+        sendDeletionEmail(user.getEmail(), user.getUsername());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     private void sendDeletionEmail(String email, String username) {
         MimeMessage message = emailSender.createMimeMessage();
@@ -172,11 +193,10 @@ public class HRAdministratorController {
             emailSender.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            // Handle exception
         }
     }
 
-    @PutMapping(consumes = "application/json", value = "/updateUser/{userId}")
+    @PostMapping(consumes = "application/json", value = "/updateUser/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody UserDTO userDTO) {
         User existingUser = userService.findById(userId);
 
@@ -205,6 +225,12 @@ public class HRAdministratorController {
             if (userDTO.getDateOfBirth() != null) {
                 existingUser.setDateOfBirth(userDTO.getDateOfBirth());
             }
+            if (userDTO.getDateOfBirth() != null) {
+                existingUser.setDateOfBirth(userDTO.getDateOfBirth());
+            }
+            if (userDTO.isEmployed()) {
+                existingUser.setEmployed(userDTO.isEmployed());
+            }
 
             userService.save(existingUser);
 
@@ -212,5 +238,19 @@ public class HRAdministratorController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    @GetMapping("/usersByRole")
+    public ResponseEntity<List<User>> getUsersByRole() {
+        List<User> usersByRole = new ArrayList<>();
+        List<String> roles = Arrays.asList("ROLE_ROUTEADMINISTRATOR", "ROLE_HRAdministrator", "ROLE_DRIVER", "ROLE_SERVICER", "ROLE_Accountant");
+        for (String role : roles) {
+            List<User> usersForRole = userService.getUsersByRole(role);
+            for (User user : usersForRole) {
+                if (user.isEmployed()) {
+                    usersByRole.add(user);
+                }
+            }
+        }
+        return new ResponseEntity<>(usersByRole, HttpStatus.OK);
     }
 }

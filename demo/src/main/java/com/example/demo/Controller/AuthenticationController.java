@@ -30,7 +30,8 @@ public class AuthenticationController {
                 requestBody.getPassword(),
                 requestBody.getDateOfBirth(),
                 requestBody.getPhone(),
-                "ROLE_AUTHENTICATED"
+                "ROLE_AUTHENTICATED",
+                false
                 );
         if(userService.save(newUser) != null){
             return new ResponseEntity<>("Saved!", HttpStatusCode.valueOf(200));

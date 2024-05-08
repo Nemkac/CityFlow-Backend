@@ -59,7 +59,8 @@ public class InitialDataInsertionService {
                 "am123",
                 user3BirthDate,
                 "0672182233",
-                "ROLE_HRAdministrator"
+                "ROLE_HRAdministrator",
+                true
         );
 
         LocalDate user4BirthDate = LocalDate.ofEpochDay(2002-18-1);
@@ -71,7 +72,8 @@ public class InitialDataInsertionService {
                 "nt123",
                 user4BirthDate,
                 "0644316167",
-                "ROLE_ROUTEADMINISTRATOR"
+                "ROLE_ROUTEADMINISTRATOR",
+                true
         );
 
 //        userService.addUser(user1);

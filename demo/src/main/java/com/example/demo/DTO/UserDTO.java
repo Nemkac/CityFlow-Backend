@@ -1,10 +1,10 @@
 package com.example.demo.DTO;
 
+import com.example.demo.Model.User;
+
 import java.time.LocalDate;
 
 public class UserDTO {
-
-    private int id;
     private String username;
     private String name;
     private String lastname;
@@ -13,9 +13,13 @@ public class UserDTO {
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String roles;
+    private boolean employed;
 
 
-    public UserDTO(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
+    public UserDTO() {
+    }
+
+    public UserDTO(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles, boolean employed) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
@@ -24,17 +28,7 @@ public class UserDTO {
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.roles = roles;
-    }
-
-    public UserDTO() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.employed = employed;
     }
 
     public String getUsername() {
@@ -61,28 +55,20 @@ public class UserDTO {
         this.lastname = lastname;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public LocalDate getDateOfBirth() {
@@ -99,6 +85,22 @@ public class UserDTO {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public boolean isEmployed() {
+        return employed;
+    }
+
+    public void setEmployed(boolean employed) {
+        this.employed = employed;
     }
 }
 

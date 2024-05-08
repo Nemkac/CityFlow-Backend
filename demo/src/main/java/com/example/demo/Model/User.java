@@ -30,8 +30,12 @@ public class User {
     private String phoneNumber;
     @Column
     private String roles;
+    @Column
+    private boolean employed;
 
-    public User(int id, String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
+    public User(){}
+
+    public User(int id, String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles, boolean employed) {
         this.id = id;
         this.username = username;
         this.name = name;
@@ -41,11 +45,10 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.roles = roles;
+        this.employed = employed;
     }
 
-    public User(){}
-
-    public User(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
+    public User(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles, boolean employed) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
@@ -54,6 +57,7 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.roles = roles;
+        this.employed = employed;
     }
 
     public int getId() {
@@ -88,28 +92,20 @@ public class User {
         this.lastname = lastname;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public LocalDate getDateOfBirth() {
@@ -126,5 +122,21 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public boolean isEmployed() {
+        return employed;
+    }
+
+    public void setEmployed(boolean employed) {
+        this.employed = employed;
     }
 }

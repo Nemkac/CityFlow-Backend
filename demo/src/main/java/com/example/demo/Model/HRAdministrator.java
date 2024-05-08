@@ -1,6 +1,7 @@
 package com.example.demo.Model;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -10,14 +11,14 @@ public class HRAdministrator {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer hrAdminId;
-
     @OneToOne
     private User user;
 
     public HRAdministrator() {
     }
 
-    public HRAdministrator(User user) {
+    public HRAdministrator(Integer hrAdminId, User user) {
+        this.hrAdminId = hrAdminId;
         this.user = user;
     }
 
@@ -36,5 +37,4 @@ public class HRAdministrator {
     public void setUser(User user) {
         this.user = user;
     }
-
 }

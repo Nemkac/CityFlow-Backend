@@ -60,4 +60,7 @@ public class UserService implements UserDetailsService {
         Optional<User> userOptional = userRepository.findById(id);
         return userOptional.orElse(null);
     }
+    public List<User> getUsersByRole(String role) {
+        return userRepository.findByRoles(role);
+    }
 }
