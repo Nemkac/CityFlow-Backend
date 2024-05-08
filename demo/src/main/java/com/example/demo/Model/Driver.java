@@ -46,6 +46,11 @@ public class Driver {
         this.bus = null;
     }
 
+    public Driver(User user, Bus bus){
+        this.user = user;
+        this.bus = bus;
+    }
+
     public Bus getBus() {
         return bus;
     }

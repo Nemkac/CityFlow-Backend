@@ -74,7 +74,7 @@ public class BusController {
         this.busService.save(bus9);
         User user = new User(1,"","","","vb","vb",null,"","ROLE_DRIVER");
         this.userService.save(user);
-        Driver driver = new Driver(user);
+        Driver driver = new Driver(user,bus1);
         this.driverService.save(driver);
         BusMalfunctionReport busMalfunctionReport1 = new BusMalfunctionReport(driver,bus2,true);
         BusMalfunctionReport busMalfunctionReport2 = new BusMalfunctionReport(driver,bus5,false);
