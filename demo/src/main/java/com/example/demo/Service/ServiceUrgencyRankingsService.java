@@ -170,7 +170,7 @@ public class ServiceUrgencyRankingsService {
     }
 
     public List<BusServicing> bookServiceSlots(List<TimeSlot> timeSlots){
-        List<ServiceUrgencyRankings> rankings = this.rankingsSorted();
+        List<ServiceUrgencyRankings> rankings = this.rankingsSortedByRankWithoutBookedServices();
         List<TimeSlot> sortedSlots = this.sortTimeSlots(timeSlots);
         List<BusServicing> busServicings = new ArrayList<BusServicing>();
         for(int i = 0; i < sortedSlots.size(); i++){
