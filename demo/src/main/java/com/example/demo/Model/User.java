@@ -64,6 +64,18 @@ public class User {
         this.roles = roles;
         this.eWallet = 0;
     }
+    public User(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
+        this.username = username;
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.roles = roles;
+        this.eWallet = 0;
+    }
+
 
     public User(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles, boolean employed) {
         this.username = username;
