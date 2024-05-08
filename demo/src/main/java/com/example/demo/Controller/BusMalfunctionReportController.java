@@ -43,10 +43,10 @@ public class BusMalfunctionReportController {
     }
 
 
-    @PostMapping(value="/CityFlow/reportMalfunctionViaDriverId/{driverId}")
-    public ResponseEntity<BusMalfunctionReport> createReportViaDriverId(@PathVariable Integer driverId){
+    @PostMapping(value="/CityFlow/reportMalfunctionViaDriverId/{driverId}/{commentary}")
+    public ResponseEntity<BusMalfunctionReport> createReportViaDriverId(@PathVariable Integer driverId,@PathVariable String commentary){
         Driver driver = this.driverService.getById(driverId);
-        BusMalfunctionReport report = new BusMalfunctionReport(driver,driver.getBus());
+        BusMalfunctionReport report = new BusMalfunctionReport(driver,driver.getBus(),commentary);
         if(busMalfunctionReportService.save(report)==null){
             return new ResponseEntity("Cannot create report", HttpStatus.FORBIDDEN);
         }
