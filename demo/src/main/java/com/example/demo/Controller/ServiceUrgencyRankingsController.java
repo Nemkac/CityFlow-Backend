@@ -76,4 +76,13 @@ public class ServiceUrgencyRankingsController {
         return new ResponseEntity<>(this.serviceUrgencyRankingsService.moveBusUpByRank(bus),HttpStatus.OK);
     }
 
+    @GetMapping(value="/CityFlow/moveBusDownByRank/{busId}")
+    public ResponseEntity<List<ServiceUrgencyRankings>> moveBusDownByRank(@PathVariable Integer busId){
+        Bus bus = this.busService.getById(busId);
+        if(bus == null){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(this.serviceUrgencyRankingsService.moveBusDownByRank(bus),HttpStatus.OK);
+    }
+
 }

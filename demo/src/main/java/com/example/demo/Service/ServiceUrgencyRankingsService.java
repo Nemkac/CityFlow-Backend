@@ -154,9 +154,70 @@ public class ServiceUrgencyRankingsService {
     }
 
    public List<ServiceUrgencyRankings> changeBusPriorityRanking(Bus bus, Integer ordinalNumber) {
-        for(ServiceUrgencyRankings ranking : rankingsSortedByRank()){
+       if(ordinalNumber < this.getByBus(bus).getRank()){
+           List<ServiceUrgencyRankings> rankings = this.rankingsSortedByRank();
+           for(ServiceUrgencyRankings ranking : rankings) {
+               if(ranking.getBus().equals(bus)){
+                   ranking.setFixedAfter(this.rankingsSortedByRank().get(ranking.getRank()-3).getBus());
+                   this.save(ranking);
+               }
+           }
+           for(ServiceUrgencyRankings ranking : rankingsSortedByRank()){
+               for(ServiceUrgencyRankings ranking2 : rankingsSortedByRank()){
+                   if(ranking2.getFixedAfter() != null && ranking2.getFixedAfter().equals(ranking.getBus())){
+                       ranking2.setRank(ranking.getRank()+1);
+                       this.save(ranking2);
+                   }
+               }
+           }
+           for(int i = 0; i < rankingsSortedByRank().size(); i++){
+               ServiceUrgencyRankings ranking = rankingsSortedByRank().get(i);
+               if(i != 0){
+                   ServiceUrgencyRankings previousRanking = rankingsSorted().get(i-1);
+                   if(ranking.getRank().equals(previousRanking.getRank())){
+                       for(int j = i; j < rankingsSortedByRank().size(); j++){
+                           rankingsSortedByRank().get(j).setRank(j+1);
+                           this.save(rankingsSortedByRank().get(j));
+                       }
+                   }
+               }
+           }
+           return rankingsSortedByRank();
+       } else {
+           List<ServiceUrgencyRankings> rankings = this.rankingsSortedByRank();
+           for(ServiceUrgencyRankings ranking : rankings) {
+               if(ranking.getBus().equals(bus)){
+                   ranking.setFixedAfter(this.rankingsSortedByRank().get(ranking.getRank()).getBus());
+                   this.save(ranking);
+               }
+           }
+           for(ServiceUrgencyRankings ranking : rankingsSortedByRank()){
+               for(ServiceUrgencyRankings ranking2 : rankingsSortedByRank()){
+                   if(ranking2.getFixedAfter() != null && ranking2.getFixedAfter().equals(ranking.getBus())){
+                       ranking2.setRank(ranking.getRank()+1);
+                       this.save(ranking2);
+                   }
+               }
+           }
+           for(int i = 0; i < rankingsSortedByRank().size()-1; i++){
+               ServiceUrgencyRankings ranking = rankingsSortedByRank().get(i);
+               ServiceUrgencyRankings nextRanking = rankingsSorted().get(i+1);
+               if(ranking.getRank().equals(nextRanking.getRank())){
+                   for(int j = i; j < rankingsSortedByRank().size(); j++){
+                       rankingsSortedByRank().get(j).setRank(j+1);
+                       this.save(rankingsSortedByRank().get(j));
+                   }
+               }
+           }
+           return rankingsSortedByRank();
+       }
+   }
+
+    public List<ServiceUrgencyRankings> moveBusUpByRank(Bus bus){
+        List<ServiceUrgencyRankings> rankings = this.rankingsSortedByRank();
+        for(ServiceUrgencyRankings ranking : rankings) {
             if(ranking.getBus().equals(bus)){
-                ranking.setFixedAfter(rankingsSorted().get(ordinalNumber-1).getBus());
+                ranking.setFixedAfter(this.rankingsSortedByRank().get(ranking.getRank()-3).getBus());
                 this.save(ranking);
             }
         }
@@ -181,14 +242,32 @@ public class ServiceUrgencyRankingsService {
             }
         }
         return rankingsSortedByRank();
-   }
+    }
 
-    public List<ServiceUrgencyRankings> moveBusUpByRank(Bus bus){
+    public List<ServiceUrgencyRankings> moveBusDownByRank(Bus bus){
         List<ServiceUrgencyRankings> rankings = this.rankingsSortedByRank();
         for(ServiceUrgencyRankings ranking : rankings) {
             if(ranking.getBus().equals(bus)){
-                ranking.setFixedAfter(this.rankingsSortedByRank().get(ranking.getRank()-2).getBus());
+                ranking.setFixedAfter(this.rankingsSortedByRank().get(ranking.getRank()).getBus());
                 this.save(ranking);
+            }
+        }
+        for(ServiceUrgencyRankings ranking : rankingsSortedByRank()){
+            for(ServiceUrgencyRankings ranking2 : rankingsSortedByRank()){
+                if(ranking2.getFixedAfter() != null && ranking2.getFixedAfter().equals(ranking.getBus())){
+                    ranking2.setRank(ranking.getRank()+1);
+                    this.save(ranking2);
+                }
+            }
+        }
+        for(int i = 0; i < rankingsSortedByRank().size()-1; i++){
+            ServiceUrgencyRankings ranking = rankingsSortedByRank().get(i);
+            ServiceUrgencyRankings nextRanking = rankingsSorted().get(i+1);
+            if(ranking.getRank().equals(nextRanking.getRank())){
+                for(int j = i; j < rankingsSortedByRank().size(); j++){
+                    rankingsSortedByRank().get(j).setRank(j+1);
+                    this.save(rankingsSortedByRank().get(j));
+                }
             }
         }
         return rankingsSortedByRank();
