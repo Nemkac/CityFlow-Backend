@@ -32,6 +32,8 @@ public class User {
     private String roles;
     @Column
     private boolean employed;
+     @Column
+    private double eWallet;
 
     public User(){}
 
@@ -45,7 +47,22 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.roles = roles;
+        this.eWallet = 0;
         this.employed = employed;
+
+    }
+
+    public User(int id, String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
+        this.id = id;
+        this.username = username;
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.roles = roles;
+        this.eWallet = 0;
     }
 
     public User(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles, boolean employed) {
@@ -58,6 +75,15 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.roles = roles;
         this.employed = employed;
+        this.eWallet = 0;
+    }
+
+    public double geteWallet() {
+        return eWallet;
+    }
+
+    public void seteWallet(double eWallet) {
+        this.eWallet = eWallet;
     }
 
     public int getId() {

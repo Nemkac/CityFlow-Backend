@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.Model.Card;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
 import com.example.demo.Model.User;
@@ -22,6 +23,8 @@ public class InitialDataInsertionService {
 
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private CardService cardService;
 
     @Transactional
     public void insertInitialData() {
@@ -75,11 +78,38 @@ public class InitialDataInsertionService {
                 "ROLE_ROUTEADMINISTRATOR",
                 true
         );
-
+        Card card1 = new Card(
+                "1234 5678",
+                "04/05",
+                "Nemanja Ranitovic",
+                "000",
+                123123123
+        );
+        Card card2 = new Card(
+                "4321 5678",
+                "05/06",
+                "Nemanja Todorovic",
+                "000",
+                123123123
+        );
+        LocalDate user5BirthDate = LocalDate.ofEpochDay(2002-18-1);
+        User user5 = new User(
+                "Djuro",
+                "Djordje",
+                "Djordjevic",
+                "dj123@gmail.com",
+                "dj123",
+                user5BirthDate,
+                "0645678910",
+                "ROLE_KYCADMINISTRATOR"
+        );
+        cardService.addCard(card1);
+        cardService.addCard(card2);
 //        userService.addUser(user1);
 //        userService.addUser(user2);
         userService.addUser(user3);
         userService.addUser(user4);
+        userService.addUser(user5);
 
         Location location1 = new Location(45.242006, 19.842685);
         Location location2 = new Location(45.241652, 19.842843);
