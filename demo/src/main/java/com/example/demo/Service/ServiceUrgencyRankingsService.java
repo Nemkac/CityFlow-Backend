@@ -183,6 +183,18 @@ public class ServiceUrgencyRankingsService {
         return rankingsSortedByRank();
    }
 
+    public List<ServiceUrgencyRankings> moveBusUpByRank(Bus bus){
+        List<ServiceUrgencyRankings> rankings = this.rankingsSortedByRank();
+        for(ServiceUrgencyRankings ranking : rankings) {
+            if(ranking.getBus().equals(bus)){
+                ranking.setFixedAfter(this.rankingsSortedByRank().get(ranking.getRank()-2).getBus());
+                this.save(ranking);
+            }
+        }
+        return rankingsSortedByRank();
+    }
+
+
 
 
 

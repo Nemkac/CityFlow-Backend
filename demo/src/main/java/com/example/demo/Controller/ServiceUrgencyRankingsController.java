@@ -36,7 +36,7 @@ public class ServiceUrgencyRankingsController {
     @GetMapping(value="/CityFlow/getServiceUrgencyRankings")
     public ResponseEntity<List<ServiceUrgencyRankings>> getAllServiceUrgencyRankings(){
         if(!serviceUrgencyRankingsService.findAll().isEmpty()) {
-            return new ResponseEntity<List<ServiceUrgencyRankings>>(serviceUrgencyRankingsService.findAll(), HttpStatus.OK);
+            return new ResponseEntity<List<ServiceUrgencyRankings>>(serviceUrgencyRankingsService.rankingsSortedByRank(), HttpStatus.OK);
         }
         return new ResponseEntity("No rankings found", HttpStatus.NOT_FOUND);
     }
@@ -65,7 +65,15 @@ public class ServiceUrgencyRankingsController {
         }
         Bus bus =  this.busService.getById(busId);
         return new ResponseEntity<List<ServiceUrgencyRankings>>(this.serviceUrgencyRankingsService.changeBusPriorityRanking(bus,ordinalNumber),HttpStatus.OK);
+    }
 
+    @GetMapping(value="/CityFlow/moveBusUpByRank/{busId}")
+    public ResponseEntity<List<ServiceUrgencyRankings>> moveBusUpByRank(@PathVariable Integer busId){
+        Bus bus = this.busService.getById(busId);
+        if(bus == null){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(this.serviceUrgencyRankingsService.moveBusUpByRank(bus),HttpStatus.OK);
     }
 
 }
