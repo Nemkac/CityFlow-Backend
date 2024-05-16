@@ -28,7 +28,7 @@ public class UserAccountController {
     private CardService cardService;
 
     @PostMapping(path = "/Account/updateProfile")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_DRIVER','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant, ROLE_ROUTEADMINISTRATOR')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_DRIVER','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant', 'ROLE_ROUTEADMINISTRATOR', 'ROLE_KYCADMINISTRATOR')")
     public ResponseEntity<String>updateProfile(@RequestHeader("Authorization") String authorisation, @RequestBody EditProfileDTO requestBody){
         String bearerToken = authorisation.substring(7);
         String username = jwtService.extractUsername(bearerToken);
