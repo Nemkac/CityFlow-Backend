@@ -1,10 +1,8 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.SalaryDTO;
 import com.example.demo.DTO.UserDTO;
-import com.example.demo.Model.Accountant;
-import com.example.demo.Model.Driver;
-import com.example.demo.Model.Termination;
-import com.example.demo.Model.User;
+import com.example.demo.Model.*;
 import com.example.demo.Service.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -39,6 +37,9 @@ public class HRAdministratorController {
 
     @Autowired
     private TerminationService terminationService;
+
+    @Autowired
+    private SalaryService salaryService;
 
     @PostMapping (path = "/addUser")
     public ResponseEntity<User> addUser(@RequestBody UserDTO userDTO) {
@@ -253,4 +254,37 @@ public class HRAdministratorController {
         }
         return new ResponseEntity<>(usersByRole, HttpStatus.OK);
     }
+
+    @PostMapping("/assignSalary/{userId}")
+    public ResponseEntity<User> assignSalary(@PathVariable Integer userId, @RequestBody SalaryDTO salaryDTO) {
+        User user = userService.findById(userId);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (!user.isEmployed()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Salary salary = new Salary();
+        salary.setUser(user);
+        salary.setBaseSalary(salaryDTO.getBaseSalary());
+        salary.setOvertimeHours(salaryDTO.getOvertimeHours());
+        salary.setHolidayWorkHours(salaryDTO.getHolidayWorkHours());
+        salary.setNightShiftHours(salaryDTO.getNightShiftHours());
+        salary.setSickLeaveHours(salaryDTO.getSickLeaveHours());
+        salary.setSickLeaveType(salaryDTO.getSickLeaveType());
+        salary.setOvertimePayRate(salaryDTO.getOvertimePayRate());
+        salary.setHolidayPayRate(salaryDTO.getHolidayPayRate());
+        salary.setNightShiftPayRate(salaryDTO.getNightShiftPayRate());
+        salary.setTotalSalary(salaryDTO.getBaseSalary()); // Initially setting totalSalary to baseSalary
+
+        salaryService.save(salary);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
 }
