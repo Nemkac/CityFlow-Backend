@@ -1,13 +1,12 @@
 package com.example.demo.Model;
 
 import jakarta.persistence.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
 @Entity
-@Table(name = "documents")
-public class Document {
+@Table(name = "PensionerStatusRequests")
+public class PensionerStatusRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +29,7 @@ public class Document {
     @Lob
     private byte[] data;
 
-    public Document(String name, String username, Date date, String type, byte[] data) {
+    public PensionerStatusRequest(String name, String username, Date date, String type, byte[] data) {
         this.name = name;
         this.username = username;
         this.date = date;
@@ -38,7 +37,7 @@ public class Document {
         this.data = data;
     }
 
-    public Document() {
+    public PensionerStatusRequest() {
     }
 
     public int getId() {
