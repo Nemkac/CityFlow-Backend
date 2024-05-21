@@ -40,6 +40,7 @@ public class AuthenticationController {
 
         }
     }
+
     @PostMapping(path = "/CityFlow/Login")
     public ResponseEntity<LoginDTO> Login(@RequestBody LoginDTO loginData){
         User user = userService.FindByUsername(loginData.getUsername());

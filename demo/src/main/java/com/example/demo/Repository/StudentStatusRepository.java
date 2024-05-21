@@ -11,6 +11,6 @@ public interface StudentStatusRepository extends JpaRepository<StudentStatusRequ
     Optional<StudentStatusRequest> findByUsername(String username);
     Optional<StudentStatusRequest> findByName(String name);
     StudentStatusRequest findByNameAndUsername(String name, String username);
-
+    StudentStatusRequest[] findAllByUsername(String username);
 
 }

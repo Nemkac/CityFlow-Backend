@@ -11,6 +11,6 @@ public interface PensionerStatusRepository extends JpaRepository<PensionerStatus
     Optional<PensionerStatusRequest> findByUsername(String username);
     Optional<PensionerStatusRequest> findByName(String name);
     PensionerStatusRequest findByNameAndUsername(String name, String username);
-
+    PensionerStatusRequest[] findAllByUsername(String username);
 
 }
