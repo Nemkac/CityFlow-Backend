@@ -32,7 +32,7 @@ public class User {
     private String roles;
     @Column
     private boolean employed;
-     @Column
+    @Column
     private double eWallet;
 
     public User(){}
