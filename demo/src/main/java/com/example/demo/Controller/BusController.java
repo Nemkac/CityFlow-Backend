@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class BusController {
@@ -26,6 +28,11 @@ public class BusController {
     @Autowired
     private BusServicingService busServicingService;
 
+    @Autowired
+    private ElectricBusService electricBusService;
+
+    @Autowired
+    private ChargingStationService chargingStationService;
 
 
     // za testiranje, brise se posle
@@ -49,6 +56,11 @@ public class BusController {
             return new ResponseEntity("Bus already exists",HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<Bus>(bus,HttpStatus.OK);
+    }
+
+    @GetMapping(value="/CityFlow/listTest")
+    public ResponseEntity<List<ChargingStation>> listTest(){
+        return new ResponseEntity<>(this.chargingStationService.getALl(),HttpStatus.OK);
     }
 
     @GetMapping(value="/CityFlow/databaseFill")
@@ -84,6 +96,17 @@ public class BusController {
         this.busMalfunctionReportService.save(busMalfunctionReport2);
         this.busMalfunctionReportService.save(busMalfunctionReport3);
         this.busMalfunctionReportService.save(busMalfunctionReport4);
+        ElectricBus elBus1 = new ElectricBus(bus1);
+        ElectricBus elBus2 = new ElectricBus(bus2);
+        List<ElectricBus> elBuses = new ArrayList<ElectricBus>();
+        elBuses.add(elBus1);
+        elBuses.add(elBus2);
+        this.electricBusService.save(elBus1);
+        this.electricBusService.save(elBus2);
+        ChargingStation chargingStation1 = new ChargingStation(elBuses);
+        ChargingStation chargingStation2 = new ChargingStation(null);
+        this.chargingStationService.save(chargingStation1);
+        this.chargingStationService.save(chargingStation2);
         //LocalDate date1 = LocalDate.now().minusMonths(12);
         //LocalDate date2 = LocalDate.now().minusMonths(15);
         //LocalDate date3 = LocalDate.now().minusMonths(12);

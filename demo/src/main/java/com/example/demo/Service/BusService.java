@@ -25,6 +25,7 @@ public class BusService {
         return null;
         //return this.busRepository.save(bus);
     }
+
     public Bus getById(Integer id) { return this.busRepository.getByBusId(id); }
 
     public List<Bus> getAll() { return this.busRepository.findAll(); }
