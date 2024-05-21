@@ -83,7 +83,7 @@ public class GeneticAlgorithmCommunicationController {
 
     @GetMapping(value="/CityFlow/testGeneticString")
     public ResponseEntity<GeneticAlgorithmOutput[]> testGeneticString() throws JsonProcessingException {
-        this.busController.databaseFill();
+        //this.busController.databaseFill();
         ElectricBus elBus1 = this.electricBusService.getById(1);
         ElectricBus elBus2 = this.electricBusService.getById(2);
         ElectricBus elBus3 = this.electricBusService.getById(3);
