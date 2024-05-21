@@ -1,9 +1,6 @@
 package com.example.demo.Service;
 
-import com.example.demo.Model.Card;
-import com.example.demo.Model.Location;
-import com.example.demo.Model.Route;
-import com.example.demo.Model.User;
+import com.example.demo.Model.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,14 +14,14 @@ public class InitialDataInsertionService {
 
     @Autowired
     private UserService userService;
-
     @Autowired
     private RouteService routeService;
-
     @Autowired
     private LocationService locationService;
     @Autowired
     private CardService cardService;
+    @Autowired
+    private BusService busService;
 
     @Transactional
     public void insertInitialData() {
@@ -130,5 +127,14 @@ public class InitialDataInsertionService {
 
         Route route1 = new Route("7A", location1, stations1, location5, "6:30", "00:30");
         routeService.save(route1);
+
+        List<Route> routesForBus1 = new ArrayList<Route>();
+        routesForBus1.add(route1);
+
+        Bus bus1 = new Bus(
+            routesForBus1
+        );
+
+        busService.save(bus1);
     }
 }
