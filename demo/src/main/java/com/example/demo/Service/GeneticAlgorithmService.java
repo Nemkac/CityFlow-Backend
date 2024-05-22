@@ -38,17 +38,22 @@ public class GeneticAlgorithmService {
         List<ElectricBus> buses = this.electricBusService.getAll();
 
         for(Integer individual : bestIndividuals) {
-            System.out.println(individual);
+
             for(ElectricBus bus : buses) {
+
                 for(ChargingStation station : stations) {
+
                     if(station.getBusesCharging() == null || station.getBusesCharging().size() < station.getNumOfPorts()) {
+
                         GeneticAlgorithmOutput newOutput = new GeneticAlgorithmOutput(bus,station,individual, LocalDateTime.now(),LocalDateTime.now().plusMinutes(individual));
                         if(station.getChargerId() == null) {
+
                             List<ElectricBus> busesCharging = new ArrayList<ElectricBus>();
                             busesCharging.add(bus);
                             station.setBusesCharging(busesCharging);
                             this.chargingStationService.save(station);
                         } else {
+
                             List<ElectricBus> busesCharging = station.getBusesCharging();
                             busesCharging.add(bus);
                             station.setBusesCharging(busesCharging);
