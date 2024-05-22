@@ -80,9 +80,14 @@ public class GeneticAlgorithmCommunicationController {
         return new ResponseEntity<>(geneticInput, HttpStatus.OK);
     }
 
+    @GetMapping(value="/CityFlow/getNigaz")
+    public ResponseEntity<List<ElectricBus>> getNigaz(){
+        return new ResponseEntity<>(this.electricBusService.getAll(),HttpStatus.OK);
+    }
+
 
     @GetMapping(value="/CityFlow/testGeneticString")
-    public ResponseEntity<GeneticAlgorithmOutput[]> testGeneticString() throws JsonProcessingException {
+    public ResponseEntity<List<GeneticAlgorithmOutput>> testGeneticString() throws JsonProcessingException {
         //this.busController.databaseFill();
         ElectricBus elBus1 = this.electricBusService.getById(1);
         ElectricBus elBus2 = this.electricBusService.getById(2);
@@ -116,17 +121,21 @@ public class GeneticAlgorithmCommunicationController {
 
         final String uri =  "http://localhost:5000/runGeneticAlgorithm";
         RestTemplate restTemplate = new RestTemplate();
-
         ResponseEntity<String> response = restTemplate.postForEntity(uri,geneticInput,String.class);
         System.out.println(response.getBody());
+
         ObjectMapper objectMapper = new ObjectMapper();
+        Integer[] outputs = objectMapper.readValue(response.getBody(),Integer[].class);
+        List<GeneticAlgorithmOutput> geneticOutput = this.geneticAlgorithmService.transferOutputIntoChargingSchedule(outputs);
+        return new ResponseEntity<>(geneticOutput,HttpStatus.OK);
+
+/*
         GeneticAlgorithmOutput[] outputs = objectMapper.readValue(response.getBody(),GeneticAlgorithmOutput[].class);
         for(GeneticAlgorithmOutput output : outputs) {
             this.geneticAlgorithmService.save(output);
             System.out.println(LocalDateTime.parse(output.getStartTime(),DateTimeFormatter.ISO_DATE_TIME));
         }
-        return new ResponseEntity<>(outputs,HttpStatus.OK);
-
+        return new ResponseEntity<>(outputs,HttpStatus.OK);*/
     }
 
 

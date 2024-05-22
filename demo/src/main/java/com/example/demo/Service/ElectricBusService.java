@@ -1,9 +1,12 @@
 package com.example.demo.Service;
 
+import com.example.demo.Model.ChargingStation;
 import com.example.demo.Model.ElectricBus;
 import com.example.demo.Repository.ElectricBusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ElectricBusService {
@@ -19,8 +22,7 @@ public class ElectricBusService {
         return this.electricBusRepository.getByElBusId(id);
     }
 
-
-
+    public List<ElectricBus> getAll() { return this.electricBusRepository.findAll(); }
 
 
 }

@@ -4,6 +4,7 @@ package com.example.demo.Model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="GeneticOutput")
@@ -13,33 +14,33 @@ public class GeneticAlgorithmOutput {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer genOutId;
 
-    @Column
-    private Integer busId;
+    @OneToOne
+    private ElectricBus elBus;
 
-    @Column
-    private Integer chargingStationId;
+    @ManyToOne
+    private ChargingStation chStation;
 
     @Column
     private Integer chargingTime;
 
     @Column
-    private String startTime;
+    private LocalDateTime startTime;
 
     @Column
-    private String endTime;
+    private LocalDateTime endTime;
 
     public GeneticAlgorithmOutput() {
     }
 
-    public GeneticAlgorithmOutput(Integer busId, Integer chargingStationId, Integer chargingTime) {
-        this.busId = busId;
-        this.chargingStationId = chargingStationId;
+    public GeneticAlgorithmOutput(ElectricBus busId, ChargingStation chargingStationId, Integer chargingTime) {
+        this.elBus = busId;
+        this.chStation = chargingStationId;
         this.chargingTime = chargingTime;
     }
 
-    public GeneticAlgorithmOutput(Integer busId, Integer chargingStationId, Integer chargingTime, String startsAt, String endTime) {
-        this.busId = busId;
-        this.chargingStationId = chargingStationId;
+    public GeneticAlgorithmOutput(ElectricBus bus, ChargingStation chStation, Integer chargingTime, LocalDateTime startsAt, LocalDateTime endTime) {
+        this.elBus = bus;
+        this.chStation = chStation;
         this.chargingTime = chargingTime;
         this.startTime = startsAt;
         this.endTime = endTime;
@@ -51,20 +52,20 @@ public class GeneticAlgorithmOutput {
         return genOutId;
     }
 
-    public Integer getBusId() {
-        return busId;
+    public ElectricBus getBusId() {
+        return elBus;
     }
 
-    public void setBusId(Integer busId) {
-        this.busId = busId;
+    public void setBusId(ElectricBus bus) {
+        this.elBus = bus;
     }
 
-    public Integer getChargingStationId() {
-        return chargingStationId;
+    public ChargingStation getChargingStationId() {
+        return chStation;
     }
 
-    public void setChargingStationId(Integer chargingStationId) {
-        this.chargingStationId = chargingStationId;
+    public void setChargingStationId(ChargingStation chStation) {
+        this.chStation = chStation;
     }
 
     public Integer getChargingTime() {
@@ -75,19 +76,19 @@ public class GeneticAlgorithmOutput {
         this.chargingTime = chargingTime;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startsAt) {
+    public void setStartTime(LocalDateTime startsAt) {
         this.startTime = startsAt;
     }
 
-    public String getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 }
