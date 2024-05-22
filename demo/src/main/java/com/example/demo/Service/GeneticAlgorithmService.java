@@ -37,31 +37,28 @@ public class GeneticAlgorithmService {
         List<ChargingStation> stations = this.chargingStationService.getALl();
         List<ElectricBus> buses = this.electricBusService.getAll();
 
-        for(Integer individual : bestIndividuals) {
-
-            for(ElectricBus bus : buses) {
-
-                for(ChargingStation station : stations) {
-
-                    if(station.getBusesCharging() == null || station.getBusesCharging().size() < station.getNumOfPorts()) {
-
-                        GeneticAlgorithmOutput newOutput = new GeneticAlgorithmOutput(bus,station,individual, LocalDateTime.now(),LocalDateTime.now().plusMinutes(individual));
-                        if(station.getChargerId() == null) {
-
-                            List<ElectricBus> busesCharging = new ArrayList<ElectricBus>();
-                            busesCharging.add(bus);
-                            station.setBusesCharging(busesCharging);
-                            this.chargingStationService.save(station);
-                        } else {
-
-                            List<ElectricBus> busesCharging = station.getBusesCharging();
-                            busesCharging.add(bus);
-                            station.setBusesCharging(busesCharging);
-                            this.chargingStationService.save(station);
+        for(int i = 0; i < bestIndividuals.length; i++) {
+            int chargingCounter = -1;
+            for(ChargingStation station : stations) {
+                for(int j = 0; j < station.getNumOfPorts(); j++) {
+                    chargingCounter++;
+                    if (i == chargingCounter) {
+                        if (station.getBusesCharging().size() < station.getNumOfPorts()) {
+                            ElectricBus bus = this.electricBusService.getAll().get(i);
+                            GeneticAlgorithmOutput newOutput = new GeneticAlgorithmOutput(bus, station, bestIndividuals[i]);
+                            save(newOutput);
+                            if (station.getBusesCharging() == null) {
+                                List<ElectricBus> busesCharging = new ArrayList<ElectricBus>();
+                                busesCharging.add(bus);
+                                station.setBusesCharging(busesCharging);
+                                this.chargingStationService.save(station);
+                            } else {
+                                List<ElectricBus> busesCharging = station.getBusesCharging();
+                                busesCharging.add(bus);
+                                station.setBusesCharging(busesCharging);
+                                this.chargingStationService.save(station);
+                            }
                         }
-                        System.out.println("scigi sacuvam");
-                        save(newOutput);
-                        break;
                     }
                 }
             }
