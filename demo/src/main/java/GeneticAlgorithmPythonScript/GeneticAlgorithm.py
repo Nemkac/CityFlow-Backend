@@ -190,7 +190,7 @@ def run_algorithm():
         station.bus_charging.clear()
 
     best_individual = min(population, key=lambda ind: fitness(ind, buses, charging_stations, current_time))
-    
+
     print(best_individual)
     return jsonify(best_individual)
 
