@@ -113,30 +113,30 @@ public class DocumentController {
         return ResponseEntity.status(200).body(message);
     }
 
-    @GetMapping("/document/getStudentFiles")
+    @PostMapping("/document/getStudentFiles")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getStudentFiles(@RequestHeader("Authorization") String authorization, @RequestBody SingleStringDTO string) throws IOException {
+    public ResponseEntity<String> getStudentFiles(@RequestBody SingleStringDTO string) throws IOException {
         StudentStatusRequest[] studentStatusRequest = studentStatusRequestService.getAllByUsername(string.getString());
         for (StudentStatusRequest request : studentStatusRequest) {
             fileService.saveStudentFiles(request.getData(),request.getName());
         }
         return ResponseEntity.status(200).body("Files written!");
     }
-    @GetMapping("/document/getPensionerFiles")
+    @PostMapping("/document/getPensionerFiles")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getPensionerFiles(@RequestHeader("Authorization") String authorization, @RequestBody SingleStringDTO string) throws IOException {
+    public ResponseEntity<String> getPensionerFiles(@RequestBody SingleStringDTO string) throws IOException {
         PensionerStatusRequest[] pensionerStatusRequests = pensionerStatusRequestService.getAllByUsername(string.getString());
         for (PensionerStatusRequest request : pensionerStatusRequests) {
             fileService.savePensionerFiles(request.getData(),request.getName());
         }
         return ResponseEntity.status(200).body("Files written!");
     }
-    @GetMapping("/document/getVacationFiles")
+    @PostMapping("/document/getVacationFiles")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getVacationFiles(@RequestHeader("Authorization") String authorization,@RequestBody SingleStringDTO string) throws IOException {
+    public ResponseEntity<String> getVacationFiles(@RequestBody SingleStringDTO string) throws IOException {
         VacationRequest[] vacationRequests = vacationService.getAllByUsername(string.getString());
         for (VacationRequest request : vacationRequests) {
             fileService.saveVacationFiles(request.getData(),request.getName());
@@ -144,10 +144,10 @@ public class DocumentController {
         return ResponseEntity.status(200).body("Files written!");
     }
 
-    @GetMapping("/document/getHealthcareFiles")
+    @PostMapping("/document/getHealthcareFiles")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getHealthcareFiles(@RequestHeader("Authorization") String authorization, @RequestBody SingleStringDTO string) throws IOException {
+    public ResponseEntity<String> getHealthcareFiles(@RequestBody SingleStringDTO string) throws IOException {
         HealthcareRequest[] healthcareRequests = healthcareService.getAllByUsername(string.getString());
         for (HealthcareRequest request : healthcareRequests) {
             fileService.saveHealthcareFiles(request.getData(),request.getName());
@@ -156,7 +156,7 @@ public class DocumentController {
     }
     @GetMapping("/document/getVacationUsernames")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
-    public ResponseEntity<Map<String,List<String>>> getRequestingUsernames(@RequestHeader("Authorization") String auhorization){
+    public ResponseEntity<Map<String,List<String>>> getRequestingUsernames(){
         Map<String, List<String>> responseMap = new HashMap<>();
         responseMap.put("array", vacationService.getAllUsernames());
         return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
@@ -164,7 +164,7 @@ public class DocumentController {
 
     @GetMapping("/document/getHealthcareUsernames")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
-    public ResponseEntity<Map<String,List<String>>> getRequestingHealthcareUsernames(@RequestHeader("Authorization") String auhorization){
+    public ResponseEntity<Map<String,List<String>>> getRequestingHealthcareUsernames(){
         Map<String, List<String>> responseMap = new HashMap<>();
         responseMap.put("array", healthcareService.getAllUsernames());
         return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
@@ -172,15 +172,13 @@ public class DocumentController {
 
     @GetMapping("/document/getStudentUsernames")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
-    public ResponseEntity<Map<String,List<String>>> getRequestingStudentUsernames(@RequestHeader("Authorization") String auhorization){
-        Map<String, List<String>> responseMap = new HashMap<>();
-        responseMap.put("array", studentStatusRequestService.getAllUsernames());
-        return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
+    public ResponseEntity<List<String>> getRequestingStudentUsernames(){
+        return new ResponseEntity<>(studentStatusRequestService.getAllUsernames(), HttpStatusCode.valueOf(200));
     }
 
     @GetMapping("/document/getPensionerUsernames")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
-    public ResponseEntity<Map<String,List<String>>> getRequestingPensionerUsernames(@RequestHeader("Authorization") String auhorization){
+    public ResponseEntity<Map<String,List<String>>> getRequestingPensionerUsernames(){
         Map<String, List<String>> responseMap = new HashMap<>();
         responseMap.put("array", pensionerStatusRequestService.getAllUsernames());
         return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
