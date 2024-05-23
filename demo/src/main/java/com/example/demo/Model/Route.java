@@ -1,8 +1,10 @@
 package com.example.demo.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,6 +23,10 @@ public class Route {
 
     @OneToMany
     public List<Location> stations;
+
+    @ManyToMany(mappedBy = "routes")
+    @JsonIgnoreProperties("routes")
+    public List<Bus> buses;
 
     @ManyToOne
     @JoinColumn(name = "endLocationID")
@@ -41,6 +47,7 @@ public class Route {
         this.endPoint = endPoint;
         this.openingTime = openingTime;
         this.closingTime = closingTime;
+        this.buses = new ArrayList<Bus>();
     }
 
     public int getId() {
@@ -73,5 +80,13 @@ public class Route {
 
     public void setEndPoint(Location endPoint) {
         this.endPoint = endPoint;
+    }
+
+    public List<Bus> getBuses() {
+        return buses;
+    }
+
+    public void setBuses(List<Bus> buses) {
+        this.buses = buses;
     }
 }
