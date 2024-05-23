@@ -11,7 +11,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class VacationService {
@@ -34,4 +36,17 @@ public class VacationService {
     public VacationRequest[] getAllByUsername(String username){
         return vacationRepository.findAllByUsername(username);
     }
+
+    public List<String> getAllUsernames(){
+        List<VacationRequest> vacationRequests = vacationRepository.findAll();
+        List<String> usernames = new ArrayList<>();
+        for (VacationRequest vacationRequest : vacationRequests) {
+            if(!usernames.contains(vacationRequest.getUsername())) {
+                usernames.add(vacationRequest.getUsername());
+            }
+        }
+        return usernames;
+    }
+
+
 }

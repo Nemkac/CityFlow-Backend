@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class DocumentController {
@@ -110,36 +114,30 @@ public class DocumentController {
     }
 
     @GetMapping("/document/getStudentFiles")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getStudentFiles(@RequestHeader("Authorization") String authorization) throws IOException {
-        String bearerToken = authorization.substring(7);
-        String username = jwtService.extractUsername(bearerToken);
-        StudentStatusRequest[] studentStatusRequest = studentStatusRequestService.getAllByUsername(username);
+    public ResponseEntity<String> getStudentFiles(@RequestHeader("Authorization") String authorization, @RequestBody SingleStringDTO string) throws IOException {
+        StudentStatusRequest[] studentStatusRequest = studentStatusRequestService.getAllByUsername(string.getString());
         for (StudentStatusRequest request : studentStatusRequest) {
             fileService.saveStudentFiles(request.getData(),request.getName());
         }
         return ResponseEntity.status(200).body("Files written!");
     }
     @GetMapping("/document/getPensionerFiles")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getPensionerFiles(@RequestHeader("Authorization") String authorization) throws IOException {
-        String bearerToken = authorization.substring(7);
-        String username = jwtService.extractUsername(bearerToken);
-        PensionerStatusRequest[] pensionerStatusRequests = pensionerStatusRequestService.getAllByUsername(username);
+    public ResponseEntity<String> getPensionerFiles(@RequestHeader("Authorization") String authorization, @RequestBody SingleStringDTO string) throws IOException {
+        PensionerStatusRequest[] pensionerStatusRequests = pensionerStatusRequestService.getAllByUsername(string.getString());
         for (PensionerStatusRequest request : pensionerStatusRequests) {
             fileService.savePensionerFiles(request.getData(),request.getName());
         }
         return ResponseEntity.status(200).body("Files written!");
     }
     @GetMapping("/document/getVacationFiles")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getVacationFiles(@RequestHeader("Authorization") String authorization) throws IOException {
-        String bearerToken = authorization.substring(7);
-        String username = jwtService.extractUsername(bearerToken);
-        VacationRequest[] vacationRequests = vacationService.getAllByUsername(username);
+    public ResponseEntity<String> getVacationFiles(@RequestHeader("Authorization") String authorization,@RequestBody SingleStringDTO string) throws IOException {
+        VacationRequest[] vacationRequests = vacationService.getAllByUsername(string.getString());
         for (VacationRequest request : vacationRequests) {
             fileService.saveVacationFiles(request.getData(),request.getName());
         }
@@ -147,16 +145,45 @@ public class DocumentController {
     }
 
     @GetMapping("/document/getHealthcareFiles")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     @Transactional
-    public ResponseEntity<String> getHealthcareFiles(@RequestHeader("Authorization") String authorization) throws IOException {
-        String bearerToken = authorization.substring(7);
-        String username = jwtService.extractUsername(bearerToken);
-        HealthcareRequest[] healthcareRequests = healthcareService.getAllByUsername(username);
+    public ResponseEntity<String> getHealthcareFiles(@RequestHeader("Authorization") String authorization, @RequestBody SingleStringDTO string) throws IOException {
+        HealthcareRequest[] healthcareRequests = healthcareService.getAllByUsername(string.getString());
         for (HealthcareRequest request : healthcareRequests) {
             fileService.saveHealthcareFiles(request.getData(),request.getName());
         }
         return ResponseEntity.status(200).body("Files written!");
+    }
+    @GetMapping("/document/getVacationUsernames")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
+    public ResponseEntity<Map<String,List<String>>> getRequestingUsernames(@RequestHeader("Authorization") String auhorization){
+        Map<String, List<String>> responseMap = new HashMap<>();
+        responseMap.put("array", vacationService.getAllUsernames());
+        return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("/document/getHealthcareUsernames")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
+    public ResponseEntity<Map<String,List<String>>> getRequestingHealthcareUsernames(@RequestHeader("Authorization") String auhorization){
+        Map<String, List<String>> responseMap = new HashMap<>();
+        responseMap.put("array", healthcareService.getAllUsernames());
+        return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("/document/getStudentUsernames")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
+    public ResponseEntity<Map<String,List<String>>> getRequestingStudentUsernames(@RequestHeader("Authorization") String auhorization){
+        Map<String, List<String>> responseMap = new HashMap<>();
+        responseMap.put("array", studentStatusRequestService.getAllUsernames());
+        return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("/document/getPensionerUsernames")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
+    public ResponseEntity<Map<String,List<String>>> getRequestingPensionerUsernames(@RequestHeader("Authorization") String auhorization){
+        Map<String, List<String>> responseMap = new HashMap<>();
+        responseMap.put("array", pensionerStatusRequestService.getAllUsernames());
+        return new ResponseEntity<>(responseMap, HttpStatusCode.valueOf(200));
     }
 
 

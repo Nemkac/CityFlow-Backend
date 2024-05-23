@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.Model.HealthcareRequest;
 import com.example.demo.Model.StudentStatusRequest;
 import com.example.demo.Repository.StudentStatusRepository;
 import jakarta.transaction.Transactional;
@@ -9,7 +10,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class StudentStatusRequestService {
@@ -31,5 +34,15 @@ public class StudentStatusRequestService {
     @Transactional
     public StudentStatusRequest[] getAllByUsername(String username){
         return studentStatusRepository.findAllByUsername(username);
+    }
+    public List<String> getAllUsernames(){
+        List<StudentStatusRequest> studentStatusRequests = studentStatusRepository.findAll();
+        List<String> usernames = new ArrayList<>();
+        for (StudentStatusRequest studentStatusRequest : studentStatusRequests) {
+            if(!usernames.contains(studentStatusRequest.getUsername())) {
+                usernames.add(studentStatusRequest.getUsername());
+            }
+        }
+        return usernames;
     }
 }

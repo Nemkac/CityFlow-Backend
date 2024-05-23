@@ -1,9 +1,9 @@
 package com.example.demo.Repository;
 
-import com.example.demo.Model.HealthcareRequest;
 import com.example.demo.Model.VacationRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VacationRepository extends JpaRepository<VacationRequest,Integer> {
@@ -13,5 +13,5 @@ public interface VacationRepository extends JpaRepository<VacationRequest,Intege
     Optional<VacationRequest> findByName(String name);
     VacationRequest findByNameAndUsername(String name, String username);
     VacationRequest[] findAllByUsername(String username);
-
+    List<VacationRequest> findAll();
 }

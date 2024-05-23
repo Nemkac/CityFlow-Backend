@@ -11,7 +11,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class PensionerStatusRequestService {
@@ -33,5 +35,15 @@ public class PensionerStatusRequestService {
     @Transactional
     public PensionerStatusRequest[] getAllByUsername(String username){
         return pensionerStatusRepository.findAllByUsername(username);
+    }
+    public List<String> getAllUsernames(){
+        List<PensionerStatusRequest> pensionerStatusRequests = pensionerStatusRepository.findAll();
+        List<String> usernames = new ArrayList<>();
+        for (PensionerStatusRequest pensionerStatusRequest : pensionerStatusRequests) {
+            if(!usernames.contains(pensionerStatusRequest.getUsername())) {
+                usernames.add(pensionerStatusRequest.getUsername());
+            }
+        }
+        return usernames;
     }
 }
