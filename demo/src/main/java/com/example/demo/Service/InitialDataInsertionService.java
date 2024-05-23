@@ -131,9 +131,7 @@ public class InitialDataInsertionService {
         List<Route> routesForBus1 = new ArrayList<Route>();
         routesForBus1.add(route1);
 
-        Bus bus1 = new Bus(
-            routesForBus1
-        );
+        Bus bus1 = new Bus("SM 076 AT",routesForBus1);
 
         busService.save(bus1);
     }

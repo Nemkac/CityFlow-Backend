@@ -1,5 +1,6 @@
 package com.example.demo.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
@@ -23,7 +24,8 @@ public class Route {
     @OneToMany
     public List<Location> stations;
 
-    @OneToMany
+    @ManyToMany(mappedBy = "routes")
+    @JsonIgnoreProperties("routes")
     public List<Bus> buses;
 
     @ManyToOne
