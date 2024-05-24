@@ -23,6 +23,9 @@ public class RouteService {
         Optional<Route> optionalRoute = routeRepository.findById(id);
         return optionalRoute.orElse(null);
     }
+    public Route getById(int id) {
+        return routeRepository.findById(id).orElse(null);
+    }
 
     public Route getByStartingPoint(Location startingPoint){
         return routeRepository.getByStartingPoint(startingPoint);

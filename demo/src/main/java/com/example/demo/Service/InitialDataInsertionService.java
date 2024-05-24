@@ -78,6 +78,35 @@ public class InitialDataInsertionService {
                 "ROLE_ROUTEADMINISTRATOR",
                 true
         );
+
+        LocalDate user6BirthDate = LocalDate.of(1985, 3, 15);
+        User user6 = new User(
+                "DriverMilan",
+                "Milan",
+                "Petrović",
+                "milan.petrović@gmail.com",
+                "mp123",
+                user6BirthDate,
+                "0623456789",
+                "ROLE_DRIVER",
+                true
+        );
+        userService.addUser(user6);
+
+        LocalDate user7BirthDate = LocalDate.of(1978, 8, 30);
+        User user7 = new User(
+                "DriverMarko",
+                "Marko",
+                "Nikolić",
+                "marko.nikolic@gmail.com",
+                "mn123",
+                user7BirthDate,
+                "0634567890",
+                "ROLE_DRIVER",
+                true
+        );
+
+        userService.addUser(user7);
         Card card1 = new Card(
                 "1234 5678",
                 "04/05",
@@ -103,6 +132,8 @@ public class InitialDataInsertionService {
                 "0645678910",
                 "ROLE_KYCADMINISTRATOR"
         );
+
+
         cardService.addCard(card1);
         cardService.addCard(card2);
 //        userService.addUser(user1);
