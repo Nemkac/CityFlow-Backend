@@ -1,5 +1,6 @@
 package com.example.demo.Repository;
 
+import com.example.demo.Model.Bus;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
