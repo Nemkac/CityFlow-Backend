@@ -42,11 +42,13 @@ public class DocumentController {
     @Transactional
     @PostMapping(path = "/document/studentRequestUpload")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<String> uploadStudentFile(@RequestHeader("Authorization") String authorization,
+    public ResponseEntity<String> uploadStudentFile(
+                                             @RequestHeader("Authorization") String authorization,
                                              @RequestParam("zahtev") MultipartFile zahtev,
                                              @RequestParam("obrada") MultipartFile obrada,
                                              @RequestParam("fotografija") MultipartFile fotografija,
                                              @RequestParam("indeks") MultipartFile indeks
+
     ) throws IOException {
         String bearerToken = authorization.substring(7);
         String username = jwtService.extractUsername(bearerToken);
