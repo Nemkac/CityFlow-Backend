@@ -1,9 +1,11 @@
 package com.example.demo.Model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.checkerframework.checker.units.qual.C;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,6 +36,7 @@ public class User {
     private boolean employed;
     @Column
     private double eWallet;
+
 
     public User(){}
 
@@ -89,6 +92,7 @@ public class User {
         this.employed = employed;
         this.eWallet = 0;
     }
+
 
     public double geteWallet() {
         return eWallet;
