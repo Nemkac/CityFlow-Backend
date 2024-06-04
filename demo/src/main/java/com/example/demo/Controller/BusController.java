@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.DTO.BusDTO;
 import com.example.demo.Model.Bus;
+import com.example.demo.Model.Route;
 import com.example.demo.Service.BusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,18 @@ public class BusController {
             return new ResponseEntity<>(bus, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity(e, HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @DeleteMapping(path = "/deleteBus/{id}")
+    public ResponseEntity<?>deleteBus(@PathVariable Integer id){
+        Bus busToDelete = this.busService.findById(id);
+
+        if (busToDelete != null) {
+            busService.deleteById(busToDelete.id);
+            return ResponseEntity.ok().body("{\"message\": \"Bus deleted successfully\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Bus not found\"}");
         }
     }
 }

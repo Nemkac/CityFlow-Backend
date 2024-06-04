@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.DeleteBusFromRouteDTO;
 import com.example.demo.DTO.RouteDTO;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
@@ -92,6 +93,23 @@ public class RouteController {
             return ResponseEntity.ok().body("{\"message\": \"Route deleted successfully\"}");
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Route not found\"}");
+        }
+    }
+
+    @PostMapping(path = "/deleteBusFromRoute")
+    public ResponseEntity<?> deleteBusFromRoute(@RequestBody DeleteBusFromRouteDTO dto){
+        System.out.println("Prvi poziv");
+        try{
+            System.out.println("Drugi poziv");
+            Integer routeId = dto.getRouteId();
+            System.out.println(routeId);
+            Integer busId = dto.getBusId();
+            System.out.println(busId);
+            this.routeService.deleteBusFromRoute(routeId, busId);
+            System.out.println("Peti poziv");
+            return new ResponseEntity<>("Bus successfuly removed from route!", HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(e, HttpStatus.FORBIDDEN);
         }
     }
 }

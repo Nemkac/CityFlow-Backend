@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.Model.Bus;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
 import com.example.demo.Repository.RouteRepository;
@@ -30,7 +31,24 @@ public class RouteService {
     public Route getByStartingPoint(Location startingPoint){
         return routeRepository.getByStartingPoint(startingPoint);
     }
-
+    public void deleteBusFromRoute(Integer routeId, Integer busId){
+        System.out.println("Prvi poziv u servisu");
+        Route route = findById(routeId);
+        System.out.println(route.name);
+        if(route != null){
+            List<Bus> routeBuses = route.getBuses();
+            System.out.println("Lista dobijena");
+            for(Bus bus : routeBuses){
+                if(bus.id.equals(busId)){
+                    System.out.println("Bus pronadjen");
+                    routeBuses.remove(bus);
+                    System.out.println("Bus obrisan");
+                    route.setBuses(routeBuses);
+                    this.routeRepository.save(route);
+                }
+            }
+        }
+    }
     public Route getByEndPoint(Location endPoint){
         return routeRepository.getByEndPoint(endPoint);
     }
