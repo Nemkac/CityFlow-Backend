@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import com.example.demo.Service.InitialDataInsertionService;
+import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 
 @EnableAsync
+@EnableRabbit
 @SpringBootApplication
 public class DemoApplication implements CommandLineRunner {
 

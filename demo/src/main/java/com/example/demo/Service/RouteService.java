@@ -3,6 +3,7 @@ package com.example.demo.Service;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
+import com.example.demo.Repository.BusRepository;
 import com.example.demo.Repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ public class RouteService {
 
     @Autowired
     private RouteRepository routeRepository;
+
+    @Autowired
+    private BusService busService;
 
     public Route save(Route route){
         return routeRepository.save(route);
@@ -32,21 +36,17 @@ public class RouteService {
         return routeRepository.getByStartingPoint(startingPoint);
     }
     public void deleteBusFromRoute(Integer routeId, Integer busId){
-        System.out.println("Prvi poziv u servisu");
-        Route route = findById(routeId);
-        System.out.println(route.name);
-        if(route != null){
-            List<Bus> routeBuses = route.getBuses();
-            System.out.println("Lista dobijena");
-            for(Bus bus : routeBuses){
-                if(bus.id.equals(busId)){
-                    System.out.println("Bus pronadjen");
-                    routeBuses.remove(bus);
-                    System.out.println("Bus obrisan");
-                    route.setBuses(routeBuses);
-                    this.routeRepository.save(route);
-                }
-            }
+        Route selectedRoute = findById(routeId);
+        Bus busToRemove = this.busService.findById(busId);
+        if(selectedRoute != null && busToRemove != null){
+            List<Bus> routeBuses = selectedRoute.getBuses();
+            List<Route> busRoutes = busToRemove.getRoutes();
+
+            routeBuses.removeIf(bus -> bus.id.equals(busId));
+            busRoutes.removeIf(route -> route.id.equals(routeId));
+
+            //save(selectedRoute);
+            this.busService.save(busToRemove);
         }
     }
     public Route getByEndPoint(Location endPoint){

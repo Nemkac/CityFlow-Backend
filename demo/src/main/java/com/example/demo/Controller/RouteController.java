@@ -96,20 +96,16 @@ public class RouteController {
         }
     }
 
-    @PostMapping(path = "/deleteBusFromRoute")
+    @PutMapping(path = "/deleteBusFromRoute")
     public ResponseEntity<?> deleteBusFromRoute(@RequestBody DeleteBusFromRouteDTO dto){
-        System.out.println("Prvi poziv");
         try{
-            System.out.println("Drugi poziv");
             Integer routeId = dto.getRouteId();
-            System.out.println(routeId);
             Integer busId = dto.getBusId();
-            System.out.println(busId);
+
             this.routeService.deleteBusFromRoute(routeId, busId);
-            System.out.println("Peti poziv");
             return new ResponseEntity<>("Bus successfuly removed from route!", HttpStatus.OK);
         }catch(Exception e){
-            return new ResponseEntity<>(e, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.toString(), HttpStatus.FORBIDDEN);
         }
     }
 }

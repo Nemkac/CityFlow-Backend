@@ -13,6 +13,5 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     Bus save(Bus bus);
     List<Bus> findAll();
     Optional<Bus> findById(Integer id);
-
     void deleteById(Integer id);
 }
