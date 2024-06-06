@@ -19,9 +19,8 @@ public class LiveLocationController {
         this.rabbitMQJsonProducer = rabbitMQJsonProducer;
     }
 
-    @PostMapping(value = "/api/liveLocation/publish/json")
+    @PostMapping(value = "/liveLocation/publish/json")
     @CrossOrigin(origins = "http://localhost:4200")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<LiveLocationDTO> sendJsonMessage(@RequestBody LiveLocationDTO liveLocationDTO){
         rabbitMQJsonProducer.sendJsonMessage(liveLocationDTO);
         return new ResponseEntity(liveLocationDTO, HttpStatus.OK);
