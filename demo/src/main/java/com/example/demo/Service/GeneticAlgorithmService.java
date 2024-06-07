@@ -71,7 +71,7 @@ public class GeneticAlgorithmService {
         for(ElectricBus bus : this.electricBusService.getAll()){
             boolean busFound = false;
             for(GeneticAlgorithmOutput output : this.getAll()){
-                if(bus.equals(output.getBusId())){
+                if(bus.equals(output.getElBus())){
                     busFound = true;
                 }
             }

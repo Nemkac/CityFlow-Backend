@@ -139,4 +139,11 @@ public class GeneticAlgorithmCommunicationController {
     }
 
 
+    @GetMapping(value="/CityFlow/getChargingPlan")
+    public ResponseEntity<List<GeneticAlgorithmOutput>> getChargingPlan(){
+        return new ResponseEntity<>(this.geneticAlgorithmService.getAll(),HttpStatus.OK);
+    }
+
+
+
 }

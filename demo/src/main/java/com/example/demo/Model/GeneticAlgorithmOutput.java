@@ -3,7 +3,6 @@ package com.example.demo.Model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -52,11 +51,11 @@ public class GeneticAlgorithmOutput {
         return genOutId;
     }
 
-    public ElectricBus getBusId() {
+    public ElectricBus getElBus() {
         return elBus;
     }
 
-    public void setBusId(ElectricBus bus) {
+    public void setElBus(ElectricBus bus) {
         this.elBus = bus;
     }
 
