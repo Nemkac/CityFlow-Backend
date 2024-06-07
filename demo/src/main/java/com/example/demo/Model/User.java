@@ -36,6 +36,8 @@ public class User {
     private boolean employed;
     @Column
     private double eWallet;
+    @Column
+    private String status;
 
 
     public User(){}
@@ -180,5 +182,13 @@ public class User {
 
     public void setEmployed(boolean employed) {
         this.employed = employed;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
