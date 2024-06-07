@@ -40,6 +40,8 @@ public class HRAdministratorController {
 
     @Autowired
     private SalaryService salaryService;
+    @Autowired
+    private  FinancialReportService financialReportService;
 
     @PostMapping (path = "/addUser")
     public ResponseEntity<User> addUser(@RequestBody UserDTO userDTO) {
@@ -283,6 +285,45 @@ public class HRAdministratorController {
         salaryService.save(salary);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/financialReports")
+    public ResponseEntity<FinancialReport> getAggregatedFinancialReport() {
+        List<FinancialReport> reports = financialReportService.getAllReports();
+
+        double totalDailyTicketSales = 0;
+        double totalMonthlyTicketSales = 0;
+        double totalAnnualTicketSales = 0;
+        double totalSponsorshipRevenue = 0;
+        double totalSalariesPaid = 0;
+        double totalFuelCosts = 0;
+        double totalVehicleMaintenanceCosts = 0;
+
+        for (FinancialReport report : reports) {
+            totalDailyTicketSales += report.getDailyTicketSales();
+            totalMonthlyTicketSales += report.getMonthlyTicketSales();
+            totalAnnualTicketSales += report.getAnnualTicketSales();
+            totalSponsorshipRevenue += report.getSponsorshipRevenue();
+            totalSalariesPaid += report.getTotalSalariesPaid();
+            totalFuelCosts += report.getFuelCosts();
+            totalVehicleMaintenanceCosts += report.getVehicleMaintenanceCosts();
+        }
+
+        double totalIncome = totalDailyTicketSales + totalMonthlyTicketSales + totalAnnualTicketSales + totalSponsorshipRevenue;
+        double totalOutcome = totalSalariesPaid + totalFuelCosts + totalVehicleMaintenanceCosts;
+        double netProfit = totalIncome - totalOutcome;
+
+        FinancialReport aggregatedReport = new FinancialReport();
+        aggregatedReport.setDailyTicketSales(totalDailyTicketSales);
+        aggregatedReport.setMonthlyTicketSales(totalMonthlyTicketSales);
+        aggregatedReport.setAnnualTicketSales(totalAnnualTicketSales);
+        aggregatedReport.setSponsorshipRevenue(totalSponsorshipRevenue);
+        aggregatedReport.setTotalSalariesPaid(totalSalariesPaid);
+        aggregatedReport.setFuelCosts(totalFuelCosts);
+        aggregatedReport.setVehicleMaintenanceCosts(totalVehicleMaintenanceCosts);
+        aggregatedReport.setNetProfit(netProfit);
+
+        return ResponseEntity.ok(aggregatedReport);
     }
 
 

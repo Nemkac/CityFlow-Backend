@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,6 +23,8 @@ public class InitialDataInsertionService {
     private CardService cardService;
     @Autowired
     private BusService busService;
+    @Autowired
+    private FinancialReportService financialReportService;
 
     @Transactional
     public void insertInitialData() {
@@ -165,5 +168,18 @@ public class InitialDataInsertionService {
         Bus bus1 = new Bus("SM 076 AT",routesForBus1);
 
         busService.save(bus1);
+
+
+        FinancialReport report1 = new FinancialReport(1, 1000, 30000, 360000, 5000, 20000, 3000, 4000, new Date(), 5000);
+        FinancialReport report2 = new FinancialReport(2, 1200, 32000, 384000, 6000, 21000, 3200, 4200, new Date(), 5200);
+        FinancialReport report3 = new FinancialReport(3, 1100, 31000, 372000, 5500, 20500, 3100, 4100, new Date(), 5100);
+        FinancialReport report4 = new FinancialReport(4, 1300, 33000, 396000, 6500, 22000, 3300, 4300, new Date(), 5300);
+        FinancialReport report5 = new FinancialReport(5, 1400, 34000, 408000, 7000, 23000, 3400, 4400, new Date(), 5400);
+
+        financialReportService.save(report1);
+        financialReportService.save(report2);
+        financialReportService.save(report3);
+        financialReportService.save(report4);
+        financialReportService.save(report5);
     }
 }
