@@ -59,11 +59,11 @@ public class GeneticAlgorithmOutput {
         this.elBus = bus;
     }
 
-    public ChargingStation getChargingStationId() {
+    public ChargingStation getChStation() {
         return chStation;
     }
 
-    public void setChargingStationId(ChargingStation chStation) {
+    public void setChargingStation(ChargingStation chStation) {
         this.chStation = chStation;
     }
 
