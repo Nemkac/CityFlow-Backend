@@ -52,7 +52,6 @@ public class DocumentController {
     ) throws IOException {
         String bearerToken = authorization.substring(7);
         String username = jwtService.extractUsername(bearerToken);
-
         studentStatusRequestService.store(zahtev,username);
         String message = "Uploaded the file successfully: " + zahtev.getOriginalFilename() + '\n';
         studentStatusRequestService.store(obrada,username);
@@ -121,7 +120,7 @@ public class DocumentController {
     public ResponseEntity<String> getStudentFiles(@RequestBody SingleStringDTO string) throws IOException {
         StudentStatusRequest[] studentStatusRequest = studentStatusRequestService.getAllByUsername(string.getString());
         for (StudentStatusRequest request : studentStatusRequest) {
-            fileService.saveStudentFiles(request.getData(),request.getName());
+            fileService.saveStudentFiles(request.getData(),request.getName(),string.getString());
         }
         return ResponseEntity.status(200).body("Files written!");
     }
@@ -131,7 +130,7 @@ public class DocumentController {
     public ResponseEntity<String> getPensionerFiles(@RequestBody SingleStringDTO string) throws IOException {
         PensionerStatusRequest[] pensionerStatusRequests = pensionerStatusRequestService.getAllByUsername(string.getString());
         for (PensionerStatusRequest request : pensionerStatusRequests) {
-            fileService.savePensionerFiles(request.getData(),request.getName());
+            fileService.savePensionerFiles(request.getData(),request.getName(),string.getString());
         }
         return ResponseEntity.status(200).body("Files written!");
     }
@@ -141,7 +140,7 @@ public class DocumentController {
     public ResponseEntity<String> getVacationFiles(@RequestBody SingleStringDTO string) throws IOException {
         VacationRequest[] vacationRequests = vacationService.getAllByUsername(string.getString());
         for (VacationRequest request : vacationRequests) {
-            fileService.saveVacationFiles(request.getData(),request.getName());
+            fileService.saveVacationFiles(request.getData(),request.getName(),string.getString());
         }
         return ResponseEntity.status(200).body("Files written!");
     }
@@ -152,7 +151,7 @@ public class DocumentController {
     public ResponseEntity<String> getHealthcareFiles(@RequestBody SingleStringDTO string) throws IOException {
         HealthcareRequest[] healthcareRequests = healthcareService.getAllByUsername(string.getString());
         for (HealthcareRequest request : healthcareRequests) {
-            fileService.saveHealthcareFiles(request.getData(),request.getName());
+            fileService.saveHealthcareFiles(request.getData(),request.getName(),string.getString());
         }
         return ResponseEntity.status(200).body("Files written!");
     }

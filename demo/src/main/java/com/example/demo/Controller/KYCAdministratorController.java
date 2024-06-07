@@ -3,8 +3,7 @@ package com.example.demo.Controller;
 import com.example.demo.DTO.KYCBalanceDTO;
 import com.example.demo.DTO.UsernamesDTO;
 import com.example.demo.Model.User;
-import com.example.demo.Service.JwtService;
-import com.example.demo.Service.UserService;
+import com.example.demo.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -27,11 +26,20 @@ public class KYCAdministratorController {
     private JwtService jwtService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private StudentStatusRequestService studentStatusRequestService;
+    @Autowired
+    private PensionerStatusRequestService pensionerStatusRequestService;
+    @Autowired
+    private VacationService vacationService;
+    @Autowired
+    private  HealthcareService healthcareService;
 
     @PostMapping(path = "/KYC/studentRequests")
     @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
     public ResponseEntity<String> studentRequests(@RequestBody UsernamesDTO usernamesDTO){
         RestTemplate restTemplate = new RestTemplate();
+        System.out.println(usernamesDTO);
         int counter = 0;
         String url = "http://localhost:8000/studentRequests";
         for (String username: usernamesDTO.getUsernames()) {
@@ -113,6 +121,30 @@ public class KYCAdministratorController {
         }else{
             return new ResponseEntity<>("Error!",HttpStatusCode.valueOf(400));
         }
+    }
+    @GetMapping(path="/KYC/report")
+    @PreAuthorize("hasAuthority('ROLE_KYCADMINISTRATOR')")
+    public ResponseEntity<List<String>> report() {
+        int pensionerRequests = pensionerStatusRequestService.getAllUsernames().size();
+        int vacationRequests = vacationService.getAllUsernames().size();
+        int studentRequests = studentStatusRequestService.getAllUsernames().size();
+        int healthcareRequests = healthcareService.getAllUsernames().size();
+        int totalRequests = pensionerRequests + vacationRequests + studentRequests + healthcareRequests;
+        List<String> list = new ArrayList<>();
+        list.add(Integer.toString(pensionerRequests));
+        list.add(Integer.toString(vacationRequests));
+        list.add(Integer.toString(studentRequests));
+        list.add(Integer.toString(healthcareRequests));
+        list.add(Integer.toString(totalRequests));
+        List<User> users = userService.getAll();
+        int payments = 0;
+        for (User user : users) {
+            payments += user.geteWallet();
+        }
+        list.add(Integer.toString(payments));
+
+        return new ResponseEntity<>(list, HttpStatusCode.valueOf(200));
+
     }
 
 }
