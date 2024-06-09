@@ -1,7 +1,9 @@
 package com.example.demo.Service;
 
+import com.example.demo.Model.Bus;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
+import com.example.demo.Repository.BusRepository;
 import com.example.demo.Repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ public class RouteService {
 
     @Autowired
     private RouteRepository routeRepository;
+
+    @Autowired
+    private BusService busService;
 
     public Route save(Route route){
         return routeRepository.save(route);
@@ -30,7 +35,20 @@ public class RouteService {
     public Route getByStartingPoint(Location startingPoint){
         return routeRepository.getByStartingPoint(startingPoint);
     }
+    public void deleteBusFromRoute(Integer routeId, Integer busId){
+        Route selectedRoute = findById(routeId);
+        Bus busToRemove = this.busService.findById(busId);
+        if(selectedRoute != null && busToRemove != null){
+            List<Bus> routeBuses = selectedRoute.getBuses();
+            List<Route> busRoutes = busToRemove.getRoutes();
 
+            routeBuses.removeIf(bus -> bus.id.equals(busId));
+            busRoutes.removeIf(route -> route.id.equals(routeId));
+
+            //save(selectedRoute);
+            this.busService.save(busToRemove);
+        }
+    }
     public Route getByEndPoint(Location endPoint){
         return routeRepository.getByEndPoint(endPoint);
     }

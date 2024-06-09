@@ -10,10 +10,10 @@ import java.util.List;
 public class Bus {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    public Integer id;
 
     @Column
-    private String licencePlate;
+    public String licencePlate;
 
     @ManyToMany
     @JoinTable(
@@ -22,7 +22,7 @@ public class Bus {
             inverseJoinColumns = @JoinColumn(name = "route_id")
     )
     @JsonIgnoreProperties("buses")
-    private List<Route> routes;
+    public List<Route> routes;
 
     public Bus() {
     }
