@@ -5,13 +5,16 @@ import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
 import com.example.demo.Repository.BusRepository;
 import com.example.demo.Repository.RouteRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class RouteService {
 
     @Autowired
@@ -20,8 +23,25 @@ public class RouteService {
     @Autowired
     private BusService busService;
 
+    private final WebClient webClient;
+
+
     public Route save(Route route){
-        return routeRepository.save(route);
+        Route savedRoute = routeRepository.save(route);
+        sendRouteToGraphDatabase(savedRoute);
+        return savedRoute;
+    }
+
+    private void sendRouteToGraphDatabase(Route route) {
+        webClient.post()
+                .uri("http://localhost:8080/api/routes/save")
+                .bodyValue(route)
+                .retrieve()
+                .bodyToMono(Route.class)
+                .subscribe(
+                        result -> System.out.println("Route saved in graph database with ID: " + result.getId()),
+                        error -> System.err.println("Failed to save route in graph database: " + error.getMessage())
+                );
     }
 
     public Route findById(Integer id){
