@@ -1,8 +1,10 @@
 package com.example.demo.Service;
 
+import com.example.demo.DTO.RouteGraphDTO;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
+import com.example.demo.Model.Station;
 import com.example.demo.Repository.BusRepository;
 import com.example.demo.Repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,16 +31,38 @@ public class RouteService {
 
     public Route save(Route route){
         Route savedRoute = routeRepository.save(route);
-        sendRouteToGraphDatabase(savedRoute);
+
+        RouteGraphDTO routeGraph = new RouteGraphDTO();
+
+        routeGraph.setId(savedRoute.id);
+        routeGraph.setName(savedRoute.name);
+        routeGraph.setBuses(savedRoute.buses);
+
+        List<Location> locations = new ArrayList<>();
+        List<Station> stations = new ArrayList<>();
+
+        locations.add(savedRoute.startingPoint);
+        locations.addAll(savedRoute.stations);
+        locations.add(savedRoute.endPoint);
+
+        for(Location loc : locations){
+            Station station = new Station();
+            station.setLocation(loc);
+            stations.add(station);
+        }
+        routeGraph.setLocations(locations);
+        routeGraph.setStations(stations);
+
+        sendRouteToGraphDatabase(routeGraph);
         return savedRoute;
     }
 
-    private void sendRouteToGraphDatabase(Route route) {
+    private void sendRouteToGraphDatabase(RouteGraphDTO route) {
         webClient.post()
                 .uri("http://localhost:8080/api/routes/save")
                 .bodyValue(route)
                 .retrieve()
-                .bodyToMono(Route.class)
+                .bodyToMono(RouteGraphDTO.class)
                 .subscribe(
                         result -> System.out.println("Route saved in graph database with ID: " + result.getId()),
                         error -> System.err.println("Failed to save route in graph database: " + error.getMessage())
@@ -78,6 +103,24 @@ public class RouteService {
     }
 
     public void deleteById(Integer id){
+        Route route = findById(id);
         routeRepository.deleteById(id);
+        deleteRouteInGraphDatabase(route.name);
     }
+    private void deleteRouteInGraphDatabase(String routeName) {
+        webClient.delete()
+                .uri(uriBuilder -> uriBuilder.scheme("http")
+                        .host("localhost")
+                        .port(8080)
+                        .path("/api/routes/deleteByName")
+                        .queryParam("name", routeName)
+                        .build())
+                .retrieve()
+                .bodyToMono(Void.class)
+                .subscribe(
+                        result -> System.out.println("Route deleted in graph database: " + routeName),
+                        error -> System.err.println("Failed to delete route in graph database: " + error.getMessage())
+                );
+    }
+
 }

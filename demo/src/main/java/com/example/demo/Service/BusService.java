@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.DTO.RouteGraphDTO;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Route;
 import com.example.demo.Repository.BusRepository;
@@ -22,7 +23,6 @@ public class BusService {
 
     public Bus save(Bus bus){
         Bus savedBus = busRepository.save(bus);
-        sendBusToGraphDatabase(savedBus);
         return savedBus;
     }
 
@@ -33,11 +33,10 @@ public class BusService {
                 .retrieve()
                 .bodyToMono(Bus.class)
                 .subscribe(
-                        result -> System.out.println("Bus saved in graph database with ID: " + result.getId()),
-                        error -> System.err.println("Failed to save bus in graph database: " + error.getMessage())
+                        result -> System.out.println("Route saved in graph database with ID: " + result.getId()),
+                        error -> System.err.println("Failed to save route in graph database: " + error.getMessage())
                 );
     }
-
 
     public List<Bus> findAll(){
         return this.busRepository.findAll();

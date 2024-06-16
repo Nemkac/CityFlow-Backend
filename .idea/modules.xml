@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/CityFlow-Backend.iml" filepath="$PROJECT_DIR$/.idea/CityFlow-Backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/CityTransportService/CityTransportService.iml" filepath="$PROJECT_DIR$/CityTransportService/CityTransportService.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GraphDatabaseExample/GraphDatabaseExample.iml" filepath="$PROJECT_DIR$/GraphDatabaseExample/GraphDatabaseExample.iml" />
     </modules>
   </component>
 </project>
