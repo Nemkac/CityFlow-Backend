@@ -22,4 +22,7 @@ public class FinancialReportService {
         return financialReportRepository.findAll();
     }
 
+   /* public void saveAll(List<FinancialReport> reports) {
+        financialReportRepository.saveAll(reports);
+    }*/
 }
