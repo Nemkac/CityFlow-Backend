@@ -199,11 +199,11 @@ public class InitialDataInsertionService {
 //            sendUserToGraphDatabase(dto);
         }
 
-        Location location1 = new Location(45.242006, 19.842685);
-        Location location2 = new Location(45.241652, 19.842843);
-        Location location3 = new Location(45.243805, 19.841589);
-        Location location4 = new Location(45.246582, 19.840096);
-        Location location5 = new Location(45.247929, 19.839362);
+        Location location1 = new Location("Kraljevica Marka 53", 45.242006, 19.842685);
+        Location location2 = new Location("Veljka Petrovica 5", 45.241652, 19.842843);
+        Location location3 = new Location("Veselina Maslese 156", 45.243805, 19.841589);
+        Location location4 = new Location("Papa Pavla 4",45.246582, 19.840096);
+        Location location5 = new Location("Bulevar oslobodjenja 4", 45.247929, 19.839362);
 
         locationService.save(location1);
         locationService.save(location2);

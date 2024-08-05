@@ -67,6 +67,12 @@ public class RouteController {
         return new ResponseEntity<>(routes, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/getStations")
+    public ResponseEntity<List<Location>> getAllStations() {
+        List<Location> locations = locationService.getAll();
+        return new ResponseEntity<>(locations, HttpStatus.OK);
+    }
+
     @GetMapping(path = "/route/{id}")
     public ResponseEntity<Route> getRouteById(@PathVariable Integer id) {
         List<Route> routes = routeService.getAll();
