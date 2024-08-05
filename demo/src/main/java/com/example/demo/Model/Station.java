@@ -7,11 +7,14 @@ public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
+    @Column
+    private String address;
     @Column
     private Location location;
 
-    public Station() {
+    public Station(String address, Location location) {
+        this.address = address;
+        this.location = location;
     }
 
     public Station(Location location) {

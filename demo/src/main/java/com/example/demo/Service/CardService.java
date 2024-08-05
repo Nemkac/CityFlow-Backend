@@ -11,7 +11,6 @@ public class CardService {
     @Autowired
     private CardRepository cardRepository;
 
-
     public Card findByCardNumber(String number){
         return cardRepository.findByCardNumber(number);
     }

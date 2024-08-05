@@ -27,19 +27,19 @@ public class InitialDataInsertionService {
     @Autowired
     private BusService busService;
 
-    private final WebClient webClient;
+//    private final WebClient webClient;
 
-    private void sendUserToGraphDatabase(UserGraphDTO dto) {
-        webClient.post()
-                .uri("http://localhost:8080/api/users/save")
-                .bodyValue(dto)
-                .retrieve()
-                .bodyToMono(UserGraphDTO.class)
-                .subscribe(
-                        result -> System.out.println("User saved in graph database with ID: " + result.getId()),
-                        error -> System.err.println("Failed to save user in graph database: " + error.getMessage())
-                );
-    }
+//    private void sendUserToGraphDatabase(UserGraphDTO dto) {
+//        webClient.post()
+//                .uri("http://localhost:8080/api/users/save")
+//                .bodyValue(dto)
+//                .retrieve()
+//                .bodyToMono(UserGraphDTO.class)
+//                .subscribe(
+//                        result -> System.out.println("User saved in graph database with ID: " + result.getId()),
+//                        error -> System.err.println("Failed to save user in graph database: " + error.getMessage())
+//                );
+//    }
 
     @Transactional
     public void insertInitialData() {
@@ -113,7 +113,7 @@ public class InitialDataInsertionService {
             dto.setName(savedUser6.getName());
             dto.setLastname(savedUser6.getLastname());
             dto.setUsername(savedUser6.getUsername());
-            sendUserToGraphDatabase(dto);
+//            sendUserToGraphDatabase(dto);
         }
 
         LocalDate user7BirthDate = LocalDate.of(1978, 8, 30);
@@ -136,7 +136,7 @@ public class InitialDataInsertionService {
             dto.setName(savedUser7.getName());
             dto.setLastname(savedUser7.getLastname());
             dto.setUsername(savedUser7.getUsername());
-            sendUserToGraphDatabase(dto);
+//            sendUserToGraphDatabase(dto);
         }
 
         Card card1 = new Card(
@@ -177,7 +177,7 @@ public class InitialDataInsertionService {
             dto.setName(savedUser3.getName());
             dto.setLastname(savedUser3.getLastname());
             dto.setUsername(savedUser3.getUsername());
-            sendUserToGraphDatabase(dto);
+//            sendUserToGraphDatabase(dto);
         }
 
         User savedUser4 = userService.addUser(user4);
@@ -187,7 +187,7 @@ public class InitialDataInsertionService {
             dto.setName(savedUser4.getName());
             dto.setLastname(savedUser4.getLastname());
             dto.setUsername(savedUser4.getUsername());
-            sendUserToGraphDatabase(dto);
+//            sendUserToGraphDatabase(dto);
         }
         User savedUser5 = userService.addUser(user5);
         if(savedUser5 != null){
@@ -196,7 +196,7 @@ public class InitialDataInsertionService {
             dto.setName(savedUser5.getName());
             dto.setLastname(savedUser5.getLastname());
             dto.setUsername(savedUser5.getUsername());
-            sendUserToGraphDatabase(dto);
+//            sendUserToGraphDatabase(dto);
         }
 
         Location location1 = new Location(45.242006, 19.842685);

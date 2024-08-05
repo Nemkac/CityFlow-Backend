@@ -16,7 +16,7 @@ public class LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
-    private final WebClient webClient;
+//    private final WebClient webClient;
 
     public Location save(Location location){
         Location savedLocation = locationRepository.save(location);
