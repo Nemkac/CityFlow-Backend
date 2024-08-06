@@ -49,12 +49,14 @@ public class LocationService {
 //                );
 //    }
 
-    public Location getByLatitudeAndLongiture(double latitude, double longitude){
+    public Location getByLatitudeAndLongitude(double latitude, double longitude){
         return locationRepository.getByLatitudeAndLongitude(latitude, longitude);
     }
 
     public List<Location> getAll(){
         return locationRepository.findAll();
     }
+
+
 
 }

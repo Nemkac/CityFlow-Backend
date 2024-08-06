@@ -39,7 +39,7 @@ public class AuthenticationController {
 //    }
 
     @PostMapping(path = "/CityFlow/RegisterUser")
-    public ResponseEntity<String> SaveUser(@RequestBody RegisterDTO requestBody){
+    public ResponseEntity<User> SaveUser(@RequestBody RegisterDTO requestBody){
         User newUser = new User(
                 requestBody.getUsername(),
                 requestBody.getName(),
@@ -51,7 +51,7 @@ public class AuthenticationController {
                 "ROLE_USER",
                 false
                 );
-//        User savedUser = userService.save(newUser);
+        userService.save(newUser);
 //        if(savedUser != null){
 //            UserGraphDTO dto = new UserGraphDTO();
 //            dto.setId(savedUser.getId());
@@ -64,7 +64,8 @@ public class AuthenticationController {
 //            return new ResponseEntity<>("Not saved!", HttpStatusCode.valueOf(200));
 //
 //        }
-        return new ResponseEntity<>("User successfully saved!", HttpStatusCode.valueOf(200));
+
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @PostMapping(path = "/CityFlow/Login")

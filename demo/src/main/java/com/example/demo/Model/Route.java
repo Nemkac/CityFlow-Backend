@@ -17,11 +17,18 @@ public class Route {
     @Column
     public String name;
 
+
     @ManyToOne
     @JoinColumn(name = "startLocationID")
     public Location startingPoint;
 
-    @OneToMany
+
+    @ManyToMany
+    @JoinTable(
+            name = "route_stations",
+            joinColumns = @JoinColumn(name = "route_id"),
+            inverseJoinColumns = @JoinColumn(name = "station_id")
+    )
     public List<Location> stations;
 
     @ManyToMany(mappedBy = "routes")

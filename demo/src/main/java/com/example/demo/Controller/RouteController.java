@@ -18,6 +18,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/CityFlow")
@@ -73,6 +75,17 @@ public class RouteController {
         return new ResponseEntity<>(locations, HttpStatus.OK);
     }
 
+    @PostMapping(path = "/station/save")
+    public ResponseEntity<Location> saveStation(@RequestBody Location location){
+        Location existingLocation = findOrCreateLocation(location);
+        if(existingLocation != null) {
+            this.locationService.save(location);
+            return new ResponseEntity<>(location, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+    }
+
     @GetMapping(path = "/route/{id}")
     public ResponseEntity<Route> getRouteById(@PathVariable Integer id) {
         List<Route> routes = routeService.getAll();
@@ -92,44 +105,30 @@ public class RouteController {
 //    }
 
     @PostMapping(path = "/saveRoute")
-    public ResponseEntity<Route> save(@RequestBody RouteDTO routeDTO){
+    public ResponseEntity<Route> save(@RequestBody RouteDTO routeDTO) {
+        Location starting = findOrCreateLocation(routeDTO.getStartingPoint());
+        Location ending = findOrCreateLocation(routeDTO.getEndingPoint());
 
-        Location starting = routeDTO.getStartingPoint();
-        Location existingStarting = locationService.getByLatitudeAndLongiture(starting.latitude, starting.longitude);
-        if(existingStarting == null){
-            locationService.save(starting);
-        }
-
-        Location ending = routeDTO.getEndingPoint();
-        Location existingEnding = locationService.getByLatitudeAndLongiture(ending.latitude, ending.longitude);
-        if(existingEnding == null){
-            locationService.save(ending);
-        }
-
-        List<Location> tmpStations = routeDTO.getStations();
-        List<Location> stations = new ArrayList<>();
-
-        for(Location station : tmpStations){
-            Location savedStation = locationService.getByLatitudeAndLongiture(station.getLatitude(), station.getLongitude());
-            if (savedStation == null) {
-                locationService.save(station);
-            } else {
-                station = savedStation;
-            }
-            stations.add(station);
-        }
+        Set<Location> uniqueStations = routeDTO.getStations().stream()
+                .map(this::findOrCreateLocation)
+                .collect(Collectors.toSet());
 
         Route newRoute = new Route(
                 routeDTO.getRouteName(),
                 starting,
-                stations,
+                new ArrayList<>(uniqueStations),
                 ending,
                 routeDTO.getOpeningTime(),
                 routeDTO.getClosingTime()
         );
 
-        this.routeService.save(newRoute);
+        routeService.save(newRoute);
         return new ResponseEntity<>(newRoute, HttpStatus.OK);
+    }
+
+    public Location findOrCreateLocation(Location location) {
+        Location existingLocation = this.locationService.getByLatitudeAndLongitude(location.latitude, location.longitude);
+        return (existingLocation != null) ? existingLocation : this.locationService.save(location);
     }
 
     @DeleteMapping(path = "/deleteRoute/{id}")
