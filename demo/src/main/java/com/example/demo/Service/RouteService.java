@@ -122,4 +122,42 @@ public class RouteService {
 //                );
 //    }
 
+    public void updateDepartureFromStartingStation(Route route, Bus bus) {
+        double totalDistance = 0;
+        Location previous = route.getStartingPoint();
+        for (Location station : route.getStations()) {
+            totalDistance += this.calculateDistance(previous, station);
+            previous = station;
+        }
+        totalDistance += this.calculateDistance(previous, route.getEndPoint());
+
+        int numberOfBuses = route.getBuses().size() + 1;
+        double speed = 50;
+        double travelTime = totalDistance / speed * 60;
+
+        int newDeparture = (int) Math.ceil(travelTime / numberOfBuses);
+        route.setDepartureFromStartingStation(newDeparture);
+        this.save(route);
+    }
+
+    public double calculateDistance(Location loc1, Location loc2) {
+        double lat1 = Math.toRadians(loc1.getLatitude());
+        double lon1 = Math.toRadians(loc1.getLongitude());
+        double lat2 = Math.toRadians(loc2.getLatitude());
+        double lon2 = Math.toRadians(loc2.getLongitude());
+
+        double deltaLat = lat2 - lat1;
+        double deltaLon = lon2 - lon1;
+
+        double a = Math.pow(Math.sin(deltaLat / 2), 2)
+                + Math.cos(lat1) * Math.cos(lat2)
+                * Math.pow(Math.sin(deltaLon / 2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = 6371 * c; // Radijus Zemlje u kilometrima
+
+        return distance;
+    }
+
+
+
 }

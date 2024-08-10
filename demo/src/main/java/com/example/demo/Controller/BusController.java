@@ -4,6 +4,7 @@ import com.example.demo.DTO.BusDTO;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Route;
 import com.example.demo.Service.BusService;
+import com.example.demo.Service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class BusController {
     @Autowired
     private BusService busService;
 
+    @Autowired
+    private RouteService routeService;
+
     @GetMapping(path = "/buses")
     public ResponseEntity<List<Bus>> findAll(){
         try {
@@ -31,17 +35,35 @@ public class BusController {
 
     @PostMapping(path = "/saveBus")
     public ResponseEntity<Bus> save(@RequestBody BusDTO newBus){
+//        try{
+//            Bus bus = new Bus();
+//
+//            bus.setLicencePlate(newBus.getLicencePlate());
+//            bus.setRoutes(newBus.getRoutes());
+//
+//            busService.save(bus);
+//
+//            return new ResponseEntity<>(bus, HttpStatus.OK);
+//        } catch (Exception e){
+//            return new ResponseEntity(e, HttpStatus.FORBIDDEN);
+//        }
         try{
             Bus bus = new Bus();
-
             bus.setLicencePlate(newBus.getLicencePlate());
+
+            List<Route> selectedRoutes = new ArrayList<>();
+
+            selectedRoutes.addAll(newBus.getRoutes());
             bus.setRoutes(newBus.getRoutes());
 
-            busService.save(bus);
+            for (Route route : selectedRoutes) {
+                routeService.updateDepartureFromStartingStation(route, bus);
+            }
 
+            busService.save(bus);
             return new ResponseEntity<>(bus, HttpStatus.OK);
         } catch (Exception e){
-            return new ResponseEntity(e, HttpStatus.FORBIDDEN);
+            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
 

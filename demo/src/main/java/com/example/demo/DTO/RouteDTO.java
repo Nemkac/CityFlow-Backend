@@ -71,4 +71,6 @@ public class RouteDTO {
     public void setClosingTime(String closingTime) {
         this.closingTime = closingTime;
     }
+
+
 }

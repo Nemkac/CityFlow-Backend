@@ -48,6 +48,9 @@ public class Route {
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Shift> shifts;
 
+    @Column
+    public Integer departureFromStartingStation;
+
     public Route() {}
 
     public Route(String name, Location startingPoint, List<Location> stations, Location endPoint, String openingTime, String closingTime) {
@@ -58,6 +61,7 @@ public class Route {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
         this.buses = new ArrayList<Bus>();
+        this.departureFromStartingStation = 0;
     }
 
     public Route(Integer id, String name, Location startingPoint, List<Location> stations, Location endPoint, String openingTime, String closingTime, List<Shift> shifts) {
@@ -141,5 +145,13 @@ public class Route {
 
     public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
+    }
+
+    public Integer getDepartureFromStartingStation() {
+        return departureFromStartingStation;
+    }
+
+    public void setDepartureFromStartingStation(Integer departureFromStartingStation) {
+        this.departureFromStartingStation = departureFromStartingStation;
     }
 }
