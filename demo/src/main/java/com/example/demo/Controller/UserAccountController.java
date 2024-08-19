@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -29,7 +30,7 @@ public class UserAccountController {
 
     @PostMapping(path = "/Account/updateProfile")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_DRIVER','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant', 'ROLE_ROUTEADMINISTRATOR', 'ROLE_KYCADMINISTRATOR')")
-    public ResponseEntity<String>updateProfile(@RequestHeader("Authorization") String authorisation, @RequestBody EditProfileDTO requestBody){
+    public ResponseEntity<?>updateProfile(@RequestHeader("Authorization") String authorisation, @RequestBody EditProfileDTO requestBody){
         String bearerToken = authorisation.substring(7);
         String username = jwtService.extractUsername(bearerToken);
         System.out.println(bearerToken);
@@ -42,9 +43,9 @@ public class UserAccountController {
             user.setPhoneNumber(requestBody.getPhoneNumber());
             user.setUsername(requestBody.getUsername());
             userService.save(user);
-            return new ResponseEntity<>("Updated!", HttpStatusCode.valueOf(200));
+            return ResponseEntity.ok().body(Map.of("message", "Updated!"));
         } else{
-            return new ResponseEntity<>("Invalid request!",HttpStatusCode.valueOf(400));
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid request!"));
         }
     }
 
