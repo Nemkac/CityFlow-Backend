@@ -49,7 +49,7 @@ public class UserAccountController {
     }
 
     @GetMapping(path = "/Account/getUser")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_DRIVER','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','','ROLE_SERVICER','ROLE_HRAdministrator', 'ROLE_Accountant')")
     public ResponseEntity<User> getUser(@RequestHeader("Authorization") String authorisation){
         String bearerToken = authorisation.substring(7);
         String username = jwtService.extractUsername(bearerToken);

@@ -6,7 +6,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,20 +25,8 @@ public class InitialDataInsertionService {
     private CardService cardService;
     @Autowired
     private BusService busService;
-
-    private final WebClient webClient;
-
-    private void sendUserToGraphDatabase(UserGraphDTO dto) {
-        webClient.post()
-                .uri("http://localhost:8080/api/users/save")
-                .bodyValue(dto)
-                .retrieve()
-                .bodyToMono(UserGraphDTO.class)
-                .subscribe(
-                        result -> System.out.println("User saved in graph database with ID: " + result.getId()),
-                        error -> System.err.println("Failed to save user in graph database: " + error.getMessage())
-                );
-    }
+    @Autowired
+    private SalaryService salaryService;
 
     @Transactional
     public void insertInitialData() {
@@ -70,7 +57,7 @@ public class InitialDataInsertionService {
 
         LocalDate user3BirthDate = LocalDate.ofEpochDay(2002-25-1);
         User user3 = new User(
-                "Lele",
+                "AndreaHR",
                 "Andrea",
                 "Mitic",
                 "amitic@gmail.com",
@@ -80,6 +67,9 @@ public class InitialDataInsertionService {
                 "ROLE_HRAdministrator",
                 true
         );
+        user3.setProfilePicture("profile_20230923_102115.png");
+        userService.save(user3);
+
 
         LocalDate user4BirthDate = LocalDate.ofEpochDay(2002-18-1);
         User user4 = new User(
@@ -93,6 +83,8 @@ public class InitialDataInsertionService {
                 "ROLE_ROUTEADMINISTRATOR",
                 true
         );
+        user4.setProfilePicture("profile_20230915_102045.png");
+        userService.save(user4);
 
         LocalDate user6BirthDate = LocalDate.of(1985, 3, 15);
         User user6 = new User(
@@ -106,14 +98,28 @@ public class InitialDataInsertionService {
                 "ROLE_DRIVER",
                 true
         );
+        user6.setProfilePicture("profile_20230915_102115.png");
+        userService.save(user6);
+
         User savedUser6 = userService.addUser(user6);
-        if(savedUser6 != null){
-            UserGraphDTO dto = new UserGraphDTO();
-            dto.setId(savedUser6.getId());
-            dto.setName(savedUser6.getName());
-            dto.setLastname(savedUser6.getLastname());
-            dto.setUsername(savedUser6.getUsername());
-            sendUserToGraphDatabase(dto);
+        if(savedUser6 != null) {
+            Salary salaryForUser6 = new Salary();
+            salaryForUser6.setUser(savedUser6);
+            salaryForUser6.setBaseSalary(50000);  // Example base salary
+            salaryForUser6.setOvertimeHours(10);
+            salaryForUser6.setHolidayWorkHours(5);
+            salaryForUser6.setNightShiftHours(8);
+            salaryForUser6.setSickLeaveHours(0);
+            salaryForUser6.setOvertimePayRate(150);
+            salaryForUser6.setHolidayPayRate(200);
+            salaryForUser6.setNightShiftPayRate(180);
+            salaryForUser6.setSickLeaveType("None");
+            salaryForUser6.setTotalSalary(salaryForUser6.getBaseSalary() +
+                    (salaryForUser6.getOvertimeHours() * salaryForUser6.getOvertimePayRate()) +
+                    (salaryForUser6.getHolidayWorkHours() * salaryForUser6.getHolidayPayRate()) +
+                    (salaryForUser6.getNightShiftHours() * salaryForUser6.getNightShiftPayRate()));
+            salaryService.save(salaryForUser6);
+
         }
 
         LocalDate user7BirthDate = LocalDate.of(1978, 8, 30);
@@ -128,6 +134,8 @@ public class InitialDataInsertionService {
                 "ROLE_DRIVER",
                 true
         );
+        user7.setProfilePicture("profile_20230915_102100.png");
+        userService.save(user7);
 
         User savedUser7 = userService.addUser(user7);
         if(savedUser7 != null){
@@ -136,7 +144,6 @@ public class InitialDataInsertionService {
             dto.setName(savedUser7.getName());
             dto.setLastname(savedUser7.getLastname());
             dto.setUsername(savedUser7.getUsername());
-            sendUserToGraphDatabase(dto);
         }
 
         Card card1 = new Card(
@@ -177,7 +184,6 @@ public class InitialDataInsertionService {
             dto.setName(savedUser3.getName());
             dto.setLastname(savedUser3.getLastname());
             dto.setUsername(savedUser3.getUsername());
-            sendUserToGraphDatabase(dto);
         }
 
         User savedUser4 = userService.addUser(user4);
@@ -187,7 +193,6 @@ public class InitialDataInsertionService {
             dto.setName(savedUser4.getName());
             dto.setLastname(savedUser4.getLastname());
             dto.setUsername(savedUser4.getUsername());
-            sendUserToGraphDatabase(dto);
         }
         User savedUser5 = userService.addUser(user5);
         if(savedUser5 != null){
@@ -196,7 +201,6 @@ public class InitialDataInsertionService {
             dto.setName(savedUser5.getName());
             dto.setLastname(savedUser5.getLastname());
             dto.setUsername(savedUser5.getUsername());
-            sendUserToGraphDatabase(dto);
         }
 
         Location location1 = new Location(45.242006, 19.842685);

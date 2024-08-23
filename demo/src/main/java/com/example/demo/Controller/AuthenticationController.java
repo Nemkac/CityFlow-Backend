@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
-
 @RestController
 @RequiredArgsConstructor
 public class AuthenticationController {
@@ -24,19 +22,6 @@ public class AuthenticationController {
     @Autowired
     private JwtService jwtService;
 
-    private final WebClient webClient;
-
-    private void sendUserToGraphDatabase(UserGraphDTO dto) {
-        webClient.post()
-                .uri("http://localhost:8080/api/users/save")
-                .bodyValue(dto)
-                .retrieve()
-                .bodyToMono(UserGraphDTO.class)
-                .subscribe(
-                        result -> System.out.println("User saved in graph database with ID: " + result.getId()),
-                        error -> System.err.println("Failed to save user in graph database: " + error.getMessage())
-                );
-    }
 
     @PostMapping(path = "/CityFlow/RegisterUser")
     public ResponseEntity<String> SaveUser(@RequestBody RegisterDTO requestBody){
@@ -58,7 +43,6 @@ public class AuthenticationController {
             dto.setName(savedUser.getName());
             dto.setLastname(savedUser.getLastname());
             dto.setUsername(savedUser.getUsername());
-            sendUserToGraphDatabase(dto);
             return new ResponseEntity<>("Saved!", HttpStatusCode.valueOf(200));
         }else{
             return new ResponseEntity<>("Not saved!", HttpStatusCode.valueOf(200));
