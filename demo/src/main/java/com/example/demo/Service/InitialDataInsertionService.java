@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,8 @@ public class InitialDataInsertionService {
     private BusService busService;
     @Autowired
     private SalaryService salaryService;
+    @Autowired
+    private MessageService messageService;
 
     @Transactional
     public void insertInitialData() {
@@ -229,5 +232,18 @@ public class InitialDataInsertionService {
         Bus bus1 = new Bus("SM 076 AT");
         busService.save(bus1);
         bus1.setRoutes(routesForBus1);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Message message1 = new Message(1, 2, "Hi, how are you?", now.minusDays(1), false);
+        Message message2 = new Message(2, 1, "I'm good, thanks! And you?", now.minusDays(1).plusMinutes(5), true);
+
+        Message message3 = new Message(2, 3, "Are we meeting tomorrow?", now.minusHours(10), false);
+        Message message4 = new Message(3, 2, "Yes, at the usual place.", now.minusHours(9), true);
+
+        messageService.save(message1);
+        messageService.save(message2);
+        messageService.save(message3);
+        messageService.save(message4);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.CommunicationPartnerDTO;
 import com.example.demo.DTO.EmploymentStatisticsDTO;
 import com.example.demo.DTO.SalaryDTO;
 import com.example.demo.DTO.UserDTO;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/CityFlow")
@@ -46,6 +46,8 @@ public class HRAdministratorController {
     @Autowired
     private SalaryService salaryService;
 
+    @Autowired
+    private MessageService messageService;
     @PostMapping (path = "/addUser")
     public ResponseEntity<User> addUser(@RequestBody UserDTO userDTO) {
         User existingUser = this.userService.findByEmail(userDTO.getEmail());
@@ -398,4 +400,87 @@ public class HRAdministratorController {
         EmploymentStatisticsDTO statistics = userService.getEmploymentStatistics();
         return ResponseEntity.ok(statistics);
     }
+
+
+    @PostMapping("/send")
+    public ResponseEntity<Message> sendMessage(@RequestBody Message message) {
+        return ResponseEntity.ok(messageService.sendMessage(message.getSenderId(), message.getReceiverId(), message.getContent()));
+    }
+
+    @GetMapping("/received/{userId}")
+    public ResponseEntity<Page<Message>> getReceivedMessages(
+            @PathVariable Integer userId,
+            @RequestParam(required = false, defaultValue = "") String filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(messageService.getMessagesForUserWithPaginationAndFilter(userId, filter, page, size));
+    }
+
+    @GetMapping("/sent/{userId}")
+    public ResponseEntity<Page<Message>> getSentMessages(
+            @PathVariable Integer userId,
+            @RequestParam(required = false, defaultValue = "") String filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(messageService.getSentMessagesWithPaginationAndFilter(userId, filter, page, size));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAll();
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+    @GetMapping("messages/{userId1}/{userId2}")
+    public ResponseEntity<List<Message>> getMessagesBetweenUsers(@PathVariable Integer userId1, @PathVariable Integer userId2) {
+        List<Message> messages = messageService.getMessagesBetweenUsers(userId1, userId2);
+        if (messages.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+    @GetMapping("/communicationPartners/{userId}")
+    public ResponseEntity<List<CommunicationPartnerDTO>> getCommunicationPartners(@PathVariable Integer userId) {
+        // Retrieve all sent and received messages
+        List<Message> sentMessages = messageService.getSentMessages(userId);
+        List<Message> receivedMessages = messageService.getReceivedMessages(userId);
+
+        // Use a map to avoid duplicates and to store the latest message
+        Map<Integer, Message> latestMessages = new HashMap<>();
+        for (Message message : sentMessages) {
+            int receiverId = message.getReceiverId();
+            latestMessages.compute(receiverId, (key, current) ->
+                    (current == null || message.getTimestamp().isAfter(current.getTimestamp())) ? message : current);
+        }
+        for (Message message : receivedMessages) {
+            int senderId = message.getSenderId();
+            latestMessages.compute(senderId, (key, current) ->
+                    (current == null || message.getTimestamp().isAfter(current.getTimestamp())) ? message : current);
+        }
+
+        // Fetch user details and the latest message for each unique user ID
+        List<CommunicationPartnerDTO> partners = new ArrayList<>();
+        latestMessages.forEach((id, message) -> {
+            User user = userService.findById(id);
+            if (user != null) {
+                CommunicationPartnerDTO partner = new CommunicationPartnerDTO(user, message);
+                partners.add(partner);
+            }
+        });
+
+        // Sort partners by the timestamp of the last message
+        partners.sort(Comparator.comparing(p -> p.getLastMessage().getTimestamp(), Comparator.reverseOrder()));
+
+        // Return the list of users with their last message
+        if (!partners.isEmpty()) {
+            return new ResponseEntity<>(partners, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+
+
 }
