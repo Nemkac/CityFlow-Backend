@@ -6,7 +6,6 @@ import com.example.demo.DTO.SalaryDTO;
 import com.example.demo.DTO.UserDTO;
 import com.example.demo.Model.*;
 import com.example.demo.Service.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -443,11 +442,9 @@ public class HRAdministratorController {
     }
     @GetMapping("/communicationPartners/{userId}")
     public ResponseEntity<List<CommunicationPartnerDTO>> getCommunicationPartners(@PathVariable Integer userId) {
-        // Retrieve all sent and received messages
         List<Message> sentMessages = messageService.getSentMessages(userId);
         List<Message> receivedMessages = messageService.getReceivedMessages(userId);
 
-        // Use a map to avoid duplicates and to store the latest message
         Map<Integer, Message> latestMessages = new HashMap<>();
         for (Message message : sentMessages) {
             int receiverId = message.getReceiverId();
@@ -460,7 +457,6 @@ public class HRAdministratorController {
                     (current == null || message.getTimestamp().isAfter(current.getTimestamp())) ? message : current);
         }
 
-        // Fetch user details and the latest message for each unique user ID
         List<CommunicationPartnerDTO> partners = new ArrayList<>();
         latestMessages.forEach((id, message) -> {
             User user = userService.findById(id);
@@ -470,10 +466,8 @@ public class HRAdministratorController {
             }
         });
 
-        // Sort partners by the timestamp of the last message
         partners.sort(Comparator.comparing(p -> p.getLastMessage().getTimestamp(), Comparator.reverseOrder()));
 
-        // Return the list of users with their last message
         if (!partners.isEmpty()) {
             return new ResponseEntity<>(partners, HttpStatus.OK);
         } else {
