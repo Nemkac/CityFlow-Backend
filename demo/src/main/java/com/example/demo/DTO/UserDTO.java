@@ -14,6 +14,7 @@ public class UserDTO {
     private String phoneNumber;
     private String roles;
     private boolean employed;
+    private String profilePicture;
 
 
     public UserDTO() {
@@ -29,6 +30,27 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
         this.roles = roles;
         this.employed = employed;
+    }
+
+    public UserDTO(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles, boolean employed, String profilePicture) {
+        this.username = username;
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.roles = roles;
+        this.employed = employed;
+        this.profilePicture = profilePicture;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public String getUsername() {

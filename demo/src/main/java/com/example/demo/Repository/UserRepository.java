@@ -2,6 +2,7 @@ package com.example.demo.Repository;
 
 import com.example.demo.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,5 +22,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findById(Integer id);
 
     List<User> findByRoles(String role);
+    @Query("SELECT u FROM User u WHERE LOWER(CONCAT(u.name, ' ', u.lastname)) LIKE LOWER(CONCAT('%', ?1, '%'))")
+    List<User> searchByName(String name);
+    @Query("SELECT u FROM User u WHERE LOWER(REPLACE(SUBSTRING(u.roles, 6), '_', ' ')) LIKE LOWER(CONCAT('%', ?1, '%'))")
+    List<User> findByRoleContaining(String roleFragment);
+
+    int countByEmployedTrue();
+
+
+
 
 }

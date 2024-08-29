@@ -1,5 +1,7 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.CommunicationPartnerDTO;
+import com.example.demo.DTO.EmploymentStatisticsDTO;
 import com.example.demo.DTO.SalaryDTO;
 import com.example.demo.DTO.UserDTO;
 import com.example.demo.Model.*;
@@ -7,17 +9,19 @@ import com.example.demo.Service.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/CityFlow")
@@ -41,6 +45,8 @@ public class HRAdministratorController {
     @Autowired
     private SalaryService salaryService;
 
+    @Autowired
+    private MessageService messageService;
     @PostMapping (path = "/addUser")
     public ResponseEntity<User> addUser(@RequestBody UserDTO userDTO) {
         User existingUser = this.userService.findByEmail(userDTO.getEmail());
@@ -279,11 +285,195 @@ public class HRAdministratorController {
         salary.setOvertimePayRate(salaryDTO.getOvertimePayRate());
         salary.setHolidayPayRate(salaryDTO.getHolidayPayRate());
         salary.setNightShiftPayRate(salaryDTO.getNightShiftPayRate());
-        salary.setTotalSalary(salaryDTO.getBaseSalary()); // Initially setting totalSalary to baseSalary
+        salary.setTotalSalary(salaryDTO.getBaseSalary());
 
         salaryService.save(salary);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/searchByName")
+    public ResponseEntity<List<User>> searchByName(@RequestParam String name) {
+        List<User> users = userService.searchByName(name);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchByRole")
+    public ResponseEntity<List<User>> searchByRole(@RequestParam String role) {
+        List<User> users = userService.searchByRole(role);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserDetails/{userId}")
+    public ResponseEntity<UserDTO> getUserDetails(@PathVariable Integer userId) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(user.getUsername());
+        userDTO.setName(user.getName());
+        userDTO.setLastname(user.getLastname());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setRoles(user.getRoles());
+        userDTO.setDateOfBirth(user.getDateOfBirth());
+        userDTO.setEmployed(user.isEmployed());
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/getSalaryByUserId/{userId}")
+    public ResponseEntity<SalaryDTO> getSalaryByUserId(@PathVariable int userId) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Salary salary = salaryService.getByUser(user);
+        if (salary == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        SalaryDTO salaryDTO = new SalaryDTO(
+                salary.getBaseSalary(),
+                salary.getOvertimeHours(),
+                salary.getHolidayWorkHours(),
+                salary.getNightShiftHours(),
+                salary.getSickLeaveHours(),
+                salary.getOvertimePayRate(),
+                salary.getHolidayPayRate(),
+                salary.getNightShiftPayRate(),
+                salary.getSickLeaveType(),
+                salary.getTotalSalary()
+        );
+
+        return new ResponseEntity<>(salaryDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserProfilePicture/{userId}")
+    public ResponseEntity<?> getUserProfilePicture(@PathVariable Integer userId) {
+        try {
+            User user = userService.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            String imageName = user.getProfilePicture();
+            if (imageName == null || imageName.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No profile picture set for this user");
+            }
+
+            String base64Image = userService.getImage(imageName);
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(base64Image);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while retrieving the profile picture: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/uploadProfilePicture/{userId}")
+    public ResponseEntity<String> uploadProfilePicture(@PathVariable Integer userId, @RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return new ResponseEntity<>("No file provided", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            String storedFileName = userService.generateStoredFileName("profile", file);
+
+            userService.uploadFile(file, storedFileName);
+
+            User user = userService.findById(userId);
+            if (user == null) {
+                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            }
+
+            user.setProfilePicture(storedFileName);
+            userService.save(user);
+
+            return new ResponseEntity<>("Profile picture uploaded successfully", HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Error while uploading the file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/employmentStatistics")
+    public ResponseEntity<EmploymentStatisticsDTO> getEmploymentStatistics() {
+        EmploymentStatisticsDTO statistics = userService.getEmploymentStatistics();
+        return ResponseEntity.ok(statistics);
+    }
+
+
+    @PostMapping("/send")
+    public ResponseEntity<Message> sendMessage(@RequestBody Message message) {
+        return ResponseEntity.ok(messageService.sendMessage(message.getSenderId(), message.getReceiverId(), message.getContent()));
+    }
+
+    @GetMapping("/received/{userId}")
+    public ResponseEntity<Page<Message>> getReceivedMessages(
+            @PathVariable Integer userId,
+            @RequestParam(required = false, defaultValue = "") String filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(messageService.getMessagesForUserWithPaginationAndFilter(userId, filter, page, size));
+    }
+
+    @GetMapping("/sent/{userId}")
+    public ResponseEntity<Page<Message>> getSentMessages(
+            @PathVariable Integer userId,
+            @RequestParam(required = false, defaultValue = "") String filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(messageService.getSentMessagesWithPaginationAndFilter(userId, filter, page, size));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAll();
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+    @GetMapping("messages/{userId1}/{userId2}")
+    public ResponseEntity<List<Message>> getMessagesBetweenUsers(@PathVariable Integer userId1, @PathVariable Integer userId2) {
+        List<Message> messages = messageService.getMessagesBetweenUsers(userId1, userId2);
+        if (messages.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+    @GetMapping("/communicationPartners/{userId}")
+    public ResponseEntity<List<CommunicationPartnerDTO>> getCommunicationPartners(@PathVariable Integer userId) {
+        List<Message> sentMessages = messageService.getSentMessages(userId);
+        List<Message> receivedMessages = messageService.getReceivedMessages(userId);
+
+        Map<Integer, Message> latestMessages = new HashMap<>();
+        for (Message message : sentMessages) {
+            int receiverId = message.getReceiverId();
+            latestMessages.compute(receiverId, (key, current) ->
+                    (current == null || message.getTimestamp().isAfter(current.getTimestamp())) ? message : current);
+        }
+        for (Message message : receivedMessages) {
+            int senderId = message.getSenderId();
+            latestMessages.compute(senderId, (key, current) ->
+                    (current == null || message.getTimestamp().isAfter(current.getTimestamp())) ? message : current);
+        }
+
+        List<CommunicationPartnerDTO> partners = new ArrayList<>();
+        latestMessages.forEach((id, message) -> {
+            User user = userService.findById(id);
+            if (user != null) {
+                CommunicationPartnerDTO partner = new CommunicationPartnerDTO(user, message);
+                partners.add(partner);
+            }
+        });
+
+        partners.sort(Comparator.comparing(p -> p.getLastMessage().getTimestamp(), Comparator.reverseOrder()));
+
+        if (!partners.isEmpty()) {
+            return new ResponseEntity<>(partners, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
 

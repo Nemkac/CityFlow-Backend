@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -30,36 +29,6 @@ public class RouteController {
     @Autowired
     private LocationService locationService;
 
-    private final WebClient webClient;
-
-    private void searchRouteGraph(SearchDTO dto) {
-        webClient.post()
-                .uri("http://localhost:8080/api/users/searchRoute")
-                .bodyValue(dto)
-                .retrieve()
-                .bodyToMono(SearchDTO.class)
-                .subscribe(
-                        result -> System.out.println("Search saved in graph database"),
-                        error -> System.err.println("Failed to save search in graph database: " + error.getMessage())
-                );
-    }
-
-    private String mostFrequentedRoute(String username){
-        URI uri = UriComponentsBuilder.fromUriString("http://localhost:8080/api/users/mostFrequented/{username}")
-                .buildAndExpand(username)
-                .toUri();
-
-        return webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(String.class).block();
-    }
-
-    @GetMapping(path = "/mostFrequented/{username}")
-    public ResponseEntity<String> getMostFrequentedRoute(@PathVariable String username){
-        String routeName = mostFrequentedRoute(username);
-        return new ResponseEntity<>(routeName, HttpStatus.OK);
-    }
 
     @GetMapping(path = "/allRoutes")
     public ResponseEntity<List<Route>> getAll(){
@@ -78,11 +47,6 @@ public class RouteController {
             }
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping(path = "/route/search")
-    public void searchRoute(@RequestBody SearchDTO dto){
-        searchRouteGraph(dto);
     }
 
     @PostMapping(path = "/saveRoute")
@@ -151,65 +115,5 @@ public class RouteController {
         }
     }
 
-    public List<String> atLeastThreeStations() {
-        return webClient.get()
-                .uri("http://localhost:8080/api/routes/atLeastThreeStations")
-                .retrieve()
-                .bodyToFlux(String.class)
-                .collectList()
-                .block();
-    }
 
-    @GetMapping(path = "/atLeastThreeStations")
-    public ResponseEntity<List<String>> getRouteWithAtLeastThreeStations(){
-        List<String> routeNames = atLeastThreeStations();
-        return new ResponseEntity<>(routeNames, HttpStatus.OK);
-    }
-
-    private Integer stationsCount(String routeName){
-        URI uri = UriComponentsBuilder.fromUriString("http://localhost:8080/api/routes/{routeName}/stations/count")
-                .buildAndExpand(routeName)
-                .toUri();
-
-        return webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(Integer.class).block();
-    }
-
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping(path = "/stationsCount/{routeName}")
-    public ResponseEntity<Integer> getRouteWithAtLeastThreeStations(@PathVariable String routeName){
-        Integer numberOfStation = stationsCount(routeName);
-        return new ResponseEntity<>(numberOfStation, HttpStatus.OK);
-    }
-
-    public List<String> getPopularRoutes() {
-        return webClient.get()
-                .uri("http://localhost:8080/api/routes/popular")
-                .retrieve()
-                .bodyToFlux(String.class)
-                .collectList()
-                .block();
-    }
-
-    @GetMapping(path = "/popular")
-    public ResponseEntity<List<String>> getMostPopularRoutes(){
-        List<String> popularRoutes = getPopularRoutes();
-        return new ResponseEntity<>(popularRoutes, HttpStatus.OK);
-    }
-
-    public String getLongestRouteName() {
-        return webClient.get()
-                .uri("http://localhost:8080/api/routes/longest")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
-    @GetMapping(path = "/longest")
-    public ResponseEntity<String> getLongestRoute(){
-        String routeName = getLongestRouteName();
-        return new ResponseEntity<>(routeName, HttpStatus.OK);
-    }
 }
