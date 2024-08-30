@@ -2,27 +2,49 @@ package com.example.demo.DTO;
 import java.time.LocalDateTime;
 
 public class ShiftDTO {
-    private int userId;
-    private int routeId;
+    private Integer id;
+    private Integer userId;
+    private Integer busId; // New field
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String location;
+    private Integer extraHours;
 
     public ShiftDTO() {
     }
 
-    public ShiftDTO(LocalDateTime startTime, LocalDateTime endTime, String location) {
+    public ShiftDTO(Integer id, Integer userId, Integer busId, LocalDateTime startTime, LocalDateTime endTime, String location, Integer extraHours) {
+        this.id = id;
+        this.userId = userId;
+        this.busId = busId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
+        this.extraHours = extraHours;
     }
 
-    public ShiftDTO(int userId, int routeId, LocalDateTime startTime, LocalDateTime endTime, String location) {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
         this.userId = userId;
-        this.routeId = routeId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.location = location;
+    }
+
+    public Integer getBusId() {
+        return busId;
+    }
+
+    public void setBusId(Integer busId) {
+        this.busId = busId;
     }
 
     public LocalDateTime getStartTime() {
@@ -49,19 +71,11 @@ public class ShiftDTO {
         this.location = location;
     }
 
-    public int getUserId() {
-        return userId;
+    public Integer getExtraHours() {
+        return extraHours;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getRouteId() {
-        return routeId;
-    }
-
-    public void setRouteId(int routeId) {
-        this.routeId = routeId;
+    public void setExtraHours(Integer extraHours) {
+        this.extraHours = extraHours;
     }
 }

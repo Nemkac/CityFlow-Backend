@@ -27,5 +27,7 @@ public class ShiftService {
         return shiftRepository.findAll();
     }
 
-
+    public List<Shift> saveAll(List<Shift> shifts){
+        return shiftRepository.saveAll(shifts); // Batch save method
+    }
 }

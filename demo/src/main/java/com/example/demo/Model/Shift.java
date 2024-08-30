@@ -14,12 +14,11 @@ public class Shift {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"name", "password", "email", "roles", "lastname", "dateOfBirth", "phoneNumber", "eWallet"})
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "route_id")
-    private Route route;
+    @JoinColumn(name = "bus_id") // New reference to a Bus
+    private Bus bus;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -30,16 +29,19 @@ public class Shift {
     @Column(name = "location")
     private String location;
 
+    @Column(name = "extra_hours") // New field for extra hours
+    private Integer extraHours;
     public Shift() {
     }
 
-    public Shift(int id, User user, Route route, LocalDateTime startTime, LocalDateTime endTime, String location) {
+    public Shift(int id, User user, Bus bus, LocalDateTime startTime, LocalDateTime endTime, String location, Integer extraHours) {
         this.id = id;
         this.user = user;
-        this.route = route;
+        this.bus = bus;
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
+        this.extraHours = extraHours;
     }
 
     public int getId() {
@@ -58,12 +60,12 @@ public class Shift {
         this.user = user;
     }
 
-    public Route getRoute() {
-        return route;
+    public Bus getBus() {
+        return bus;
     }
 
-    public void setRoute(Route route) {
-        this.route = route;
+    public void setBus(Bus bus) {
+        this.bus = bus;
     }
 
     public LocalDateTime getStartTime() {
@@ -88,5 +90,13 @@ public class Shift {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Integer getExtraHours() {
+        return extraHours;
+    }
+
+    public void setExtraHours(Integer extraHours) {
+        this.extraHours = extraHours;
     }
 }
