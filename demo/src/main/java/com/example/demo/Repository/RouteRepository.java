@@ -26,4 +26,6 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
 
     @Override
     void delete(Route route);
+
+    boolean existsByName(String name);
 }

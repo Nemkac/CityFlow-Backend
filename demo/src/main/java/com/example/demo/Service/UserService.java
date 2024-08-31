@@ -1,6 +1,8 @@
 package com.example.demo.Service;
 
 import com.example.demo.DTO.RouteGraphDTO;
+import com.example.demo.Exceptions.RouteNotFoundException;
+import com.example.demo.Exceptions.UserNotFoundException;
 import com.example.demo.Model.User;
 import com.example.demo.Model.UserInfoDetails;
 import com.example.demo.Repository.UserRepository;
@@ -29,7 +31,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User FindByUsername(String username){
-        return this.userRepository.getByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.orElseThrow(() -> new UserNotFoundException("User could not be found by given username: " + username));
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

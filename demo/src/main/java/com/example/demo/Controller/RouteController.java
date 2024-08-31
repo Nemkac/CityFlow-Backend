@@ -3,14 +3,20 @@ package com.example.demo.Controller;
 import com.example.demo.DTO.DeleteBusFromRouteDTO;
 import com.example.demo.DTO.RouteDTO;
 import com.example.demo.DTO.SearchDTO;
+import com.example.demo.Exceptions.DuplicateRouteException;
+import com.example.demo.Exceptions.RouteCreatingException;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
+import com.example.demo.Model.User;
+import com.example.demo.Service.JwtService;
 import com.example.demo.Service.LocationService;
 import com.example.demo.Service.RouteService;
+import com.example.demo.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -22,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/CityFlow")
+@RequestMapping(path = "/route")
 @RequiredArgsConstructor
 public class RouteController {
 
@@ -32,51 +38,40 @@ public class RouteController {
     @Autowired
     private LocationService locationService;
 
-//    private final WebClient webClient;
+    @Autowired
+    private JwtService jwtService;
 
-//    private void searchRouteGraph(SearchDTO dto) {
-//        webClient.post()
-//                .uri("http://localhost:8080/api/users/searchRoute")
-//                .bodyValue(dto)
-//                .retrieve()
-//                .bodyToMono(SearchDTO.class)
-//                .subscribe(
-//                        result -> System.out.println("Search saved in graph database"),
-//                        error -> System.err.println("Failed to save search in graph database: " + error.getMessage())
-//                );
-//    }
+    @Autowired
+    private UserService userService;
 
-//    private String mostFrequentedRoute(String username){
-//        URI uri = UriComponentsBuilder.fromUriString("http://localhost:8080/api/users/mostFrequented/{username}")
-//                .buildAndExpand(username)
-//                .toUri();
-//
-//        return webClient.get()
-//                .uri(uri)
-//                .retrieve()
-//                .bodyToMono(String.class).block();
-//    }
-
-//    @GetMapping(path = "/mostFrequented/{username}")
-//    public ResponseEntity<String> getMostFrequentedRoute(@PathVariable String username){
-//        String routeName = mostFrequentedRoute(username);
-//        return new ResponseEntity<>(routeName, HttpStatus.OK);
-//    }
-
-    @GetMapping(path = "/allRoutes")
-    public ResponseEntity<List<Route>> getAll(){
-        List<Route> routes = routeService.getAll();
-        return new ResponseEntity<>(routes, HttpStatus.OK);
+    @GetMapping(path = "/get/all")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<List<Route>> getAll(@RequestHeader("Authorization") String authorization){
+        try {
+            String bearerToken = authorization.substring(7);
+            String username = jwtService.extractUsername(bearerToken);
+            User user = userService.FindByUsername(username);
+            if(user != null){
+                List<Route> routes = routeService.getAll();
+                return new ResponseEntity<>(routes, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e){
+            return new  ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping(path = "/getStations")
-    public ResponseEntity<List<Location>> getAllStations() {
+    @GetMapping(path = "/stations/get/all")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<List<Location>> getAllStations(@RequestHeader("Authorization") String authorization) {
         List<Location> locations = locationService.getAll();
         return new ResponseEntity<>(locations, HttpStatus.OK);
     }
 
     @PostMapping(path = "/station/save")
-    public ResponseEntity<Location> saveStation(@RequestBody Location location){
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<Location> saveStation(@RequestHeader("Authorization") String authorization, @RequestBody Location location){
         Location existingLocation = findOrCreateLocation(location);
         if(existingLocation != null) {
             this.locationService.save(location);
@@ -86,44 +81,45 @@ public class RouteController {
         }
     }
 
-    @GetMapping(path = "/route/{id}")
-    public ResponseEntity<Route> getRouteById(@PathVariable Integer id) {
-        List<Route> routes = routeService.getAll();
-
-        for (Route route : routes) {
-            int routeId = route.getId();
-            if (routeId == id) {
-                return new ResponseEntity<>(route, HttpStatus.OK);
-            }
-        }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    @GetMapping(path = "/get/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<Route> getRouteById(@RequestHeader("Authorization") String authorization, @PathVariable Integer id) {
+        String bearerToken = authorization.substring(7);
+        String username = jwtService.extractUsername(bearerToken);
+        User user = userService.FindByUsername(username);
+        Route route = routeService.findById(id);
+        return new ResponseEntity<>(route, HttpStatus.OK);
     }
 
-//    @PostMapping(path = "/route/search")
-//    public void searchRoute(@RequestBody SearchDTO dto){
-//        searchRouteGraph(dto);
-//    }
+    @PostMapping(path = "/save")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<Route> save(@RequestHeader("Authorization") String authorization, @RequestBody RouteDTO routeDTO) {
+        try {
+            Location starting = findOrCreateLocation(routeDTO.getStartingPoint());
+            Location ending = findOrCreateLocation(routeDTO.getEndingPoint());
 
-    @PostMapping(path = "/saveRoute")
-    public ResponseEntity<Route> save(@RequestBody RouteDTO routeDTO) {
-        Location starting = findOrCreateLocation(routeDTO.getStartingPoint());
-        Location ending = findOrCreateLocation(routeDTO.getEndingPoint());
+            if (routeService.existsByName(routeDTO.routeName)) {
+                throw new DuplicateRouteException("A route with the same name already exists.");
+            } else {
+                Set<Location> uniqueStations = routeDTO.getStations().stream()
+                        .map(this::findOrCreateLocation)
+                        .collect(Collectors.toSet());
 
-        Set<Location> uniqueStations = routeDTO.getStations().stream()
-                .map(this::findOrCreateLocation)
-                .collect(Collectors.toSet());
+                Route newRoute = new Route(
+                        routeDTO.getRouteName(),
+                        starting,
+                        new ArrayList<>(uniqueStations),
+                        ending,
+                        routeDTO.getOpeningTime(),
+                        routeDTO.getClosingTime()
+                );
 
-        Route newRoute = new Route(
-                routeDTO.getRouteName(),
-                starting,
-                new ArrayList<>(uniqueStations),
-                ending,
-                routeDTO.getOpeningTime(),
-                routeDTO.getClosingTime()
-        );
-
-        routeService.save(newRoute);
-        return new ResponseEntity<>(newRoute, HttpStatus.OK);
+                routeService.save(newRoute);
+                return new ResponseEntity<>(newRoute, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            throw new RouteCreatingException("Failed to create a new route: " + e.getMessage());
+        }
     }
 
     public Location findOrCreateLocation(Location location) {
@@ -132,7 +128,8 @@ public class RouteController {
     }
 
     @DeleteMapping(path = "/deleteRoute/{id}")
-    public ResponseEntity<?> deleteRoute(@PathVariable Integer id) {
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<?> deleteRoute(@RequestHeader("Authorization") String authorization, @PathVariable Integer id) {
         Route routeToDelete = this.routeService.findById(id);
 
         if (routeToDelete != null) {
@@ -144,7 +141,8 @@ public class RouteController {
     }
 
     @PutMapping(path = "/deleteBusFromRoute")
-    public ResponseEntity<?> deleteBusFromRoute(@RequestBody DeleteBusFromRouteDTO dto){
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<?> deleteBusFromRoute(@RequestHeader("Authorization") String authorization, @RequestBody DeleteBusFromRouteDTO dto){
         try{
             Integer routeId = dto.getRouteId();
             Integer busId = dto.getBusId();
@@ -155,66 +153,4 @@ public class RouteController {
             return new ResponseEntity<>(e.toString(), HttpStatus.FORBIDDEN);
         }
     }
-
-//    public List<String> atLeastThreeStations() {
-//        return webClient.get()
-//                .uri("http://localhost:8080/api/routes/atLeastThreeStations")
-//                .retrieve()
-//                .bodyToFlux(String.class)
-//                .collectList()
-//                .block();
-//    }
-
-//    @GetMapping(path = "/atLeastThreeStations")
-//    public ResponseEntity<List<String>> getRouteWithAtLeastThreeStations(){
-//        List<String> routeNames = atLeastThreeStations();
-//        return new ResponseEntity<>(routeNames, HttpStatus.OK);
-//    }
-
-//    private Integer stationsCount(String routeName){
-//        URI uri = UriComponentsBuilder.fromUriString("http://localhost:8080/api/routes/{routeName}/stations/count")
-//                .buildAndExpand(routeName)
-//                .toUri();
-//
-//        return webClient.get()
-//                .uri(uri)
-//                .retrieve()
-//                .bodyToMono(Integer.class).block();
-//    }
-
-//    @CrossOrigin(origins = "http://localhost:4200")
-//    @GetMapping(path = "/stationsCount/{routeName}")
-//    public ResponseEntity<Integer> getRouteWithAtLeastThreeStations(@PathVariable String routeName){
-//        Integer numberOfStation = stationsCount(routeName);
-//        return new ResponseEntity<>(numberOfStation, HttpStatus.OK);
-//    }
-
-//    public List<String> getPopularRoutes() {
-//        return webClient.get()
-//                .uri("http://localhost:8080/api/routes/popular")
-//                .retrieve()
-//                .bodyToFlux(String.class)
-//                .collectList()
-//                .block();
-//    }
-
-//    @GetMapping(path = "/popular")
-//    public ResponseEntity<List<String>> getMostPopularRoutes(){
-//        List<String> popularRoutes = getPopularRoutes();
-//        return new ResponseEntity<>(popularRoutes, HttpStatus.OK);
-//    }
-
-//    public String getLongestRouteName() {
-//        return webClient.get()
-//                .uri("http://localhost:8080/api/routes/longest")
-//                .retrieve()
-//                .bodyToMono(String.class)
-//                .block();
-//    }
-
-//    @GetMapping(path = "/longest")
-//    public ResponseEntity<String> getLongestRoute(){
-//        String routeName = getLongestRouteName();
-//        return new ResponseEntity<>(routeName, HttpStatus.OK);
-//    }
 }

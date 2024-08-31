@@ -35,18 +35,6 @@ public class BusController {
 
     @PostMapping(path = "/saveBus")
     public ResponseEntity<Bus> save(@RequestBody BusDTO newBus){
-//        try{
-//            Bus bus = new Bus();
-//
-//            bus.setLicencePlate(newBus.getLicencePlate());
-//            bus.setRoutes(newBus.getRoutes());
-//
-//            busService.save(bus);
-//
-//            return new ResponseEntity<>(bus, HttpStatus.OK);
-//        } catch (Exception e){
-//            return new ResponseEntity(e, HttpStatus.FORBIDDEN);
-//        }
         try{
             Bus bus = new Bus();
             bus.setLicencePlate(newBus.getLicencePlate());

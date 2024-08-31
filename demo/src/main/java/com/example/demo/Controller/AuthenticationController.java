@@ -24,20 +24,6 @@ public class AuthenticationController {
     @Autowired
     private JwtService jwtService;
 
-//    private final WebClient webClient;
-
-//    private void sendUserToGraphDatabase(UserGraphDTO dto) {
-//        webClient.post()
-//                .uri("http://localhost:8080/api/users/save")
-//                .bodyValue(dto)
-//                .retrieve()
-//                .bodyToMono(UserGraphDTO.class)
-//                .subscribe(
-//                        result -> System.out.println("User saved in graph database with ID: " + result.getId()),
-//                        error -> System.err.println("Failed to save user in graph database: " + error.getMessage())
-//                );
-//    }
-
     @PostMapping(path = "/CityFlow/RegisterUser")
     public ResponseEntity<User> SaveUser(@RequestBody RegisterDTO requestBody){
         User newUser = new User(
@@ -52,19 +38,6 @@ public class AuthenticationController {
                 false
                 );
         userService.save(newUser);
-//        if(savedUser != null){
-//            UserGraphDTO dto = new UserGraphDTO();
-//            dto.setId(savedUser.getId());
-//            dto.setName(savedUser.getName());
-//            dto.setLastname(savedUser.getLastname());
-//            dto.setUsername(savedUser.getUsername());
-//            sendUserToGraphDatabase(dto);
-//            return new ResponseEntity<>("Saved!", HttpStatusCode.valueOf(200));
-//        }else{
-//            return new ResponseEntity<>("Not saved!", HttpStatusCode.valueOf(200));
-//
-//        }
-
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 

@@ -17,11 +17,9 @@ public class Route {
     @Column
     public String name;
 
-
     @ManyToOne
     @JoinColumn(name = "startLocationID")
     public Location startingPoint;
-
 
     @ManyToMany
     @JoinTable(

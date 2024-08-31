@@ -50,12 +50,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
-                .cors() // Dodajte ovu liniju za konfiguraciju CORS
+                .cors()
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/CityFlow/**", "/livelocation-websocket/**").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/testToken","/Account/**","/KYC/**","/document/**").authenticated()
+                .authorizeHttpRequests().requestMatchers("/testToken","/Account/**","/KYC/**","/document/**", "/route/**").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
