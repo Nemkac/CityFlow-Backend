@@ -39,13 +39,13 @@ public class BusController {
             Bus bus = new Bus();
             bus.setLicencePlate(newBus.getLicencePlate());
 
-            List<Route> selectedRoutes = new ArrayList<>();
-
-            selectedRoutes.addAll(newBus.getRoutes());
+            List<Route> selectedRoutes = new ArrayList<>(newBus.getRoutes());
             bus.setRoutes(newBus.getRoutes());
 
             for (Route route : selectedRoutes) {
-                routeService.updateDepartureFromStartingStation(route, bus);
+                if(route.getBuses().isEmpty()){
+                    routeService.updateDepartureFromStartingStation(route);
+                }
             }
 
             busService.save(bus);

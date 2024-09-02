@@ -40,25 +40,40 @@ public class RouteService {
         return routeRepository.findById(id).orElse(null);
     }
 
-    public Route getByStartingPoint(Location startingPoint){
-        return routeRepository.getByStartingPoint(startingPoint);
-    }
     public void deleteBusFromRoute(Integer routeId, Integer busId){
         Route selectedRoute = findById(routeId);
         Bus busToRemove = this.busService.findById(busId);
-        if(selectedRoute != null && busToRemove != null){
-            List<Bus> routeBuses = selectedRoute.getBuses();
-            List<Route> busRoutes = busToRemove.getRoutes();
+        List<Bus> routeBuses = selectedRoute.getBuses();
+        List<Route> busRoutes = busToRemove.getRoutes();
 
-            routeBuses.removeIf(bus -> bus.id.equals(busId));
-            busRoutes.removeIf(route -> route.id.equals(routeId));
+        routeBuses.removeIf(bus -> bus.id.equals(busId));
+        busRoutes.removeIf(route -> route.id.equals(routeId));
 
-            //save(selectedRoute);
-            this.busService.save(busToRemove);
+        //save(selectedRoute);
+//        if(selectedRoute.departureFromStartingStation > 10){
+//            updateDepartureFromStartingStation(selectedRoute);
+//        }
+
+        if(routeBuses.isEmpty()) {
+            selectedRoute.setDepartureFromStartingStation(0);
+            this.save(selectedRoute);
+        } else {
+            updateDepartureFromStartingStation(selectedRoute);
         }
-    }
-    public Route getByEndPoint(Location endPoint){
-        return routeRepository.getByEndPoint(endPoint);
+
+        this.busService.save(busToRemove);
+
+        //        if(selectedRoute != null && busToRemove != null){
+//            List<Bus> routeBuses = selectedRoute.getBuses();
+//            List<Route> busRoutes = busToRemove.getRoutes();
+//
+//            routeBuses.removeIf(bus -> bus.id.equals(busId));
+//            busRoutes.removeIf(route -> route.id.equals(routeId));
+//
+//            //save(selectedRoute);
+//            updateDepartureFromStartingStation(selectedRoute);
+//            this.busService.save(busToRemove);
+//        }
     }
 
     public List<Route> getAll(){
@@ -73,7 +88,7 @@ public class RouteService {
         return this.routeRepository.existsByName(name);
     }
 
-    public void updateDepartureFromStartingStation(Route route, Bus bus) {
+    public void updateDepartureFromStartingStation(Route route) {
         double totalDistance = 0;
         Location previous = route.getStartingPoint();
         for (Location station : route.getStations()) {
@@ -87,7 +102,13 @@ public class RouteService {
         double travelTime = totalDistance / speed * 60;
 
         int newDeparture = (int) Math.ceil(travelTime / numberOfBuses);
-        route.setDepartureFromStartingStation(newDeparture);
+
+        if(newDeparture >= 10) {
+            route.setDepartureFromStartingStation(newDeparture);
+        } else {
+            route.setDepartureFromStartingStation(10);
+        }
+
         this.save(route);
     }
 
@@ -108,7 +129,4 @@ public class RouteService {
 
         return distance;
     }
-
-
-
 }

@@ -27,6 +27,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<ErrorObject>(errorObject, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(LocationNotFoundException.class)
+    public ResponseEntity<ErrorObject> handleLocationNotFoundException(LocationNotFoundException ex, WebRequest request){
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(HttpStatus.NOT_FOUND.value());
+        errorObject.setMessage(ex.getMessage());
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<ErrorObject>(errorObject, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BusNotFoundException.class)
+    public ResponseEntity<ErrorObject> handleBusNotFoundException(BusNotFoundException ex, WebRequest request){
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(HttpStatus.NOT_FOUND.value());
+        errorObject.setMessage(ex.getMessage());
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<ErrorObject>(errorObject, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(RouteCreatingException.class)
     public ResponseEntity<ErrorObject> handleRouteCreatingException(RouteCreatingException ex){
         ErrorObject errorObject = new ErrorObject();

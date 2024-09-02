@@ -140,17 +140,29 @@ public class RouteController {
         }
     }
 
-    @PutMapping(path = "/deleteBusFromRoute")
+    @DeleteMapping(path = "/bus/delete")
     @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
-    public ResponseEntity<?> deleteBusFromRoute(@RequestHeader("Authorization") String authorization, @RequestBody DeleteBusFromRouteDTO dto){
+    public ResponseEntity<?> deleteBusFromRoute(@RequestHeader("Authorization") String authorization,
+                                                @RequestParam Integer busID, @RequestParam Integer routeID){
         try{
-            Integer routeId = dto.getRouteId();
-            Integer busId = dto.getBusId();
-
-            this.routeService.deleteBusFromRoute(routeId, busId);
+            this.routeService.deleteBusFromRoute(routeID, busID);
             return new ResponseEntity<>("Bus successfuly removed from route!", HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(e.toString(), HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @GetMapping(path = "/destinations/get/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<String> getRouteFromTo(@RequestHeader("Authorization") String authorization, @PathVariable Integer id){
+        try{
+            Route route = routeService.findById(id);
+            Location startingPosition = this.locationService.findById(route.startingPoint.id);
+            Location endPosition = this.locationService.findById(route.endPoint.id);
+            String FromTo = startingPosition.getAddress() + " - " + endPosition.getAddress();
+            return new ResponseEntity<>(FromTo, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

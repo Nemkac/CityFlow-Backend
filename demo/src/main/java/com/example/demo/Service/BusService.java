@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import com.example.demo.DTO.RouteGraphDTO;
+import com.example.demo.Exceptions.BusNotFoundException;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Route;
 import com.example.demo.Repository.BusRepository;
@@ -46,7 +47,7 @@ public class BusService {
 
     public Bus findById(Integer id){
         Optional<Bus> optionalBus = busRepository.findById(id);
-        return optionalBus.orElse(null);
+        return optionalBus.orElseThrow(() -> new BusNotFoundException("Bus could not be found by given ID"));
     }
 
 

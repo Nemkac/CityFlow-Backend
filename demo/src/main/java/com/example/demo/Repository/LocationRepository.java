@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Integer> {
@@ -12,7 +13,7 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 
     Location getByLatitudeAndLongitude(double Latitude, double Longitude);
 
-    Location getById(int id);
+    Optional<Location> findById(Integer id);
 
     List<Location> findAll();
 }
