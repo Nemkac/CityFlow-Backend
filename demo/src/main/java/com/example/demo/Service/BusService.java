@@ -20,6 +20,9 @@ public class BusService {
     @Autowired
     private BusRepository busRepository;
 
+    @Autowired
+    private RouteService routeService;
+
 //    private final WebClient webClient;
 
     public Bus save(Bus bus){
@@ -43,12 +46,24 @@ public class BusService {
         return this.busRepository.findAll();
     }
 
-    public void deleteById(Integer id) { this.busRepository.deleteById(id); }
+    public void deleteById(Integer id) {
+        Optional<Bus> bus = this.busRepository.findById(id);
+        List<Route> routes = bus.get().getRoutes();
+
+        for(Route route : routes){
+            this.routeService.updateDepartureFromStartingStation(route);
+        }
+
+        this.busRepository.deleteById(id);
+
+    }
 
     public Bus findById(Integer id){
         Optional<Bus> optionalBus = busRepository.findById(id);
         return optionalBus.orElseThrow(() -> new BusNotFoundException("Bus could not be found by given ID"));
     }
 
-
+    public List<Bus> findAllById(List<Integer> ids){
+        return this.busRepository.findAllById(ids);
+    }
 }

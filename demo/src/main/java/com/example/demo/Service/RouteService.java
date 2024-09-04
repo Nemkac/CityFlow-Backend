@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.DTO.AddBusToRouteDTO;
 import com.example.demo.DTO.RouteGraphDTO;
 import com.example.demo.Exceptions.RouteNotFoundException;
 import com.example.demo.Model.Bus;
@@ -8,17 +9,21 @@ import com.example.demo.Model.Route;
 import com.example.demo.Model.Station;
 import com.example.demo.Repository.BusRepository;
 import com.example.demo.Repository.RouteRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class RouteService {
 
     @Autowired
@@ -26,7 +31,6 @@ public class RouteService {
 
     @Autowired
     private BusService busService;
-
 
     public Route save(Route route){
         return routeRepository.save(route);
@@ -102,11 +106,11 @@ public class RouteService {
         double travelTime = totalDistance / speed * 60;
 
         int newDeparture = (int) Math.ceil(travelTime / numberOfBuses);
-
-        if(newDeparture >= 10) {
-            route.setDepartureFromStartingStation(newDeparture);
-        } else {
+        System.out.println("New Departure Time: " + newDeparture);
+        if(newDeparture < 10) {
             route.setDepartureFromStartingStation(10);
+        } else {
+            route.setDepartureFromStartingStation(newDeparture);
         }
 
         this.save(route);
@@ -128,5 +132,44 @@ public class RouteService {
         double distance = 6371 * c;
 
         return distance;
+    }
+
+    @Transactional
+    public void addBusesToRoute(AddBusToRouteDTO dto) {
+        Route route = this.findById(dto.getSelectedRoute().id);
+        List<Bus> buses = new ArrayList<>(dto.getSelectedBuses());
+
+        for(Bus bus : buses) {
+            if(!route.getBuses().contains(bus)){
+                route.getBuses().add(bus);
+                bus.getRoutes().add(route);
+            }
+        }
+
+        if(dto.isScaleDepartureTime()) {
+            if(route.getDepartureFromStartingStation() > 10) {
+                this.updateDepartureFromStartingStation(route);
+            } else {
+                if(route.getDepartureFromStartingStation() == 0) {
+                    this.updateDepartureFromStartingStation(route);
+                } else {
+                    route.setDepartureFromStartingStation(10);
+                }
+            }
+        }
+
+        if (dto.isExtendClosingTime()) {
+            this.extendClosingTime(route);
+        }
+
+        this.routeRepository.save(route);
+        buses.forEach(this.busService::save);
+    }
+
+    private void extendClosingTime(Route route) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime closingTime = LocalTime.parse(route.getClosingTime(), formatter);
+        closingTime = closingTime.plusMinutes(30);
+        route.setClosingTime(closingTime.format(formatter));
     }
 }

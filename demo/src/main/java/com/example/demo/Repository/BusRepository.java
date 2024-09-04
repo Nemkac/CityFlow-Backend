@@ -3,6 +3,8 @@ package com.example.demo.Repository;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,4 +16,6 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     List<Bus> findAll();
     Optional<Bus> findById(Integer id);
     void deleteById(Integer id);
+    @Query("SELECT b FROM Bus b WHERE b.id IN :ids")
+    List<Bus> findBusesByIds(@Param("ids") List<Integer> ids);
 }

@@ -1,10 +1,10 @@
 package com.example.demo.Controller;
 
-import com.example.demo.DTO.DeleteBusFromRouteDTO;
+import com.example.demo.DTO.AddBusToRouteDTO;
 import com.example.demo.DTO.RouteDTO;
-import com.example.demo.DTO.SearchDTO;
 import com.example.demo.Exceptions.DuplicateRouteException;
 import com.example.demo.Exceptions.RouteCreatingException;
+import com.example.demo.Model.Bus;
 import com.example.demo.Model.Location;
 import com.example.demo.Model.Route;
 import com.example.demo.Model.User;
@@ -18,10 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -163,6 +160,17 @@ public class RouteController {
             return new ResponseEntity<>(FromTo, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(path = "/bus/addToRoute")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<String> addBusToRoute(@RequestHeader("Authorization") String authorization, @RequestBody AddBusToRouteDTO dto){
+        try{
+            this.routeService.addBusesToRoute(dto);
+            return new ResponseEntity<>("Success!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
