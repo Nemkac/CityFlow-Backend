@@ -30,6 +30,9 @@ public class BusMalfunctionReport {
     @Column
     private LocalDate date;
 
+    @Column
+    private Integer priority;
+
     public BusMalfunctionReport(){}
 
     public BusMalfunctionReport(Driver driver, Bus bus, String summary, Boolean ifProcessed) {
@@ -46,6 +49,15 @@ public class BusMalfunctionReport {
         this.summary = summary;
         this.ifProcessed = false;
         this.date = LocalDate.now();
+    }
+
+    public BusMalfunctionReport(Driver driver, Bus bus, String summary, Integer priority) {
+        this.driver = driver;
+        this.bus = bus;
+        this.summary = summary;
+        this.ifProcessed = false;
+        this.date = LocalDate.now();
+        this.priority = priority;
     }
 
     public BusMalfunctionReport(Driver driver, Bus bus, Boolean ifProcessed) {
