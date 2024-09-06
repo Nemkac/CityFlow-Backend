@@ -111,6 +111,36 @@ public class BusServicingController {
         return new ResponseEntity<>(null,HttpStatus.FORBIDDEN);
     }
 
+    @GetMapping(value="/CityFlow/getPastServicings")
+    public ResponseEntity<List<BusServicing>> getPastServicings() {
+        List<BusServicing> pastServicings = new ArrayList<>();
+        for(BusServicing servicing : this.busServicingService.getAll()){
+            if(servicing.getDate().isBefore(LocalDate.now())){
+                pastServicings.add(servicing);
+            }
+        }
+        if(pastServicings.size() > 0) {
+            return new ResponseEntity<>(pastServicings, HttpStatus.OK);
+        } else  {
+            return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping(value="/CityFlow/getFutureServicings")
+    public ResponseEntity<List<BusServicing>> getFutureServicings() {
+        List<BusServicing> futureServicings = new ArrayList<>();
+        for(BusServicing servicing : this.busServicingService.getAll()){
+            if(servicing.getDate().isAfter(LocalDate.now().minusDays(1))){
+                futureServicings.add(servicing);
+            }
+        }
+        if(futureServicings.size() > 0) {
+            return new ResponseEntity<>(futureServicings, HttpStatus.OK);
+        } else  {
+            return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
+        }
+    }
+
 
 
 
