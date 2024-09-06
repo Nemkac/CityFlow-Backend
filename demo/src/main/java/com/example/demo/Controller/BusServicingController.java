@@ -1,10 +1,7 @@
 package com.example.demo.Controller;
 
 
-import com.example.demo.Model.Bus;
-import com.example.demo.Model.BusMalfunctionReport;
-import com.example.demo.Model.BusServicing;
-import com.example.demo.Model.TimeSlot;
+import com.example.demo.Model.*;
 import com.example.demo.Service.BusService;
 import com.example.demo.Service.BusServicingService;
 import com.example.demo.Service.ServiceUrgencyRankingsService;
@@ -141,7 +138,13 @@ public class BusServicingController {
         }
     }
 
-
+    @GetMapping(value="/CityFlow/reportServicing/{servicingId}")
+    public ResponseEntity<List<BusServicing>> reportServicing(@PathVariable Integer servicingId) {
+        ServiceUrgencyRankings ranking = this.serviceUrgencyRankingsService.getByBus(this.busServicingService.getById(servicingId).getBus());
+        ranking.setScore(ranking.getScore()*1.4);
+        this.busServicingService.deleteById(servicingId);
+        return this.getPastServicings();
+    }
 
 
 

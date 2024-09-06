@@ -25,4 +25,6 @@ public class BusServicingService {
 
     public List<BusServicing> findAllByBusOrderByDateDesc (Bus bus) { return this.busServicingRepository.findAllByBusOrderByDateDesc(bus); }
 
+    public void deleteById(Integer id) { this.busServicingRepository.deleteById(id); }
+
 }
