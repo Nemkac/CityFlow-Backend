@@ -1,14 +1,18 @@
 package com.example.demo.Service;
 
+import com.example.demo.DTO.AddRoutesToBusDTO;
+import com.example.demo.DTO.EditBusDTO;
 import com.example.demo.Exceptions.BusNotFoundException;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Route;
 import com.example.demo.Repository.BusRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,19 +31,62 @@ public class BusService {
         return savedBus;
     }
 
+    public void edit(EditBusDTO dto) {
+
+    }
+
+    public void addRoutesToBus(AddRoutesToBusDTO dto){
+        dto.getBus().getRoutes().addAll(dto.getRoutes());
+
+        for (Route route : dto.getRoutes()) {
+            if(dto.isScaleDepartureTime()) {
+                if(route.getDepartureFromStartingStation() > 10) {
+                    this.routeService.updateDepartureFromStartingStation(route);
+                } else {
+                    if(route.getDepartureFromStartingStation() == 0) {
+                        this.routeService.updateDepartureFromStartingStation(route);
+                    } else {
+                        route.setDepartureFromStartingStation(10);
+                    }
+                }
+            }
+
+            if (dto.isExtendClosingTime()) {
+                this.routeService.extendClosingTime(route);
+            }
+        }
+
+        this.save(dto.getBus());
+    }
+
     public List<Bus> findAll(){
         return this.busRepository.findAll();
     }
 
-    public void deleteById(Integer id) {
-        Optional<Bus> bus = this.busRepository.findById(id);
-        List<Route> routes = bus.get().getRoutes();
+    @Transactional
+    public void deleteBus(Integer id){
+        Bus bus = this.findById(id);
 
-        for(Route route : routes){
-            this.routeService.updateDepartureFromStartingStation(route);
+        if (bus.getRoutes() == null || bus.getRoutes().isEmpty()) {
+            busRepository.delete(bus);
+            System.out.println("Bus deleted with no routes.");
+        } else {
+            for (Route route : bus.getRoutes()) {
+                route.getBuses().remove(bus);
+
+                if (route.getBuses().isEmpty()) {
+                    route.setDepartureFromStartingStation(0);
+                } else {
+                    this.routeService.updateDepartureFromStartingStation(route);
+                }
+
+                // Save the updated route
+                this.routeService.save(route);
+            }
+
+            busRepository.delete(bus);
+            System.out.println("Bus deleted and departure times updated for affected routes.");
         }
-
-        this.busRepository.deleteById(id);
     }
 
     public Bus findById(Integer id){

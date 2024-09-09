@@ -83,10 +83,27 @@ public class RouteService {
         return routeRepository.findAll();
     }
 
-    public void deleteById(Integer id){
-        routeRepository.deleteById(id);
-    }
+    @Transactional
+    public void deleteById(Integer routeId) {
+        Optional<Route> optionalRoute = routeRepository.findById(routeId);
 
+        if (optionalRoute.isPresent()) {
+            Route route = optionalRoute.get();
+
+            for (Bus bus : route.getBuses()) {
+                bus.getRoutes().remove(route);
+                this.busService.save(bus);
+            }
+
+            route.getBuses().clear();
+
+            routeRepository.deleteById(routeId);
+
+            System.out.println("Route and its associations deleted successfully.");
+        } else {
+            System.out.println("Route with id " + routeId + " not found.");
+        }
+    }
     public boolean existsByName(String name) {
         return this.routeRepository.existsByName(name);
     }
@@ -135,25 +152,24 @@ public class RouteService {
 
     @Transactional
     public void addBusesToRoute(AddBusToRouteDTO dto) {
-        Route route = this.findById(dto.getSelectedRoute().id);
-        List<Bus> buses = new ArrayList<>(dto.getSelectedBuses());
+        Route route = this.findById(dto.getSelectedRoute().getId());
 
-        for(Bus bus : buses) {
-            if(!route.getBuses().contains(bus)){
+        List<Bus> buses = dto.getSelectedBuses().stream()
+                .map(bus -> busService.findById(bus.getId()))
+                .collect(Collectors.toList());
+
+        for (Bus bus : buses) {
+            if (!route.getBuses().contains(bus)) {
                 route.getBuses().add(bus);
                 bus.getRoutes().add(route);
             }
         }
 
-        if(dto.isScaleDepartureTime()) {
-            if(route.getDepartureFromStartingStation() > 10) {
+        if (dto.isScaleDepartureTime()) {
+            if (route.getDepartureFromStartingStation() > 10 || route.getDepartureFromStartingStation() == 0) {
                 this.updateDepartureFromStartingStation(route);
             } else {
-                if(route.getDepartureFromStartingStation() == 0) {
-                    this.updateDepartureFromStartingStation(route);
-                } else {
-                    route.setDepartureFromStartingStation(10);
-                }
+                route.setDepartureFromStartingStation(10);
             }
         }
 
@@ -165,7 +181,10 @@ public class RouteService {
         buses.forEach(this.busService::save);
     }
 
-    private void extendClosingTime(Route route) {
+
+
+
+    public void extendClosingTime(Route route) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime closingTime = LocalTime.parse(route.getClosingTime(), formatter);
         closingTime = closingTime.plusMinutes(30);

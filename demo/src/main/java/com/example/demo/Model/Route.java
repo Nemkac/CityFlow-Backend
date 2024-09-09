@@ -34,7 +34,7 @@ public class Route {
     public RouteType type;
 
     @ManyToMany(mappedBy = "routes")
-    @JsonIgnoreProperties("routes")
+    @JsonIgnoreProperties(allowSetters = true, value = "routes")
     public List<Bus> buses;
 
     @ManyToOne

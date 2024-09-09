@@ -22,7 +22,7 @@ public class Bus {
             joinColumns = @JoinColumn(name = "bus_id"),
             inverseJoinColumns = @JoinColumn(name = "route_id")
     )
-    @JsonIgnoreProperties("buses")
+    @JsonIgnoreProperties(allowSetters = true, value = "buses")
     public List<Route> routes;
 
     public Bus() {
