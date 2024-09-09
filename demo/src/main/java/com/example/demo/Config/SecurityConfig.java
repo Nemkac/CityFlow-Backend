@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/CityFlow/**", "/livelocation-websocket/**").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/testToken","/Account/**","/KYC/**","/document/**", "/route/**").authenticated()
+                .authorizeHttpRequests().requestMatchers("/testToken","/Account/**","/KYC/**","/document/**", "/route/**", "/routeAdministrator/**", "/bus/**", "/widgets/**").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

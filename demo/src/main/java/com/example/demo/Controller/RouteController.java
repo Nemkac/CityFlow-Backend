@@ -108,7 +108,8 @@ public class RouteController {
                         new ArrayList<>(uniqueStations),
                         ending,
                         routeDTO.getOpeningTime(),
-                        routeDTO.getClosingTime()
+                        routeDTO.getClosingTime(),
+                        routeDTO.getType()
                 );
 
                 routeService.save(newRoute);

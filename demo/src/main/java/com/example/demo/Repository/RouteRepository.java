@@ -13,19 +13,10 @@ import java.util.Optional;
 public interface RouteRepository extends JpaRepository<Route, Integer> {
 
     Optional<Route> findById(Integer id);
-
-    Route getByStartingPoint(Location startingPoint);
-
-    Route getByEndPoint(Location endPoint);
-
     Route save(Route route);
-
     List<Route> findAll();
-
     void deleteById(Integer id);
-
     @Override
     void delete(Route route);
-
     boolean existsByName(String name);
 }

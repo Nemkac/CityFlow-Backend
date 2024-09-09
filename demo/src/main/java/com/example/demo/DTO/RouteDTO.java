@@ -1,6 +1,7 @@
 package com.example.demo.DTO;
 
 import com.example.demo.Model.Location;
+import com.example.demo.Model.RouteType;
 
 import java.util.List;
 
@@ -12,13 +13,16 @@ public class RouteDTO {
     public String openingTime;
     public String closingTime;
 
-    public RouteDTO(String routeName, Location startingPoint, Location endingPoint, List<Location> stations, String openingTime, String closingTime) {
+    public RouteType type;
+
+    public RouteDTO(String routeName, Location startingPoint, Location endingPoint, List<Location> stations, String openingTime, String closingTime, RouteType routeType) {
         this.routeName = routeName;
         this.startingPoint = startingPoint;
         this.endingPoint = endingPoint;
         this.stations = stations;
         this.openingTime = openingTime;
         this.closingTime = closingTime;
+        this.type = routeType;
     }
 
     public RouteDTO() {
@@ -72,5 +76,11 @@ public class RouteDTO {
         this.closingTime = closingTime;
     }
 
+    public RouteType getType() {
+        return type;
+    }
 
+    public void setType(RouteType type) {
+        this.type = type;
+    }
 }

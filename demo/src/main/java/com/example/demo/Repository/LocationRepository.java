@@ -10,10 +10,7 @@ import java.util.Optional;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Integer> {
     Location save(Location location);
-
     Location getByLatitudeAndLongitude(double Latitude, double Longitude);
-
     Optional<Location> findById(Integer id);
-
     List<Location> findAll();
 }

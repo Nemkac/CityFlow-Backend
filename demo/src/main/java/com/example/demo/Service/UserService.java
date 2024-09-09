@@ -1,6 +1,5 @@
 package com.example.demo.Service;
 
-import com.example.demo.DTO.RouteGraphDTO;
 import com.example.demo.Exceptions.RouteNotFoundException;
 import com.example.demo.Exceptions.UserNotFoundException;
 import com.example.demo.Model.User;
@@ -39,37 +38,8 @@ public class UserService implements UserDetailsService {
 
         Optional<User> userDetail = userRepository.findByUsername(username);
 
-        // Converting userDetail to UserDetails
         return userDetail.map(UserInfoDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
     }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    public User addUser(User userInfo) {
-        User savedUser = userRepository.save(userInfo);
-        return savedUser;
-    }
-
-    public void deleteById(Integer userId) {
-        userRepository.deleteById(userId);
-    }
-
-    public User getById(Integer userId){
-        return userRepository.getById(userId);
-    }
-
-    public List<User> getAll(){
-        return userRepository.findAll();
-    }
-
-    public User findById(Integer id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        return userOptional.orElse(null);
-    }
-    public List<User> getUsersByRole(String role) {
-        return userRepository.findByRoles(role);
-    }
 }

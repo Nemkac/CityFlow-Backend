@@ -1,6 +1,5 @@
 package com.example.demo.Service;
 
-import com.example.demo.DTO.UserGraphDTO;
 import com.example.demo.Model.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,6 @@ public class InitialDataInsertionService {
     private RouteService routeService;
     @Autowired
     private LocationService locationService;
-    @Autowired
-    private CardService cardService;
     @Autowired
     private BusService busService;
 

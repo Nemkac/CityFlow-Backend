@@ -16,6 +16,5 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     List<Bus> findAll();
     Optional<Bus> findById(Integer id);
     void deleteById(Integer id);
-    @Query("SELECT b FROM Bus b WHERE b.id IN :ids")
-    List<Bus> findBusesByIds(@Param("ids") List<Integer> ids);
+
 }

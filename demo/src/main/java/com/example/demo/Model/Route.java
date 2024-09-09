@@ -29,6 +29,10 @@ public class Route {
     )
     public List<Location> stations;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    public RouteType type;
+
     @ManyToMany(mappedBy = "routes")
     @JsonIgnoreProperties("routes")
     public List<Bus> buses;
@@ -43,15 +47,12 @@ public class Route {
     @Column
     public String closingTime;
 
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Shift> shifts;
-
     @Column
     public Integer departureFromStartingStation;
 
     public Route() {}
 
-    public Route(String name, Location startingPoint, List<Location> stations, Location endPoint, String openingTime, String closingTime) {
+    public Route(String name, Location startingPoint, List<Location> stations, Location endPoint, String openingTime, String closingTime, RouteType type) {
         this.name = name;
         this.startingPoint = startingPoint;
         this.stations = stations;
@@ -60,17 +61,7 @@ public class Route {
         this.closingTime = closingTime;
         this.buses = new ArrayList<Bus>();
         this.departureFromStartingStation = 0;
-    }
-
-    public Route(Integer id, String name, Location startingPoint, List<Location> stations, Location endPoint, String openingTime, String closingTime, List<Shift> shifts) {
-        this.id = id;
-        this.name = name;
-        this.startingPoint = startingPoint;
-        this.stations = stations;
-        this.endPoint = endPoint;
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
-        this.shifts = shifts;
+        this.type = type;
     }
 
     public int getId() {
@@ -135,14 +126,6 @@ public class Route {
 
     public void setClosingTime(String closingTime) {
         this.closingTime = closingTime;
-    }
-
-    public List<Shift> getShifts() {
-        return shifts;
-    }
-
-    public void setShifts(List<Shift> shifts) {
-        this.shifts = shifts;
     }
 
     public Integer getDepartureFromStartingStation() {

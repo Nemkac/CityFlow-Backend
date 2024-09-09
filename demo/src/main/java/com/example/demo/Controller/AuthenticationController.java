@@ -2,7 +2,6 @@ package com.example.demo.Controller;
 
 import com.example.demo.DTO.LoginDTO;
 import com.example.demo.DTO.RegisterDTO;
-import com.example.demo.DTO.UserGraphDTO;
 import com.example.demo.Model.User;
 import com.example.demo.Service.JwtService;
 import com.example.demo.Service.UserService;
