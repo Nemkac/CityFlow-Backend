@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.MalfunctionDataDTO;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.BusMalfunctionReport;
 import com.example.demo.Model.Driver;
@@ -28,6 +29,7 @@ public class BusMalfunctionReportController {
 
     @Autowired
     private UserService userService;
+
 
     @PostMapping(consumes = "application/json", value="/CityFlow/reportMalfunction")
     public ResponseEntity<BusMalfunctionReport> createReport(@RequestBody BusMalfunctionReport report){
@@ -113,7 +115,12 @@ public class BusMalfunctionReportController {
         BusMalfunctionReport report = new BusMalfunctionReport(this.driverService.getById(1),this.busService.getById(1));
         this.busMalfunctionReportService.save(report);
         return new ResponseEntity<BusMalfunctionReport>(report, HttpStatus.OK);
+    }
 
+    @GetMapping(value="/CityFlow/fillMalfunctionData")
+    @ResponseStatus(HttpStatus.OK)
+    public void fillMalfunctionData(){
+        this.busMalfunctionReportService.fillMalfunctionData();
     }
 
 
