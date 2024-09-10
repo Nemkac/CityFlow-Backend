@@ -66,15 +66,15 @@ public class BusController {
     @GetMapping(value="/CityFlow/databaseFill")
     @ResponseStatus(HttpStatus.OK)
     public void databaseFill(){
-        Bus bus1 = new Bus("Gojko1","Kacar1",2002,651,154253,"KG143ZG",386291);
-        Bus bus2 = new Bus("Gojko2","Kacar2",2019,652,254253,"KG243ZG",38291);
-        Bus bus3 = new Bus("Gojko3","Kacar3",1999,653,354253,"KG343ZG",1038291);
-        Bus bus4 = new Bus("Gojko4","Kacar4",2000,654,454253,"KG443ZG",374291);
-        Bus bus5 = new Bus("Gojko5","Kacar5",2004,655,554253,"KG543ZG",128291);
-        Bus bus6 = new Bus("Gojko6","Kacar6",2011,656,654253,"KG643ZG",421291);
-        Bus bus7 = new Bus("Gojko7","Kacar7",2000,657,754253,"KG743ZG",1138291);
-        Bus bus8 = new Bus("Gojko8","Kacar8",1994,658,854253,"KG843ZG",1448291);
-        Bus bus9 = new Bus("Gojko9","Kacar9",2021,659,954253,"KG943ZG",37291);
+        Bus bus1 = new Bus("Gojko1","Kacar1",2002,651,154253,"KG143ZG",386291,4);
+        Bus bus2 = new Bus("Gojko2","Kacar2",2019,652,254253,"KG243ZG",38291,11);
+        Bus bus3 = new Bus("Gojko3","Kacar3",1999,653,354253,"KG343ZG",1038291,2);
+        Bus bus4 = new Bus("Gojko4","Kacar4",2000,654,454253,"KG443ZG",374291,102);
+        Bus bus5 = new Bus("Gojko5","Kacar5",2004,655,554253,"KG543ZG",128291,55);
+        Bus bus6 = new Bus("Gojko6","Kacar6",2011,656,654253,"KG643ZG",421291,4);
+        Bus bus7 = new Bus("Gojko7","Kacar7",2000,657,754253,"KG743ZG",1138291,8);
+        Bus bus8 = new Bus("Gojko8","Kacar8",1994,658,854253,"KG843ZG",1448291,14);
+        Bus bus9 = new Bus("Gojko9","Kacar9",2021,659,954253,"KG943ZG",37291,28);
         this.busService.save(bus1);
         this.busService.save(bus2);
         this.busService.save(bus3);

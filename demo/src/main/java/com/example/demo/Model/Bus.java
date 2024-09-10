@@ -33,6 +33,9 @@ public class Bus {
     @Column
     private Integer currentMileage;
 
+    @Column
+    private Integer busLine;
+
     // dodaj za tip busa enum
 
 
@@ -48,9 +51,24 @@ public class Bus {
         this.currentMileage = currentMileage;
     }
 
+    public Bus(String manufacturer, String model, Integer modelYear, Integer seatingCapacity, Integer chassisNumber, String registrationNumber, Integer currentMileage, Integer busLine) {
+        this.manufacturer = manufacturer;
+        this.model = model;
+        this.modelYear = modelYear;
+        this.seatingCapacity = seatingCapacity;
+        this.chassisNumber = chassisNumber;
+        this.registrationNumber = registrationNumber;
+        this.currentMileage = currentMileage;
+        this.busLine = busLine;
+    }
+
     public Integer getBusId() {
         return busId;
     }
+
+    public Integer getBusLine() { return busLine; }
+
+    public void setBusLine(Integer busLine) { this.busLine = busLine; }
 
     public void setBusId(Integer busId) {
         this.busId = busId;

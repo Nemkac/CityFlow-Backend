@@ -84,6 +84,20 @@ public class ServiceUrgencyRankingsService {
 
     public void remove() { this.serviceUrgencyRankingsRepository.deleteAll(); }
 
+    public double calculateOperationalImportance(Integer busLine) {
+        if(busLine <= 6) {
+            return 1.2;
+        } else if  (busLine > 6 && busLine <= 14) {
+            return 1.15;
+        } else if (busLine > 14 && busLine <= 28) {
+            return 1.07;
+        } else if (busLine > 28 && busLine <= 44) {
+            return 1.03;
+        } else {
+            return 1;
+        }
+    }
+
     // ovo ce da se poziva svaki put kada se u bazu ubaci novi bus
     public void createRankings(){
         List<ServiceUrgencyRankings> allRankings = this.findAll();
@@ -125,6 +139,7 @@ public class ServiceUrgencyRankingsService {
                 ifMalfunctionProcessed = 0;
             }
             formula = (double) Math.round(a*yearsOld + b*currentMileage + c*operationalImportance + d*timeSinceLastService + e*mileageSinceLastService + ifMalfunctionProcessed);
+            formula *= this.calculateOperationalImportance(bus.getBusLine());
             ServiceUrgencyRankings serviceUrgencyRankings = new ServiceUrgencyRankings(bus);
             serviceUrgencyRankings.setScore(formula);
             this.save(serviceUrgencyRankings);

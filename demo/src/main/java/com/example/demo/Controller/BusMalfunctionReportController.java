@@ -6,6 +6,7 @@ import com.example.demo.Model.Driver;
 import com.example.demo.Service.BusMalfunctionReportService;
 import com.example.demo.Service.BusService;
 import com.example.demo.Service.DriverService;
+import com.example.demo.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ public class BusMalfunctionReportController {
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping(consumes = "application/json", value="/CityFlow/reportMalfunction")
     public ResponseEntity<BusMalfunctionReport> createReport(@RequestBody BusMalfunctionReport report){
@@ -46,6 +50,16 @@ public class BusMalfunctionReportController {
     @PostMapping(value="/CityFlow/reportMalfunctionViaDriverId/{driverId}/{commentary}/{priority}")
     public ResponseEntity<BusMalfunctionReport> createReportViaDriverId(@PathVariable Integer driverId,@PathVariable String commentary, @PathVariable Integer priority){
         Driver driver = this.driverService.getById(driverId);
+        BusMalfunctionReport report = new BusMalfunctionReport(driver,driver.getBus(),commentary, priority);
+        if(busMalfunctionReportService.save(report)==null){
+            return new ResponseEntity("Cannot create report", HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity(report, HttpStatus.OK);
+    }
+
+    @PostMapping(value="/CityFlow/reportMalfunctionViaUserId/{userId}/{commentary}/{priority}")
+    public ResponseEntity<BusMalfunctionReport> createReportViaUserId(@PathVariable Integer userId,@PathVariable String commentary, @PathVariable Integer priority){
+        Driver driver = this.driverService.getByUserUsername(this.userService.getUserById(userId).getUsername());
         BusMalfunctionReport report = new BusMalfunctionReport(driver,driver.getBus(),commentary, priority);
         if(busMalfunctionReportService.save(report)==null){
             return new ResponseEntity("Cannot create report", HttpStatus.FORBIDDEN);
