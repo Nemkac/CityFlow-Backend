@@ -48,7 +48,7 @@ public class BusMalfunctionReport {
         this.bus = bus;
         this.summary = summary;
         this.ifProcessed = false;
-        this.date = LocalDate.now();
+        this.date = LocalDate.now().minusDays(15);
     }
 
     public BusMalfunctionReport(Driver driver, Bus bus, String summary, Integer priority) {

@@ -123,6 +123,15 @@ public class BusMalfunctionReportController {
         this.busMalfunctionReportService.fillMalfunctionData();
     }
 
+    @GetMapping(value="/CityFlow/getMalfunctionData")
+    public ResponseEntity<List<MalfunctionDataDTO>> getMalfunctionData(){
+        if(this.busMalfunctionReportService.findAllMalfunctionData() != null){
+            return new ResponseEntity<>(this.busMalfunctionReportService.findAllByOrderByEver(),HttpStatus.OK);
+        } else  {
+            return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
+        }
+    }
+
 
 
 }
