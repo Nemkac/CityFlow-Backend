@@ -11,7 +11,7 @@ public interface MalfunctionDataDTORepository extends JpaRepository<MalfunctionD
 
     MalfunctionDataDTO save(MalfunctionDataDTO malfunctionDataDTO);
     List<MalfunctionDataDTO> findAll();
-    List<MalfunctionDataDTO> findAllByOrderByEver();
+    List<MalfunctionDataDTO> findAllByOrderByEverDesc();
     void deleteAll();
 
 }

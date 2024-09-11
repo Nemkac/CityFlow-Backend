@@ -26,7 +26,7 @@ public class User {
     //'YYYY-MM-DD'
     @Column(name = "dateOfBirth")
     private LocalDate dateOfBirth;
-    @Column(name = "telephone")
+    @Column(name = "phoneNumber")
     private String phoneNumber;
     private String roles;
 

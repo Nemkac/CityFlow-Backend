@@ -35,7 +35,7 @@ public class BusMalfunctionReportService {
     public List<BusMalfunctionReport> getAllUnprocessed() { return this.busMalfunctionReportRepository.getByIfProcessed(false); }
     public List<BusMalfunctionReport> getAllByBusSortByDate(Bus bus) { return this.busMalfunctionReportRepository.getBusMalfunctionReportByBusOrderByDateDesc(bus); }
     public List<MalfunctionDataDTO> findAllMalfunctionData() {return this.malfunctionDataDTORepository.findAll(); }
-    public List<MalfunctionDataDTO> findAllByOrderByEver() {return this.malfunctionDataDTORepository.findAllByOrderByEver(); }
+    public List<MalfunctionDataDTO> findAllByOrderByEver() {return this.malfunctionDataDTORepository.findAllByOrderByEverDesc(); }
 
     public MalfunctionDataDTO getDataForManufacturer(String manufacturer) {
         int inLastMonth = 0;

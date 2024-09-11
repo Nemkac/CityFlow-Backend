@@ -19,16 +19,20 @@ public class AuthenticationController {
     @Autowired
     private JwtService jwtService;
 
-//    @PostMapping(path = "/save")
-//    public ResponseEntity<User> save(@RequestBody String username){
-//        User newUser = new User(username)
-//    }
     @PostMapping(path = "/CityFlow/RegisterUser")
-    public ResponseEntity<String> SaveUser(@RequestBody User requestBody){
+    public ResponseEntity<User> SaveUser(@RequestBody User requestBody){
+        requestBody.setRoles("ROLE_NONE");
+        User newUser = userService.save(requestBody);
+        return new ResponseEntity<>(newUser, HttpStatusCode.valueOf(200));
+    }
+
+    @PostMapping(path = "/CityFlow/RegisterUserX")
+    public ResponseEntity<String> SaveUserX(@RequestBody User requestBody){
+        requestBody.setRoles("ROLE_NONE");
         if(userService.save(requestBody) != null){
             return new ResponseEntity<>("Saved!", HttpStatusCode.valueOf(200));
         }else{
-            return new ResponseEntity<>("Not saved!", HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>("Not saved!", HttpStatusCode.valueOf(403));
 
         }
     }
