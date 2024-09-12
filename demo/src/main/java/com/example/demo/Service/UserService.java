@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,6 +61,16 @@ public class UserService implements UserDetailsService {
             }
         }
         return null;
+    }
+
+    public List<User> getAllUsersNoAdmin(){
+        List<User> foundUsers = new ArrayList<>();
+        for(User user : this.findAll()){
+            if(!user.getRoles().equals("SUPER_ADMIN")){
+                foundUsers.add(user);
+            }
+        }
+        return foundUsers;
     }
 
 

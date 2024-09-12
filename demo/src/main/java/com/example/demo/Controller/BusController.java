@@ -87,9 +87,11 @@ public class BusController {
         User driver = new User(1,"driver","Vladimir","Blanusa","vb@gmail.com","driver",null,"0643217393","ROLE_DRIVER");
         User serviceAdmin = new User(2,"service","Marko","Stefanovic","ms@gmail.com","service",null,"0643217393","ROLE_SERVICE");
         User chargingAdmin = new User(3,"charger","Stefan","Markovic","sm@gmail.com","charger",null,"0643217393","ROLE_CHARGER");
+        User superAdmin = new User(4,"admin","Milos","Milakovic","sm@gmail.com","admin",null,"0643217393","SUPER_ADMIN");
         this.userService.save(driver);
         this.userService.save(serviceAdmin);
         this.userService.save(chargingAdmin);
+        this.userService.save(superAdmin);
         Driver driveR = new Driver(driver,bus1);
         this.driverService.save(driveR);
         BusMalfunctionReport busMalfunctionReport1 = new BusMalfunctionReport(driveR,bus2,true);
