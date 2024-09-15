@@ -134,7 +134,7 @@ public class BusController {
         this.electricBusService.save(elBus8);
         this.electricBusService.save(elBus9);
         ChargingStation chargingStation1 = new ChargingStation(1200,2,null);
-        ChargingStation chargingStation2 = new ChargingStation(1200,2,null);
+        ChargingStation chargingStation2 = new ChargingStation(1100,2,null);
         ChargingStation chargingStation3 = new ChargingStation(3100,2,null);
         ChargingStation chargingStation4 = new ChargingStation(2695,2,null);
         this.chargingStationService.save(chargingStation1);

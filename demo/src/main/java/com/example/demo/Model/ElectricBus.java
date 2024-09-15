@@ -1,6 +1,7 @@
 package com.example.demo.Model;
 
 import jakarta.persistence.*;
+import java.util.Random;
 
 @Entity
 @Table(name="ElectricBus")
@@ -40,11 +41,12 @@ public class ElectricBus {
     }
 
     public ElectricBus(Bus bus) {
-        this.batteryHealth = 100;
-        this.batteryCapacity = 300;
-        this.energyConsumption = 200;
-        this.routeLength = 18;
-        this.batteryLevel = 100;
+        Random random = new Random();
+        this.batteryHealth = random.nextInt(76) + 25;;
+        this.batteryCapacity = random.nextInt(201) + 250;
+        this.energyConsumption = random.nextInt(41) + 180;
+        this.routeLength = random.nextInt(12) + 12;
+        this.batteryLevel = random.nextInt(96) + 5;
         this.bus = bus;
     }
 
