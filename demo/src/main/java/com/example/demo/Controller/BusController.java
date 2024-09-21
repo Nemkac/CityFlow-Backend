@@ -66,15 +66,15 @@ public class BusController {
     @GetMapping(value="/CityFlow/databaseFill")
     @ResponseStatus(HttpStatus.OK)
     public void databaseFill(){
-        Bus bus1 = new Bus("Gojko1","Kacar1",2002,651,154253,"KG143ZG",386291,4);
-        Bus bus2 = new Bus("Gojko2","Kacar2",2019,652,254253,"KG243ZG",38291,11);
-        Bus bus3 = new Bus("Gojko3","Kacar3",1999,653,354253,"KG343ZG",1038291,2);
-        Bus bus4 = new Bus("Gojko4","Kacar4",2000,654,454253,"KG443ZG",374291,102);
-        Bus bus5 = new Bus("Gojko5","Kacar5",2004,655,554253,"KG543ZG",128291,55);
-        Bus bus6 = new Bus("Gojko6","Kacar6",2011,656,654253,"KG643ZG",421291,4);
-        Bus bus7 = new Bus("Gojko7","Kacar7",2000,657,754253,"KG743ZG",1138291,8);
-        Bus bus8 = new Bus("Gojko8","Kacar8",1994,658,854253,"KG843ZG",1448291,14);
-        Bus bus9 = new Bus("Gojko9","Kacar9",2021,659,954253,"KG943ZG",37291,28);
+        Bus bus1 = new Bus("MAN","Lion’s City",2002,651,154253,"KG143ZG",386291,4);
+        Bus bus2 = new Bus("Scania","Citywide ",2019,652,254253,"KG243ZG",38291,11);
+        Bus bus3 = new Bus("Setra","S 531 DT",1999,653,354253,"KG343ZG",1038291,2);
+        Bus bus4 = new Bus("Neoplan ","Skyliner ",2000,654,454253,"KG443ZG",374291,102);
+        Bus bus5 = new Bus("Iveco ","Crossway ",2004,655,554253,"KG543ZG",128291,55);
+        Bus bus6 = new Bus("Mercedes-Benz","Citaro ",2011,656,654253,"KG643ZG",421291,4);
+        Bus bus7 = new Bus("Van Hool","EX15H ",2000,657,754253,"KG743ZG",1138291,8);
+        Bus bus8 = new Bus("BYD","K9",1994,658,854253,"KG843ZG",1448291,14);
+        Bus bus9 = new Bus("Alexander ","Enviro400",2021,659,954253,"KG943ZG",37291,28);
         this.busService.save(bus1);
         this.busService.save(bus2);
         this.busService.save(bus3);
@@ -96,14 +96,20 @@ public class BusController {
         this.userService.save(noRole);
         Driver driveR = new Driver(driver,bus1);
         this.driverService.save(driveR);
-        BusMalfunctionReport busMalfunctionReport1 = new BusMalfunctionReport(driveR,bus2,true);
-        BusMalfunctionReport busMalfunctionReport2 = new BusMalfunctionReport(driveR,bus5,false);
-        BusMalfunctionReport busMalfunctionReport3 = new BusMalfunctionReport(driveR,bus6,true);
-        BusMalfunctionReport busMalfunctionReport4 = new BusMalfunctionReport(driveR,bus9,false);
+        BusMalfunctionReport busMalfunctionReport1 = new BusMalfunctionReport(driveR,bus1,true);
+        BusMalfunctionReport busMalfunctionReport2 = new BusMalfunctionReport(driveR,bus2,true);
+        BusMalfunctionReport busMalfunctionReport3 = new BusMalfunctionReport(driveR,bus2,true);
+        BusMalfunctionReport busMalfunctionReport4 = new BusMalfunctionReport(driveR,bus2,true);
+        BusMalfunctionReport busMalfunctionReport5 = new BusMalfunctionReport(driveR,bus3,false);
+        BusMalfunctionReport busMalfunctionReport6 = new BusMalfunctionReport(driveR,bus4,true);
+        BusMalfunctionReport busMalfunctionReport7 = new BusMalfunctionReport(driveR,bus4,false);
         this.busMalfunctionReportService.save(busMalfunctionReport1);
         this.busMalfunctionReportService.save(busMalfunctionReport2);
         this.busMalfunctionReportService.save(busMalfunctionReport3);
         this.busMalfunctionReportService.save(busMalfunctionReport4);
+        this.busMalfunctionReportService.save(busMalfunctionReport5);
+        this.busMalfunctionReportService.save(busMalfunctionReport6);
+        this.busMalfunctionReportService.save(busMalfunctionReport7);
         ElectricBus elBus1 = new ElectricBus(bus1);
         ElectricBus elBus2 = new ElectricBus(bus2);
         ElectricBus elBus3 = new ElectricBus(bus3);
