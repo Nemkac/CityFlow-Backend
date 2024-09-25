@@ -42,18 +42,10 @@ public class RouteController {
     private UserService userService;
 
     @GetMapping(path = "/get/all")
-    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
-    public ResponseEntity<List<Route>> getAll(@RequestHeader("Authorization") String authorization){
+    public ResponseEntity<List<Route>> getAll(){
         try {
-            String bearerToken = authorization.substring(7);
-            String username = jwtService.extractUsername(bearerToken);
-            User user = userService.FindByUsername(username);
-            if(user != null){
-                List<Route> routes = routeService.getAll();
-                return new ResponseEntity<>(routes, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            }
+            List<Route> routes = routeService.getAll();
+            return new ResponseEntity<>(routes, HttpStatus.OK);
         } catch (Exception e){
             return new  ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
@@ -79,7 +71,7 @@ public class RouteController {
     }
 
     @GetMapping(path = "/get/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    @PreAuthorize("hasAnyRole('ROLE_ROUTEADMINISTRATOR', 'ROLE_USER')")
     public ResponseEntity<Route> getRouteById(@RequestHeader("Authorization") String authorization, @PathVariable Integer id) {
         String bearerToken = authorization.substring(7);
         String username = jwtService.extractUsername(bearerToken);
@@ -151,8 +143,7 @@ public class RouteController {
     }
 
     @GetMapping(path = "/destinations/get/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
-    public ResponseEntity<String> getRouteFromTo(@RequestHeader("Authorization") String authorization, @PathVariable Integer id){
+    public ResponseEntity<String> getRouteFromTo(@PathVariable Integer id){
         try{
             Route route = routeService.findById(id);
             Location startingPosition = this.locationService.findById(route.startingPoint.id);
