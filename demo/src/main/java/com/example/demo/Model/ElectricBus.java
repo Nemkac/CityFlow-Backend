@@ -13,14 +13,14 @@ public class ElectricBus {
     private Bus bus;
 
     @Column(name = "batteryHealth")
-    private Integer batteryHealth;
+    private double batteryHealth;
 
     @Column(name = "batteryCapacity")
     private Integer batteryCapacity;
 
     public ElectricBus(){}
 
-    public ElectricBus(Bus bus, Integer batteryHealth, Integer batteryCapacity) {
+    public ElectricBus(Bus bus, double batteryHealth, Integer batteryCapacity) {
         this.bus = bus;
         this.batteryHealth = batteryHealth;
         this.batteryCapacity = batteryCapacity;
@@ -42,11 +42,11 @@ public class ElectricBus {
         this.bus = bus;
     }
 
-    public Integer getBatteryHealth() {
+    public double getBatteryHealth() {
         return batteryHealth;
     }
 
-    public void setBatteryHealth(Integer batteryHealth) {
+    public void setBatteryHealth(double batteryHealth) {
         this.batteryHealth = batteryHealth;
     }
 

@@ -14,6 +14,14 @@ public class Bus {
     public Integer id;
 
     @Column
+    public String malfunctionDate;
+    @Column
+    public Integer seatingCapacity;
+    @Column
+    public double currentMileage;
+    @Column
+    public String chassisNumber;
+    @Column
     public String licencePlate;
 
     @ManyToMany
@@ -28,9 +36,13 @@ public class Bus {
     public Bus() {
     }
 
-    public Bus(String licencePlate) {
+    public Bus(String malfunctionDate, Integer seatingCapacity, double currentMileage, String chassisNumber, String licencePlate, List<Route> routes) {
+        this.malfunctionDate = malfunctionDate;
+        this.seatingCapacity = seatingCapacity;
+        this.currentMileage = currentMileage;
+        this.chassisNumber = chassisNumber;
         this.licencePlate = licencePlate;
-        this.routes = new ArrayList<>();
+        this.routes = routes;
     }
 
     public Integer getId() {
@@ -55,5 +67,37 @@ public class Bus {
 
     public void setRoutes(List<Route> routes) {
         this.routes = routes;
+    }
+
+    public String getMalfunctionDate() {
+        return malfunctionDate;
+    }
+
+    public void setMalfunctionDate(String malfunctionDate) {
+        this.malfunctionDate = malfunctionDate;
+    }
+
+    public Integer getSeatingCapacity() {
+        return seatingCapacity;
+    }
+
+    public void setSeatingCapacity(Integer seatingCapacity) {
+        this.seatingCapacity = seatingCapacity;
+    }
+
+    public double getCurrentMileage() {
+        return currentMileage;
+    }
+
+    public void setCurrentMileage(double currentMileage) {
+        this.currentMileage = currentMileage;
+    }
+
+    public String getChassisNumber() {
+        return chassisNumber;
+    }
+
+    public void setChassisNumber(String chassisNumber) {
+        this.chassisNumber = chassisNumber;
     }
 }

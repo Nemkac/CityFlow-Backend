@@ -6,6 +6,9 @@ import com.example.demo.Exceptions.BusNotFoundException;
 import com.example.demo.Model.Bus;
 import com.example.demo.Model.Route;
 import com.example.demo.Repository.BusRepository;
+import com.example.demo.Repository.ElectricBusRepository;
+import com.example.demo.Repository.ICEBusRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,12 @@ public class BusService {
 
     @Autowired
     private RouteService routeService;
+
+    @Autowired
+    private ICEBusRepository iceBusRepository;
+
+    @Autowired
+    private ElectricBusRepository electricBusRepository;
 
     public Bus save(Bus bus){
         Bus savedBus = busRepository.save(bus);
@@ -96,5 +105,24 @@ public class BusService {
 
     public List<Bus> findAllById(List<Integer> ids){
         return this.busRepository.findAllById(ids);
+    }
+
+    public String getBusType(Integer busId) {
+        Optional<Bus> bus = busRepository.findById(busId);
+        if (bus.isEmpty()) {
+            throw new EntityNotFoundException("Bus with ID " + busId + " not found");
+        }
+
+        Bus foundBus = bus.get();
+
+        if(iceBusRepository.existsByBus(foundBus)){
+            return "ICEBus";
+        }
+
+        if(electricBusRepository.existsByBus(foundBus)){
+            return "ElectricBus";
+        }
+
+        return "Unknown";
     }
 }

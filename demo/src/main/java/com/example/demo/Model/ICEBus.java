@@ -15,14 +15,14 @@ public class ICEBus {
     private Integer engineDisplacement;
 
     @Column(name = "transmission")
-    private Integer transmission;
+    private String transmission;
 
     @Column(name = "horsePower")
     private Integer horsePower;
 
     public ICEBus(){}
 
-    public ICEBus(Bus bus, Integer engineDisplacement, Integer transmission, Integer horsePower) {
+    public ICEBus(Bus bus, Integer engineDisplacement, String transmission, Integer horsePower) {
         this.bus = bus;
         this.engineDisplacement = engineDisplacement;
         this.transmission = transmission;
@@ -53,11 +53,11 @@ public class ICEBus {
         this.engineDisplacement = engineDisplacement;
     }
 
-    public Integer getTransmission() {
+    public String getTransmission() {
         return transmission;
     }
 
-    public void setTransmission(Integer transmission) {
+    public void setTransmission(String transmission) {
         this.transmission = transmission;
     }
 

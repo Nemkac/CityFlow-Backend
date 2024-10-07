@@ -4,8 +4,12 @@ import com.example.demo.DTO.AddRoutesToBusDTO;
 import com.example.demo.DTO.BusDTO;
 import com.example.demo.DTO.EditBusDTO;
 import com.example.demo.Model.Bus;
+import com.example.demo.Model.ElectricBus;
+import com.example.demo.Model.ICEBus;
 import com.example.demo.Model.Route;
 import com.example.demo.Service.BusService;
+import com.example.demo.Service.ElectricBusService;
+import com.example.demo.Service.ICEBusService;
 import com.example.demo.Service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +30,12 @@ public class BusController {
     @Autowired
     private RouteService routeService;
 
+    @Autowired
+    private ICEBusService iceBusService;
+
+    @Autowired
+    private ElectricBusService electricBusService;
+
     @GetMapping(path = "/get/all")
     @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
     public ResponseEntity<List<Bus>> findAll(@RequestHeader("Authorization") String authorization){
@@ -43,6 +53,10 @@ public class BusController {
         try{
             Bus bus = new Bus();
             bus.setLicencePlate(newBus.getLicencePlate());
+            bus.setMalfunctionDate(newBus.getManufactureDate());
+            bus.setChassisNumber(newBus.getChassisNumber());
+            bus.setCurrentMileage(newBus.getCurrentMileage());
+            bus.setSeatingCapacity(newBus.getSeatingCapacity());
 
             List<Route> selectedRoutes = new ArrayList<>(newBus.getRoutes());
             bus.setRoutes(newBus.getRoutes());
@@ -54,6 +68,19 @@ public class BusController {
             }
 
             busService.save(bus);
+
+            if ("ICEBus".equals(newBus.getType())) {
+                ICEBus iceBus = new ICEBus(bus,
+                        newBus.getEngineDisplacement(),
+                        newBus.getTransmission(),
+                        newBus.getHorsePower());
+                iceBusService.save(iceBus);
+            } else if ("ElectricBus".equals(newBus.getType())) {
+                ElectricBus electricBus = new ElectricBus(bus,
+                        newBus.getBatteryHealth(),
+                        newBus.getBatteryCapacity());
+                electricBusService.save(electricBus);
+            }
             return new ResponseEntity<>(bus, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
@@ -102,4 +129,17 @@ public class BusController {
         }
     }
 
+    @GetMapping(path = "/get/type/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ROUTEADMINISTRATOR', 'ROLE_USER')")
+    public ResponseEntity<String> getType(@RequestHeader("Authorization") String authorization, @PathVariable Integer id){
+        try {
+//            Bus busToDelete = this.busService.findById(id);
+//            busService.deleteById(busToDelete.id);
+            String type = busService.getBusType(id);
+            return new ResponseEntity<>(type, HttpStatus.OK);
+
+        } catch (Exception e){
+            return new ResponseEntity<>("Error while accessing deleting logics", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
