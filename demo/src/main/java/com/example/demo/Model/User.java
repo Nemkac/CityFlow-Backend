@@ -36,6 +36,8 @@ public class User {
     private boolean employed;
     @Column
     private double eWallet;
+    @Column
+    private String description;
 
 
     public User(){}
@@ -52,7 +54,7 @@ public class User {
         this.roles = roles;
         this.eWallet = 0;
         this.employed = employed;
-
+        this.description = "";
     }
 
     public User(int id, String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
@@ -66,6 +68,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.roles = roles;
         this.eWallet = 0;
+        this.description = "";
     }
     public User(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String roles) {
         this.username = username;
@@ -77,6 +80,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.roles = roles;
         this.eWallet = 0;
+        this.description = "";
     }
 
 
@@ -91,6 +95,7 @@ public class User {
         this.roles = roles;
         this.employed = employed;
         this.eWallet = 0;
+        this.description = "";
     }
 
 
@@ -180,5 +185,13 @@ public class User {
 
     public void setEmployed(boolean employed) {
         this.employed = employed;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

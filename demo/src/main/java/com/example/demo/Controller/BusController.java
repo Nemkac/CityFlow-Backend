@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.DTO.AddRoutesToBusDTO;
+import com.example.demo.DTO.AllBusTypesDTO;
 import com.example.demo.DTO.BusDTO;
 import com.example.demo.DTO.EditBusDTO;
 import com.example.demo.Model.Bus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "/bus")
@@ -42,6 +44,21 @@ public class BusController {
         try {
             List<Bus> buses = busService.findAll();
             return new ResponseEntity<>(buses, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e, HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @GetMapping(path = "/get/all/with/types")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<AllBusTypesDTO> findAllWithTypes(@RequestHeader("Authorization") String authorization){
+        try {
+            List<Bus> buses = busService.findAll();
+            List<ICEBus> iceBuses = iceBusService.findAll();
+            List<ElectricBus> electricBuses = electricBusService.findAll();
+
+            AllBusTypesDTO dto = new AllBusTypesDTO(buses, iceBuses, electricBuses);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity(e, HttpStatus.FORBIDDEN);
         }
@@ -119,8 +136,31 @@ public class BusController {
             Bus bus = this.busService.findById(dto.getBus().getId());
             if(bus != null) {
                 bus.setLicencePlate(dto.getLincencePlate());
+                bus.setSeatingCapacity(dto.getSeatingCapacity());
+                bus.setMalfunctionDate(dto.getMalfunctionDate());
+                bus.setChassisNumber(dto.getChassisNumber());
+                bus.setCurrentMileage(dto.getCurrentMileage());
                 this.busService.save(bus);
-                return new ResponseEntity<>("Licence plate successfully edited", HttpStatus.OK);
+
+                if(Objects.equals(dto.getType(), "ICE")){
+                    ICEBus iceBus = this.iceBusService.getByBus(bus);
+                    if(iceBus != null) {
+                        iceBus.setHorsePower(dto.getHorsePower());
+                        iceBus.setEngineDisplacement(dto.getEngineDisplacement());
+                        iceBus.setTransmission(dto.getTransmission());
+                        this.iceBusService.save(iceBus);
+                    }
+                }
+
+                if(Objects.equals(dto.getType(), "Electric")){
+                    ElectricBus elBus = this.electricBusService.getByBus(bus);
+                    if(elBus != null){
+                        elBus.setBatteryHealth(dto.getBatteryHealth());
+                        elBus.setBatteryCapacity(dto.getBatteryCapacity());
+                        this.electricBusService.save(elBus);
+                    }
+                }
+                return new ResponseEntity<>("Bus successfully edited", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Bus not found", HttpStatus.BAD_REQUEST);
             }
@@ -140,6 +180,28 @@ public class BusController {
 
         } catch (Exception e){
             return new ResponseEntity<>("Error while accessing deleting logics", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(path = "/get/ice")
+    @PreAuthorize("hasAnyRole('ROLE_ROUTEADMINISTRATOR', 'ROLE_USER')")
+    public ResponseEntity<ICEBus> getICEBus(@RequestHeader("Authorization") String authorization, @RequestBody Bus bus){
+        try{
+            ICEBus iceBus = this.iceBusService.getByBus(bus);
+            return new ResponseEntity<ICEBus>(iceBus, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity("Error while accessing deleting logics", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(path = "/get/electric")
+    @PreAuthorize("hasAnyRole('ROLE_ROUTEADMINISTRATOR', 'ROLE_USER')")
+    public ResponseEntity<ElectricBus> getElectricBus(@RequestHeader("Authorization") String authorization, @RequestBody Bus bus){
+        try{
+            ElectricBus elBus = this.electricBusService.getByBus(bus);
+            return new ResponseEntity<ElectricBus>(elBus, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity("Error while accessing deleting logics", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

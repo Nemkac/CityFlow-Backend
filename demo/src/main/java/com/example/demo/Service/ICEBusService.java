@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ICEBusService {
     @Autowired
@@ -18,5 +20,13 @@ public class ICEBusService {
 
     public boolean existsByBus(Bus bus) {
         return this.iceBusRepository.existsByBus(bus);
+    }
+
+    public List<ICEBus> findAll() {
+        return this.iceBusRepository.findAll();
+    }
+
+    public ICEBus getByBus(Bus bus) {
+        return this.iceBusRepository.getByBus(bus);
     }
 }

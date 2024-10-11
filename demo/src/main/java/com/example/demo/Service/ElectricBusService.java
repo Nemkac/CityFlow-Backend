@@ -6,6 +6,8 @@ import com.example.demo.Repository.ElectricBusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ElectricBusService {
     @Autowired
@@ -17,5 +19,12 @@ public class ElectricBusService {
 
     public boolean existsByBus(Bus bus) {
         return this.electricBusRepository.existsByBus(bus);
+    }
+
+    public List<ElectricBus> findAll() {
+        return this.electricBusRepository.findAll();
+    }
+    public ElectricBus getByBus(Bus bus){
+        return this.electricBusRepository.getByBus(bus);
     }
 }

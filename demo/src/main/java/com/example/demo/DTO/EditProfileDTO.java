@@ -14,10 +14,11 @@ public class EditProfileDTO {
     //'YYYY-MM-DD'
     private LocalDate dateOfBirth;
     private String phoneNumber;
+    private String description;
 
     public EditProfileDTO() {}
 
-    public EditProfileDTO(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber) {
+    public EditProfileDTO(String username, String name, String lastname, String email, String password, LocalDate dateOfBirth, String phoneNumber, String description) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
@@ -25,6 +26,7 @@ public class EditProfileDTO {
         this.password = password;
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
+        this.description = description;
     }
 
     public String getUsername() {
@@ -81,6 +83,14 @@ public class EditProfileDTO {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 

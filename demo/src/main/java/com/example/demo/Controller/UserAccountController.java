@@ -36,6 +36,7 @@ public class UserAccountController {
             user.setDateOfBirth(requestBody.getDateOfBirth());
             user.setPhoneNumber(requestBody.getPhoneNumber());
             user.setUsername(requestBody.getUsername());
+            user.setDescription(requestBody.getDescription());
             userService.save(user);
             return ResponseEntity.ok().body(Map.of("message", "Updated!"));
         } else{
