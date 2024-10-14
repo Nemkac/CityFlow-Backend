@@ -110,8 +110,29 @@ public class BusController {
         try {
 //            Bus busToDelete = this.busService.findById(id);
 //            busService.deleteById(busToDelete.id);
-            busService.deleteBus(id);
-            return new ResponseEntity<>("Bus deldeted successfully!", HttpStatus.OK);
+//            busService.deleteBus(id);
+//            return new ResponseEntity<>("Bus deldeted successfully!", HttpStatus.OK);
+
+            Bus busToDelete = this.busService.findById(id);
+            if (busToDelete == null) {
+                return new ResponseEntity<>("Bus not found", HttpStatus.NOT_FOUND);
+            }
+
+            // Check if it's an ICE bus and delete the corresponding ICEBus
+            ICEBus iceBus = iceBusService.getByBus(busToDelete);
+            if (iceBus != null) {
+                iceBusService.deleteById(iceBus.getId());
+            }
+
+            // Check if it's an Electric bus and delete the corresponding ElectricBus
+            ElectricBus electricBus = electricBusService.getByBus(busToDelete);
+            if (electricBus != null) {
+                electricBusService.deleteById(electricBus.geteBusId());
+            }
+
+            // Finally, delete the bus itself
+            busService.deleteBus(busToDelete.getId());
+            return new ResponseEntity<>("Bus deleted successfully!", HttpStatus.OK);
 
         } catch (Exception e){
             return new ResponseEntity<>("Error while accessing deleting logics", HttpStatus.INTERNAL_SERVER_ERROR);

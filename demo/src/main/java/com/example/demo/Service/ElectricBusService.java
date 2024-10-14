@@ -27,4 +27,8 @@ public class ElectricBusService {
     public ElectricBus getByBus(Bus bus){
         return this.electricBusRepository.getByBus(bus);
     }
+
+    public void deleteById(Integer eBusId) {
+        electricBusRepository.deleteById(eBusId);
+    }
 }

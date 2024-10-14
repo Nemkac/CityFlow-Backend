@@ -29,4 +29,8 @@ public class ICEBusService {
     public ICEBus getByBus(Bus bus) {
         return this.iceBusRepository.getByBus(bus);
     }
+
+    public void deleteById(Integer iceBusId) {
+        iceBusRepository.deleteById(iceBusId);
+    }
 }

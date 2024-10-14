@@ -1,13 +1,12 @@
 package com.example.demo.Controller;
 
 import com.example.demo.DTO.AddBusToRouteDTO;
+import com.example.demo.DTO.EditBusDTO;
+import com.example.demo.DTO.EditStationDTO;
 import com.example.demo.DTO.RouteDTO;
 import com.example.demo.Exceptions.DuplicateRouteException;
 import com.example.demo.Exceptions.RouteCreatingException;
-import com.example.demo.Model.Bus;
-import com.example.demo.Model.Location;
-import com.example.demo.Model.Route;
-import com.example.demo.Model.User;
+import com.example.demo.Model.*;
 import com.example.demo.Service.JwtService;
 import com.example.demo.Service.LocationService;
 import com.example.demo.Service.RouteService;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,25 +48,6 @@ public class RouteController {
             return new ResponseEntity<>(routes, HttpStatus.OK);
         } catch (Exception e){
             return new  ResponseEntity(e, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "/stations/get/all")
-    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
-    public ResponseEntity<List<Location>> getAllStations(@RequestHeader("Authorization") String authorization) {
-        List<Location> locations = locationService.getAll();
-        return new ResponseEntity<>(locations, HttpStatus.OK);
-    }
-
-    @PostMapping(path = "/station/save")
-    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
-    public ResponseEntity<Location> saveStation(@RequestHeader("Authorization") String authorization, @RequestBody Location location){
-        Location existingLocation = findOrCreateLocation(location);
-        if(existingLocation != null) {
-            this.locationService.save(location);
-            return new ResponseEntity<>(location, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -163,6 +144,48 @@ public class RouteController {
             return new ResponseEntity<>("Success!", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(path = "/stations/get/all")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<List<Location>> getAllStations(@RequestHeader("Authorization") String authorization) {
+        List<Location> locations = locationService.getAll();
+        return new ResponseEntity<>(locations, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/station/save")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<Location> saveStation(@RequestHeader("Authorization") String authorization, @RequestBody Location location){
+        Location existingLocation = findOrCreateLocation(location);
+        if(existingLocation != null) {
+            this.locationService.save(location);
+            return new ResponseEntity<>(location, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @PostMapping(path = "/station/update")
+    @PreAuthorize("hasAuthority('ROLE_ROUTEADMINISTRATOR')")
+    public ResponseEntity<String> edit(@RequestHeader("Authorization") String authorization, @RequestBody EditStationDTO dto){
+        try{
+            System.out.println("ID: " + dto.getLocation());
+            Location station = this.locationService.findById(dto.getLocation().id);
+            System.out.println(station.getAddress());
+            if(station != null) {
+                station.setAddress(dto.getAddress());
+                station.setLatitude(dto.getLatitude());
+                station.setLongitude(dto.getLongitude());
+
+                this.locationService.save(station);
+                return new ResponseEntity<>("Station successfully edited", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Station not found", HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error while accessing editing logic", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
